@@ -14,12 +14,50 @@ import {
     Text,
     useColorModeValue,
     Link,
+    useToast,
 } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const SignUpPage = () => {
+    const toast = useToast();
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
+    const navigateLogin = () => {
+        navigate('/login');
+    };
+    const [inputsRegister, setInputsRegister] = useState({
+        name: '',
+        username: '',
+        email: '',
+        password: '',
+    });
+    const handleRegister = async () => {
+        const res = await fetch('/api/user/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(inputsRegister),
+        });
+        const data = await res.json();
+        console.log('data: ', data);
+        if (!data.success) {
+            toast({
+                description: data.message,
+                status: 'error',
+                duration: 1500,
+                isClosable: true,
+                position: 'top-right',
+            });
+            return;
+        }
+        console.log('data: ', data);
+        console.log('JSON.stringify(data): ', JSON.stringify(data));
+        localStorage.setItem('userLogin', JSON.stringify(data));
+        navigate('/login');
+    };
     return (
         <>
             <Flex align={'center'} justify={'center'}>
@@ -35,24 +73,46 @@ const SignUpPage = () => {
                                 <Box>
                                     <FormControl isRequired>
                                         <FormLabel>Full name</FormLabel>
-                                        <Input type="text" />
+                                        <Input
+                                            type="text"
+                                            onChange={(e) =>
+                                                setInputsRegister({ ...inputsRegister, name: e.target.value })
+                                            }
+                                            value={inputsRegister.name}
+                                        />
                                     </FormControl>
                                 </Box>
                                 <Box>
                                     <FormControl isRequired>
                                         <FormLabel>Username</FormLabel>
-                                        <Input type="text" />
+                                        <Input
+                                            type="text"
+                                            onChange={(e) =>
+                                                setInputsRegister({ ...inputsRegister, username: e.target.value })
+                                            }
+                                            value={inputsRegister.username}
+                                        />
                                     </FormControl>
                                 </Box>
                             </HStack>
                             <FormControl isRequired>
                                 <FormLabel>Email address</FormLabel>
-                                <Input type="email" />
+                                <Input
+                                    type="email"
+                                    onChange={(e) => setInputsRegister({ ...inputsRegister, email: e.target.value })}
+                                    value={inputsRegister.email}
+                                />
                             </FormControl>
                             <FormControl isRequired>
                                 <FormLabel>Password</FormLabel>
                                 <InputGroup>
-                                    <Input type={showPassword ? 'text' : 'password'} />
+                                    <Input
+                                        type={showPassword ? 'text' : 'password'}
+                                        onChange={(e) =>
+                                            setInputsRegister({ ...inputsRegister, password: e.target.value })
+                                        }
+                                        value={inputsRegister.password}
+                                    />
                                     <InputRightElement h={'full'}>
                                         <Button
                                             variant={'ghost'}
@@ -72,13 +132,17 @@ const SignUpPage = () => {
                                     _hover={{
                                         bg: useColorModeValue('gray.700', 'gray.800'),
                                     }}
+                                    onClick={handleRegister}
                                 >
                                     Sign up
                                 </Button>
                             </Stack>
                             <Stack pt={6}>
                                 <Text align={'center'}>
-                                    Already a user? <Link color={'blue.400'}>Login</Link>
+                                    Already a user?{' '}
+                                    <Link color={'blue.400'} onClick={navigateLogin}>
+                                        Login
+                                    </Link>
                                 </Text>
                             </Stack>
                         </Stack>

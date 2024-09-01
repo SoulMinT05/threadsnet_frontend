@@ -17,9 +17,14 @@ import {
 } from '@chakra-ui/react';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
     const [showPassword, setShowPassword] = useState(false);
+    const navigate = useNavigate();
+    const navigateRegister = () => {
+        navigate('/register');
+    };
     return (
         <>
             <Flex align={'center'} justify={'center'}>
@@ -64,7 +69,10 @@ const LoginPage = () => {
                             </Stack>
                             <Stack pt={6}>
                                 <Text align={'center'}>
-                                    Don&apost have account? Create an account <Link color={'blue.400'}>Register</Link>
+                                    Don&apos;t have account?{' '}
+                                    <Link color={'blue.400'} onClick={navigateRegister}>
+                                        Register
+                                    </Link>
                                 </Text>
                             </Stack>
                         </Stack>
