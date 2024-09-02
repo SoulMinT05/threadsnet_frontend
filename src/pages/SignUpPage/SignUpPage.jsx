@@ -19,9 +19,13 @@ import {
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import useShowToast from '../../hooks/useShowToast';
+import { useSetRecoilState } from 'recoil';
+import userAtom from '../../atoms/userAtom';
 
 const SignUpPage = () => {
-    const toast = useToast();
+    const showToast = useShowToast();
+    const setUser = useSetRecoilState(userAtom);
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
     const navigateLogin = () => {
@@ -34,29 +38,26 @@ const SignUpPage = () => {
         password: '',
     });
     const handleRegister = async () => {
-        const res = await fetch('/api/user/register', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(inputsRegister),
-        });
-        const data = await res.json();
-        console.log('data: ', data);
-        if (!data.success) {
-            toast({
-                description: data.message,
-                status: 'error',
-                duration: 1500,
-                isClosable: true,
-                position: 'top-right',
+        try {
+            const res = await fetch('/api/user/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(inputsRegister),
             });
-            return;
+            const data = await res.json();
+            console.log('data: ', data);
+            if (!data.success) {
+                showToast('Error', data.message, 'error');
+                return;
+            }
+            console.log('data: ', data);
+            showToast('Success', 'Register successfully', 'success');
+            navigate('/login');
+        } catch (err) {
+            console.log('err: ', err);
         }
-        console.log('data: ', data);
-        console.log('JSON.stringify(data): ', JSON.stringify(data));
-        localStorage.setItem('userLogin', JSON.stringify(data));
-        navigate('/login');
     };
     return (
         <>

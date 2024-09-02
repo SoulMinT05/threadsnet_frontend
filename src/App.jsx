@@ -3,7 +3,7 @@ import { Col, Row } from 'antd';
 import { Navigate, Route, Router, Routes } from 'react-router-dom';
 import UserPage from './pages/UserPage';
 import PostPage from './pages/PostPage/PostPage';
-import Header from './components/Header';
+import HeaderComponent from './components/HeaderComponent/HeaderComponent';
 import { Container } from '@chakra-ui/react';
 import HomePage from './pages/HomePage/HomePage';
 import AuthPage from './pages/AuthPage/AuthPage';
@@ -17,13 +17,14 @@ import SignUpPage from './pages/SignUpPage/SignUpPage';
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
 import { useRecoilValue } from 'recoil';
 import userAtom from './atoms/userAtom';
+import LogoutComponent from './components/LogoutComponent/LogoutComponent';
 
 function App() {
     const user = useRecoilValue(userAtom);
     return (
         <>
             <Container maxW="620px">
-                <Header />
+                <HeaderComponent />
                 <Routes>
                     <Route path="/" element={user ? <HomePage /> : <Navigate to="/login" />} />
                     <Route path="/register" element={<SignUpPage />} />
@@ -33,6 +34,8 @@ function App() {
 
                     <Route path="*" element={<NotFoundPage />} />
                 </Routes>
+
+                {user && <LogoutComponent />}
             </Container>
             {/* <Router>
                 <Routes>

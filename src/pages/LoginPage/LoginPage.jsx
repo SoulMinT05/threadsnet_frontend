@@ -18,12 +18,45 @@ import {
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import useShowToast from '../../hooks/useShowToast';
+import { useSetRecoilState } from 'recoil';
+import userAtom from '../../atoms/userAtom';
 
 const LoginPage = () => {
+    const showToast = useShowToast();
+    const setUser = useSetRecoilState(userAtom);
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
     const navigateRegister = () => {
         navigate('/register');
+    };
+    const [inputsLogin, setInputsLogin] = useState({
+        email: '',
+        password: '',
+    });
+    const handleLogin = async () => {
+        try {
+            const res = await fetch('/api/user/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(inputsLogin),
+            });
+            const data = await res.json();
+            console.log('data: ', data);
+            if (!data.success) {
+                showToast('Error', data.message, 'error');
+                return;
+            }
+            console.log('data: ', data);
+            localStorage.setItem('userLogin', JSON.stringify(data));
+            setUser(data);
+            showToast('Success', 'Login successfully', 'success');
+            navigate('/');
+        } catch (err) {
+            console.log('err: ', err);
+        }
     };
     return (
         <>
@@ -38,12 +71,20 @@ const LoginPage = () => {
                         <Stack spacing={4}>
                             <FormControl isRequired>
                                 <FormLabel>Email address</FormLabel>
-                                <Input type="email" />
+                                <Input
+                                    type="email"
+                                    onChange={(e) => setInputsLogin({ ...inputsLogin, email: e.target.value })}
+                                    value={inputsLogin.email}
+                                />
                             </FormControl>
                             <FormControl isRequired>
                                 <FormLabel>Password</FormLabel>
                                 <InputGroup>
-                                    <Input type={showPassword ? 'text' : 'password'} />
+                                    <Input
+                                        type={showPassword ? 'text' : 'password'}
+                                        onChange={(e) => setInputsLogin({ ...inputsLogin, password: e.target.value })}
+                                        value={inputsLogin.password}
+                                    />
                                     <InputRightElement h={'full'}>
                                         <Button
                                             variant={'ghost'}
@@ -63,6 +104,7 @@ const LoginPage = () => {
                                     _hover={{
                                         bg: useColorModeValue('gray.700', 'gray.800'),
                                     }}
+                                    onClick={handleLogin}
                                 >
                                     Login
                                 </Button>
