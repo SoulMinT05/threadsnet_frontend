@@ -1,11 +1,77 @@
-import { Avatar, Box, Flex, Link, Menu, MenuButton, MenuItem, MenuList, Portal, Text, VStack } from '@chakra-ui/react';
+import {
+    Avatar,
+    Box,
+    Button,
+    Flex,
+    Link,
+    Menu,
+    MenuButton,
+    MenuItem,
+    MenuList,
+    Portal,
+    Text,
+    VStack,
+} from '@chakra-ui/react';
+// import { Link } from 'react-router-dom';
 import './UserHeader.scss';
 import { BsInstagram } from 'react-icons/bs';
 import { CgMoreO } from 'react-icons/cg';
 import { useToast } from '@chakra-ui/react';
+import { useRecoilValue } from 'recoil';
+import userAtom from '../../atoms/userAtom';
+import { Link as RouterLink } from 'react-router-dom';
+import { useState } from 'react';
+import useShowToast from '../../hooks/useShowToast';
 
 const UserHeader = ({ user }) => {
     const toast = useToast();
+    const currentUser = useRecoilValue(userAtom);
+    // user: username params
+    // currentUser: user in localStorage
+    const [following, setFollowing] = useState(user.followers.includes(currentUser._id));
+    const showToast = useShowToast();
+    const [updating, setUpdating] = useState(false);
+
+    const handleFollow = async () => {
+        if (!currentUser) {
+            showToast('Error', 'Please login to follow', 'error');
+            return;
+        }
+        if (updating) return;
+        setUpdating(true);
+        try {
+            const userLogin = JSON.parse(localStorage.getItem('userLogin'));
+            const accessToken = userLogin?.accessToken;
+            const res = await fetch(`/api/user/follow/${user._id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
+            });
+            const data = await res.json();
+            if (!data.success) {
+                showToast('Error', data.message, 'error');
+                return;
+            }
+            console.log('data: ', data);
+            setFollowing(!following);
+            console.log('followingAfter: ', following);
+            console.log('userAfter: ', user);
+            // 2 user unfollow
+            // true: unfollow
+            // false: follow
+            if (following) {
+                showToast('Success', `Unfollow ${user.name}`, 'success');
+                user.followers.pop();
+            } else {
+                showToast('Success', `Follow ${user.name}`, 'success');
+                user.followers.push(currentUser._id);
+            }
+        } catch (error) {
+            showToast('Error', error, 'error');
+        } finally {
+            setUpdating(false);
+        }
+    };
+
     const copyURL = () => {
         const currentURL = window.location.href;
         navigator.clipboard
@@ -25,6 +91,7 @@ const UserHeader = ({ user }) => {
                 console.error('Failed to copy: ', err);
             });
     };
+
     return (
         <VStack gap={4} alignItems={'start'}>
             <Flex justifyContent={'space-between'} w={'full'}>
@@ -51,6 +118,17 @@ const UserHeader = ({ user }) => {
                 </Box>
             </Flex>
             <Text>{user.bio}</Text>
+            {currentUser.userData._id === user._id && (
+                <Link as={RouterLink} to="/updateProfile">
+                    <Button size={'sm'}>Update profile</Button>
+                </Link>
+            )}
+            {currentUser.userData._id !== user._id && (
+                <Button size={'sm'} onClick={handleFollow} isLoading={updating}>
+                    {following ? 'Unfollow' : 'Follow'}
+                </Button>
+            )}
+
             <Flex w={'full'} justifyContent={'space-between'}>
                 <Flex gap={2} alignItems={'center'}>
                     <Text color={'gray.light'}>{user.followers.length ? user.followers.length : 0} followers</Text>
@@ -108,120 +186,3 @@ const UserHeader = ({ user }) => {
 };
 
 export default UserHeader;
-
-// import { Avatar, Button, Card, Col, Divider, Row, Tabs, Typography, Space } from 'antd';
-// import { EditOutlined, HeartOutlined, MessageOutlined, RetweetOutlined, InstagramOutlined } from '@ant-design/icons';
-// import './UserHeader.scss';
-
-// const { Title, Text } = Typography;
-// const { TabPane } = Tabs;
-
-// const UserHeader = () => {
-//     return (
-//         <div className="container">
-//             <Card className="container-card">
-//                 <Row className="card-row" align="middle" justify="space-between">
-//                     <Col className="card-col-left">
-//                         <Space className="col-space" direction="vertical">
-//                             <Title
-//                                 className="space-title"
-//                                 level={4}
-//                                 style={{ color: 'white', fontSize: '24px', margin: '0' }}
-//                             >
-//                                 Tâm Nguyễn
-//                             </Title>
-//                             <Text className="space-text" style={{ color: 'gray.light' }}>
-//                                 tamng.05
-//                             </Text>
-//                             <Text className="space-text" style={{ color: '#b3b3b3' }}>
-//                                 14 người theo dõi
-//                             </Text>
-//                         </Space>
-//                     </Col>
-//                     <Col className="card-col-right" flex="auto">
-//                         <Space className="col-space" direction="vertical">
-//                             <Avatar
-//                                 className="space-avatar"
-//                                 size={80}
-//                                 src="https://instagram.fsgn5-5.fna.fbcdn.net/v/t51.2885-19/412762265_737140611666084_7755579899464631873_n.jpg?stp=dst-jpg_s320x320&_nc_ht=instagram.fsgn5-5.fna.fbcdn.net&_nc_cat=100&_nc_ohc=209C8uB0G3cQ7kNvgFosnhD&_nc_gid=9ee6f57db61940fa9ca889815d15f680&edm=APs17CUBAAAA&ccb=7-5&oh=00_AYDZkqh9oYTvxFrUQQ_H3RGat63Z82pj6932ih1bVHPUCA&oe=66D36632&_nc_sid=10d13b"
-//                             />
-//                             <Button className="space-button" type="text" icon={<InstagramOutlined />}></Button>
-//                         </Space>
-//                     </Col>
-//                 </Row>
-//                 <Button
-//                     icon={<EditOutlined />}
-//                     style={{ marginTop: 10, backgroundColor: 'white', color: 'black', width: '100%' }}
-//                 >
-//                     Chỉnh sửa trang cá nhân
-//                 </Button>
-//             </Card>
-
-//             {/* Tabs */}
-//             <Tabs defaultActiveKey="1" style={{ marginTop: '20px' }}>
-//                 <TabPane tab="Thread" key="1">
-//                     {/* Thread Content */}
-//                     <Card style={{ backgroundColor: '#242424', color: 'white' }}>
-//                         <Row gutter={16}>
-//                             <Col>
-//                                 <Avatar src="https://via.placeholder.com/40" />
-//                             </Col>
-//                             <Col flex="auto">
-//                                 <Space direction="vertical" size="small" style={{ width: '100%' }}>
-//                                     <Text strong style={{ color: 'white' }}>
-//                                         tamng.05
-//                                     </Text>
-//                                     <Text type="secondary" style={{ color: '#b3b3b3' }}>
-//                                         09/06/2024
-//                                     </Text>
-//                                     <Text style={{ color: 'white' }}>
-//                                         bài mới của sếp hay điên ý, phải replay chục lần rồi
-//                                     </Text>
-//                                 </Space>
-//                                 <Divider />
-//                                 <Space size="middle">
-//                                     <Button type="text" icon={<HeartOutlined />} style={{ color: '#b3b3b3' }}>
-//                                         1
-//                                     </Button>
-//                                     <Button type="text" icon={<MessageOutlined />} style={{ color: '#b3b3b3' }} />
-//                                     <Button type="text" icon={<RetweetOutlined />} style={{ color: '#b3b3b3' }} />
-//                                 </Space>
-//                             </Col>
-//                         </Row>
-//                     </Card>
-//                 </TabPane>
-//                 <TabPane tab="Thread trả lời" key="2"></TabPane>
-//                 <TabPane tab="Bài đăng lại" key="3"></TabPane>
-//             </Tabs>
-
-//             {/* Completion Section */}
-//             <Card style={{ backgroundColor: '#242424', marginTop: '20px', color: 'white' }}>
-//                 <Title level={5} style={{ color: 'white' }}>
-//                     Hoàn tất trang cá nhân
-//                 </Title>
-//                 <Row gutter={16}>
-//                     <Col span={8}>
-//                         <Card style={{ backgroundColor: '#333333', textAlign: 'center', color: 'white' }}>
-//                             <EditOutlined style={{ fontSize: '24px', marginBottom: '10px' }} />
-//                             <Text>Thêm tiểu sử</Text>
-//                         </Card>
-//                     </Col>
-//                     <Col span={8}>
-//                         <Card style={{ backgroundColor: '#333333', textAlign: 'center', color: 'white' }}>
-//                             <Avatar size={24} src="https://via.placeholder.com/24" style={{ marginBottom: '10px' }} />
-//                             <Text>Thêm ảnh đại diện</Text>
-//                         </Card>
-//                     </Col>
-//                     <Col span={8}>
-//                         <Card style={{ backgroundColor: '#333333', textAlign: 'center', color: 'white' }}>
-//                             <Text>✓</Text>
-//                             <Text>Theo dõi 5 trar nhân</Text>
-//                         </Card>
-//                     </Col>
-//                 </Row>
-//             </Card>
-//         </div>
-//     );
-// };
-
-// export default UserHeader;

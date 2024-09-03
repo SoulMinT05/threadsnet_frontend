@@ -15,6 +15,7 @@ import userAtom from '../../atoms/userAtom';
 import { useRecoilState } from 'recoil';
 import usePreviewImg from '../../hooks/usePreviewImg';
 import useShowToast from '../../hooks/useShowToast';
+import { Link } from 'react-router-dom';
 
 const UpdateProfilePage = () => {
     const [user, setUser] = useRecoilState(userAtom);
@@ -29,9 +30,12 @@ const UpdateProfilePage = () => {
 
     const { handleImgChange, imgUrl } = usePreviewImg();
     const showToast = useShowToast();
+    const [updating, setUpdating] = useState(false);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (updating) return;
+        setUpdating(true);
         try {
             const userLogin = JSON.parse(localStorage.getItem('userLogin'));
             const accessToken = userLogin?.accessToken;
@@ -67,8 +71,11 @@ const UpdateProfilePage = () => {
             localStorage.setItem('userLogin', JSON.stringify(newUpdatedUser));
             showToast('Success', 'Update info successfully', 'success');
             setUser(newUpdatedUser.userData);
+            console.log('newUpdatedUser.userData: ', newUpdatedUser.userData);
         } catch (error) {
             showToast('Error', error, 'error');
+        } finally {
+            setUpdating(false);
         }
     };
 
@@ -92,7 +99,11 @@ const UpdateProfilePage = () => {
                         <FormControl id="userName">
                             <Stack direction={['column', 'row']} spacing={6}>
                                 <Center>
-                                    <Avatar size="xl" boxShadow={'md'} src={imgUrl || user.userData?.avatar} />
+                                    <Avatar
+                                        size="xl"
+                                        boxShadow={'md'}
+                                        src={imgUrl || user.avatar || user.userData.avatar}
+                                    />
                                 </Center>
                                 <Center w="full">
                                     <Button
@@ -168,6 +179,7 @@ const UpdateProfilePage = () => {
                                 }}
                             >
                                 Cancel
+                                {/* <Link >Cancel</Link> */}
                             </Button>
                             <Button
                                 bg={'green.400'}
@@ -177,6 +189,7 @@ const UpdateProfilePage = () => {
                                     bg: 'green.500',
                                 }}
                                 type="submit"
+                                isLoading={updating}
                             >
                                 Submit
                             </Button>
