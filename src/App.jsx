@@ -18,6 +18,7 @@ import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
 import { useRecoilValue } from 'recoil';
 import userAtom from './atoms/userAtom';
 import LogoutComponent from './components/LogoutComponent/LogoutComponent';
+import UpdateProfilePage from './pages/UpdateProfilePage/UpdateProfilePage';
 
 function App() {
     const user = useRecoilValue(userAtom);
@@ -29,6 +30,8 @@ function App() {
                     <Route path="/" element={user ? <HomePage /> : <Navigate to="/login" />} />
                     <Route path="/register" element={<SignUpPage />} />
                     <Route path="/login" element={!user ? <LoginPage /> : <Navigate to="/" />} />
+                    <Route path="/updateProfile" element={user ? <UpdateProfilePage /> : <Navigate to="/login" />} />
+
                     <Route path="/:username/post/:postId" element={<PostPage />} />
                     <Route path="/:username" element={<UserPage />} />
 

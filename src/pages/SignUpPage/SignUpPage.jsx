@@ -150,7 +150,6 @@ const SignUpPage = () => {
                     </Box>
                 </Stack>
             </Flex>
-            <h1>Aith</h1>
         </>
     );
 };

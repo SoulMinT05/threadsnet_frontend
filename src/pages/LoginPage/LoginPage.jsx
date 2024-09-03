@@ -6,7 +6,6 @@ import {
     FormLabel,
     Input,
     InputGroup,
-    HStack,
     InputRightElement,
     Stack,
     Button,
@@ -67,7 +66,16 @@ const LoginPage = () => {
                             Login
                         </Heading>
                     </Stack>
-                    <Box rounded={'lg'} bg={useColorModeValue('white', 'gray.dark')} boxShadow={'lg'} p={8}>
+                    <Box
+                        rounded={'lg'}
+                        bg={useColorModeValue('white', 'gray.dark')}
+                        boxShadow={'lg'}
+                        p={8}
+                        w={{
+                            base: 'full',
+                            sm: '400px',
+                        }}
+                    >
                         <Stack spacing={4}>
                             <FormControl isRequired>
                                 <FormLabel>Email address</FormLabel>
@@ -121,7 +129,6 @@ const LoginPage = () => {
                     </Box>
                 </Stack>
             </Flex>
-            <h1>Aith</h1>
         </>
     );
 };
