@@ -18,7 +18,6 @@ import useShowToast from '../../hooks/useShowToast';
 
 const UpdateProfilePage = () => {
     const [user, setUser] = useRecoilState(userAtom);
-    console.log('user: ', user);
     const [inputs, setInputs] = useState({
         name: user.userData?.name,
         username: user.userData?.username,
@@ -47,11 +46,8 @@ const UpdateProfilePage = () => {
                     avatar: imgUrl,
                 }),
             });
-            console.log('res: ', res);
             const data = await res.json();
-            console.log('data: ', data);
             if (!data.success) {
-                console.log('data: ', data);
                 showToast('Error', 'Update info failed', 'error');
                 return;
             }
@@ -60,21 +56,17 @@ const UpdateProfilePage = () => {
                 ...userLogin.userData, // Retain the current info user
                 ...data.user,
             };
-            console.log('inputs: ', inputs);
 
-            const updatedUserLogin = {
+            const newUpdatedUser = {
                 success: data.success,
                 message: data.message || 'Update successful',
                 accessToken: userLogin.accessToken, // Retain accessToken
                 userData: updatedUser, // Update info user
             };
 
-            console.log('userLogin: ', userLogin);
-
-            localStorage.setItem('userLogin', JSON.stringify(updatedUserLogin));
+            localStorage.setItem('userLogin', JSON.stringify(newUpdatedUser));
             showToast('Success', 'Update info successfully', 'success');
-            console.log('updatedUserLogin: ', updatedUserLogin);
-            setUser(updatedUserLogin.userData);
+            setUser(newUpdatedUser.userData);
         } catch (error) {
             showToast('Error', error, 'error');
         }

@@ -4,7 +4,7 @@ import { BsInstagram } from 'react-icons/bs';
 import { CgMoreO } from 'react-icons/cg';
 import { useToast } from '@chakra-ui/react';
 
-const UserHeader = () => {
+const UserHeader = ({ user }) => {
     const toast = useToast();
     const copyURL = () => {
         const currentURL = window.location.href;
@@ -30,10 +30,10 @@ const UserHeader = () => {
             <Flex justifyContent={'space-between'} w={'full'}>
                 <Box>
                     <Text fontSize={'2xl'} fontWeight={'bold'}>
-                        Mark Zuckebug
+                        {user.name}
                     </Text>
                     <Flex gap={2} alignItems={'center'}>
-                        <Text fontSize={'sm'}>markzuckebug</Text>
+                        <Text fontSize={'sm'}>{user.username}</Text>
                         <Text fontSize={'xs'} bg={'gray.dark'} color={'gray.light'} p={1} borderRadius={'full'}>
                             threads.net
                         </Text>
@@ -41,8 +41,8 @@ const UserHeader = () => {
                 </Box>
                 <Box>
                     <Avatar
-                        name="Mark Zuckebug"
-                        src="./zuck-avatar.png"
+                        name={user.name}
+                        src={user.avatar}
                         size={{
                             base: 'md',
                             md: 'xl',
@@ -50,10 +50,10 @@ const UserHeader = () => {
                     />
                 </Box>
             </Flex>
-            <Text>Carefully selected #graphicdesign works and beyond</Text>
+            <Text>{user.bio}</Text>
             <Flex w={'full'} justifyContent={'space-between'}>
                 <Flex gap={2} alignItems={'center'}>
-                    <Text color={'gray.light'}>3.2k followers</Text>
+                    <Text color={'gray.light'}>{user.followers.length ? user.followers.length : 0} followers</Text>
                     <Box w="1" h="1" bg={'gray.light'} borderRadius={'full'}></Box>
                     <Link color={'gray.light'}>instagram.com</Link>
                 </Flex>
