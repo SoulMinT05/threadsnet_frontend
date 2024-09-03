@@ -37,6 +37,7 @@ const CreatePost = () => {
     const showToast = useShowToast();
 
     const { handleImgChange, imgUrl, setImgUrl } = usePreviewImg();
+    const [loading, setLoading] = useState(false);
     const handleTextChange = (e) => {
         const inputText = e.target.value;
 
@@ -50,34 +51,43 @@ const CreatePost = () => {
         }
     };
     const handleCreatePost = async () => {
-        const userLogin = JSON.parse(localStorage.getItem('userLogin'));
-        const accessToken = userLogin?.accessToken;
+        setLoading(true);
+        try {
+            const userLogin = JSON.parse(localStorage.getItem('userLogin'));
+            const accessToken = userLogin?.accessToken;
 
-        const res = await fetch(`/api/post/createPost`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${accessToken}`,
-            },
-            body: JSON.stringify({
+            const res = await fetch(`/api/post/createPost`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${accessToken}`,
+                },
+                body: JSON.stringify({
+                    postedBy: user.userData._id,
+                    text: postText,
+                    image: imgUrl,
+                }),
+            });
+            const data = await res.json();
+            console.log('data: ', data);
+            console.log({
                 postedBy: user.userData._id,
                 text: postText,
-                image: imgUrl,
-            }),
-        });
-        const data = await res.json();
-        console.log('data: ', data);
-        console.log({
-            postedBy: user.userData._id,
-            text: postText,
-            image: imgUrl, // Kiểm tra imgUrl trước khi gửi request
-        });
-        if (!data.success) {
-            showToast('Error', data.message, 'error');
-            return;
+                image: imgUrl, // Kiểm tra imgUrl trước khi gửi request
+            });
+            if (!data.success) {
+                showToast('Error', data.message, 'error');
+                return;
+            }
+            showToast('Success', 'Created post successfully', 'success');
+            onClose();
+            setPostText('');
+            setImgUrl('');
+        } catch (error) {
+            showToast('Error', error, 'error');
+        } finally {
+            setLoading(false);
         }
-        showToast('Success', 'Created post successfully', 'success');
-        onClose();
     };
     return (
         <>
@@ -124,7 +134,7 @@ const CreatePost = () => {
                     </ModalBody>
 
                     <ModalFooter>
-                        <Button colorScheme="blue" mr={3} onClick={handleCreatePost}>
+                        <Button colorScheme="blue" mr={3} onClick={handleCreatePost} isLoading={loading}>
                             Post
                         </Button>
                     </ModalFooter>
