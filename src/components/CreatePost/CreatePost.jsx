@@ -20,18 +20,65 @@ import {
 } from '@chakra-ui/react';
 import TextArea from 'antd/es/input/TextArea';
 import { useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import usePreviewImg from '../../hooks/usePreviewImg';
 import { BsFillImageFill } from 'react-icons/bs';
+import { useRecoilValue } from 'recoil';
+import userAtom from '../../atoms/userAtom';
+import useShowToast from '../../hooks/useShowToast';
+
+const MAX_CHAR = 500;
 
 const CreatePost = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [postText, setPostText] = useState('');
     const imgRef = useRef(null);
+    const [remainingChar, setRemainingChar] = useState(MAX_CHAR);
+    const user = useRecoilValue(userAtom);
+    const showToast = useShowToast();
 
     const { handleImgChange, imgUrl, setImgUrl } = usePreviewImg();
-    const handleTextChange = () => {};
-    const handleCreatePost = () => {};
+    const handleTextChange = (e) => {
+        const inputText = e.target.value;
+
+        if (inputText.length > MAX_CHAR) {
+            const truncatedText = inputText.slice(0, MAX_CHAR);
+            setPostText(truncatedText);
+            setRemainingChar(0);
+        } else {
+            setPostText(inputText);
+            setRemainingChar(MAX_CHAR - inputText.length);
+        }
+    };
+    const handleCreatePost = async () => {
+        const userLogin = JSON.parse(localStorage.getItem('userLogin'));
+        const accessToken = userLogin?.accessToken;
+
+        const res = await fetch(`/api/post/createPost`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${accessToken}`,
+            },
+            body: JSON.stringify({
+                postedBy: user.userData._id,
+                text: postText,
+                image: imgUrl,
+            }),
+        });
+        const data = await res.json();
+        console.log('data: ', data);
+        console.log({
+            postedBy: user.userData._id,
+            text: postText,
+            image: imgUrl, // Kiểm tra imgUrl trước khi gửi request
+        });
+        if (!data.success) {
+            showToast('Error', data.message, 'error');
+            return;
+        }
+        showToast('Success', 'Created post successfully', 'success');
+        onClose();
+    };
     return (
         <>
             <Button
@@ -53,7 +100,7 @@ const CreatePost = () => {
                         <FormControl>
                             <TextArea placeholder="Post content go here" onChange={handleTextChange} value={postText} />
                             <Text fontSize={'xs'} fontWeight={'bold'} textAlign={'right'} m={'1'} color={'gray.800'}>
-                                500/500
+                                {remainingChar} / {MAX_CHAR}
                             </Text>
                             <Input type="file" hidden ref={imgRef} onChange={handleImgChange} />
                             <BsFillImageFill

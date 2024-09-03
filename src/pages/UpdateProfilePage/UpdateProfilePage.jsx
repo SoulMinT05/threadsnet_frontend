@@ -15,10 +15,12 @@ import userAtom from '../../atoms/userAtom';
 import { useRecoilState } from 'recoil';
 import usePreviewImg from '../../hooks/usePreviewImg';
 import useShowToast from '../../hooks/useShowToast';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const UpdateProfilePage = () => {
     const [user, setUser] = useRecoilState(userAtom);
+    const navigate = useNavigate();
+
     const [inputs, setInputs] = useState({
         name: user.userData?.name,
         username: user.userData?.username,
@@ -177,9 +179,9 @@ const UpdateProfilePage = () => {
                                 _hover={{
                                     bg: 'red.500',
                                 }}
+                                onClick={() => navigate(-1)}
                             >
-                                Cancel
-                                {/* <Link >Cancel</Link> */}
+                                <Link>Cancel</Link>
                             </Button>
                             <Button
                                 bg={'green.400'}
