@@ -29,11 +29,13 @@ const LoginPage = () => {
     const navigateRegister = () => {
         navigate('/register');
     };
+    const [loading, setLoading] = useState(false);
     const [inputsLogin, setInputsLogin] = useState({
         email: '',
         password: '',
     });
     const handleLogin = async () => {
+        setLoading(true);
         try {
             const res = await fetch('/api/user/login', {
                 method: 'POST',
@@ -55,6 +57,8 @@ const LoginPage = () => {
             navigate('/');
         } catch (err) {
             console.log('err: ', err);
+        } finally {
+            setLoading(false);
         }
     };
     return (
@@ -113,6 +117,7 @@ const LoginPage = () => {
                                         bg: useColorModeValue('gray.700', 'gray.800'),
                                     }}
                                     onClick={handleLogin}
+                                    isLoading={loading}
                                 >
                                     Login
                                 </Button>

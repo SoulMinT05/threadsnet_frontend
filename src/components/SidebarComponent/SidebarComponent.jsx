@@ -36,10 +36,11 @@ const SidebarComponent = () => {
                 <Link onClick={() => navigate('/favorites')} _hover={{ textDecoration: 'none' }}>
                     <Icon as={FaHeart} boxSize={6} mb="30px" />
                 </Link>
-                {/* <Link onClick={() => navigate('/profile')} _hover={{ textDecoration: 'none' }}> */}
-                <Link as={RouterLink} to={`/${user.userData.username}`} _hover={{ textDecoration: 'none' }}>
-                    <Icon as={FaUser} boxSize={6} mb="30px" />
-                </Link>
+                {user && (
+                    <Link as={RouterLink} to={`/${user.userData.username}`} _hover={{ textDecoration: 'none' }}>
+                        <Icon as={FaUser} boxSize={6} mb="30px" />
+                    </Link>
+                )}
             </Box>
 
             <Box>
