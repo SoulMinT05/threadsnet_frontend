@@ -4,7 +4,7 @@ import { Navigate, Route, Router, Routes } from 'react-router-dom';
 import UserPage from './pages/UserPage';
 import PostPage from './pages/PostPage/PostPage';
 import HeaderComponent from './components/HeaderComponent/HeaderComponent';
-import { Container } from '@chakra-ui/react';
+import { Container, Flex } from '@chakra-ui/react';
 import HomePage from './pages/HomePage/HomePage';
 import AuthPage from './pages/AuthPage/AuthPage';
 
@@ -20,53 +20,39 @@ import userAtom from './atoms/userAtom';
 import LogoutComponent from './components/LogoutComponent/LogoutComponent';
 import UpdateProfilePage from './pages/UpdateProfilePage/UpdateProfilePage';
 import CreatePost from './components/CreatePost/CreatePost';
+import SidebarComponent from './components/SidebarComponent/SidebarComponent';
 
 function App() {
     const user = useRecoilValue(userAtom);
     return (
-        <>
-            <Container maxW="620px">
-                <HeaderComponent />
-                <Routes>
-                    <Route path="/" element={user ? <HomePage /> : <Navigate to="/login" />} />
-                    <Route path="/register" element={<SignUpPage />} />
-                    <Route path="/login" element={!user ? <LoginPage /> : <Navigate to="/" />} />
-                    <Route path="/updateProfile" element={user ? <UpdateProfilePage /> : <Navigate to="/login" />} />
+        <Flex>
+            <SidebarComponent />
 
-                    <Route path="/:username/post/:postId" element={<PostPage />} />
-                    <Route path="/:username" element={<UserPage />} />
+            {/* Main Content */}
+            <Flex flex="1" ml="80px" justifyContent="center">
+                <Container maxW="620px">
+                    <HeaderComponent />
+                    <Routes>
+                        <Route path="/" element={user ? <HomePage /> : <Navigate to="/login" />} />
+                        <Route path="/register" element={<SignUpPage />} />
+                        <Route path="/login" element={!user ? <LoginPage /> : <Navigate to="/" />} />
+                        <Route
+                            path="/updateProfile"
+                            element={user ? <UpdateProfilePage /> : <Navigate to="/login" />}
+                        />
+                        {/* <Route path="/createPost" element={user ? <CreatePost /> : <Navigate to="/login" />} /> */}
 
-                    <Route path="*" element={<NotFoundPage />} />
-                </Routes>
+                        <Route path="/:username/post/:postId" element={<PostPage />} />
+                        <Route path="/:username" element={!user ? <LoginPage /> : <UserPage />} />
 
-                {user && <LogoutComponent />}
-                {user && <CreatePost />}
-            </Container>
-            {/* <Router>
-                <Routes>
-                    {routes.map((route) => {
-                        const Page = route.page;
-                        const ischeckAuth = !route.isPrivate;
-                        // || user.isAdmin;
-                        const Layout = route.isShowHeader && route.isShowFooter ? DefaultComponent : Fragment;
-                        return (
-                            <Route
-                                key={route.path}
-                                path={
-                                    // ischeckAuth && route.path
-                                    ischeckAuth ? route.path : undefined
-                                }
-                                element={
-                                    <Layout>
-                                        <Page />
-                                    </Layout>
-                                }
-                            />
-                        );
-                    })}
-                </Routes>
-            </Router> */}
-        </>
+                        <Route path="*" element={<NotFoundPage />} />
+                    </Routes>
+
+                    {user && <LogoutComponent />}
+                    {user && <CreatePost />}
+                </Container>
+            </Flex>
+        </Flex>
     );
 }
 
