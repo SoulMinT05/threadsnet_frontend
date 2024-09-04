@@ -26,7 +26,7 @@ const UpdateProfilePage = () => {
         username: user.userData?.username,
         email: user.userData?.email,
         bio: user.userData?.bio,
-        password: '',
+        // password: '',
     });
     const fileRef = useRef(null);
 

@@ -19,7 +19,7 @@ import {
     useDisclosure,
 } from '@chakra-ui/react';
 import TextArea from 'antd/es/input/TextArea';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import usePreviewImg from '../../hooks/usePreviewImg';
 import { BsFillImageFill } from 'react-icons/bs';
 import { useRecoilValue } from 'recoil';
@@ -34,6 +34,7 @@ const CreatePost = () => {
     const imgRef = useRef(null);
     const [remainingChar, setRemainingChar] = useState(MAX_CHAR);
     const user = useRecoilValue(userAtom);
+    console.log('userAtom: ', user);
     const showToast = useShowToast();
 
     const { handleImgChange, imgUrl, setImgUrl } = usePreviewImg();
@@ -50,6 +51,16 @@ const CreatePost = () => {
             setRemainingChar(MAX_CHAR - inputText.length);
         }
     };
+
+    // useEffect(() => {
+    //     // Kiểm tra dữ liệu user
+    //     console.log('userEffect: ', user);
+    //     console.log('user.userDataEffect: ', user.userData);
+    //     if (!user || !user.userData) {
+    //         showToast('Error', 'User data not found. Please log in again.', 'error');
+    //         return;
+    //     }
+    // }, [user, showToast]);
     const handleCreatePost = async () => {
         setLoading(true);
         try {
@@ -63,18 +74,13 @@ const CreatePost = () => {
                     Authorization: `Bearer ${accessToken}`,
                 },
                 body: JSON.stringify({
-                    postedBy: user.userData._id,
+                    postedBy: user?.userData._id || user?._id,
                     text: postText,
                     image: imgUrl,
                 }),
             });
             const data = await res.json();
             console.log('data: ', data);
-            console.log({
-                postedBy: user.userData._id,
-                text: postText,
-                image: imgUrl, // Kiểm tra imgUrl trước khi gửi request
-            });
             if (!data.success) {
                 showToast('Error', data.message, 'error');
                 return;
@@ -84,6 +90,7 @@ const CreatePost = () => {
             setPostText('');
             setImgUrl('');
         } catch (error) {
+            console.log(3);
             showToast('Error', error, 'error');
         } finally {
             setLoading(false);

@@ -12,7 +12,6 @@ const HeaderComponent = () => {
     const { colorMode, toggleColorMode } = useColorMode();
     const user = useRecoilValue(userAtom);
     const location = useLocation();
-    console.log('location: ', location);
 
     const pageTitle = () => {
         if (location.pathname === '/') return 'For you';

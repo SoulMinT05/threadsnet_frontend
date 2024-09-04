@@ -7,7 +7,6 @@ import { Spinner, Flex } from '@chakra-ui/react';
 
 const UserPage = () => {
     const [user, setUser] = useState(null);
-    console.log('user: ', user);
     const { username } = useParams();
     const showToast = useShowToast();
     const [loading, setLoading] = useState(true);

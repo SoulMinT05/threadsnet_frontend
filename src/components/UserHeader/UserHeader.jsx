@@ -20,15 +20,15 @@ import { useToast } from '@chakra-ui/react';
 import { useRecoilValue } from 'recoil';
 import userAtom from '../../atoms/userAtom';
 import { Link as RouterLink } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useShowToast from '../../hooks/useShowToast';
 
 const UserHeader = ({ user }) => {
     const toast = useToast();
     const currentUser = useRecoilValue(userAtom);
-    // user: username params
+    // user: username in params
     // currentUser: user in localStorage
-    const [following, setFollowing] = useState(user.followers.includes(currentUser._id));
+    const [following, setFollowing] = useState(user.followers.includes(currentUser.userData._id));
     const showToast = useShowToast();
     const [updating, setUpdating] = useState(false);
 
@@ -53,11 +53,9 @@ const UserHeader = ({ user }) => {
             }
             console.log('data: ', data);
             setFollowing(!following);
-            console.log('followingAfter: ', following);
-            console.log('userAfter: ', user);
             // 2 user unfollow
-            // true: unfollow
-            // false: follow
+            // true: followed --> unfollow
+            // false: unfollowed --> follow
             if (following) {
                 showToast('Success', `Unfollow ${user.name}`, 'success');
                 user.followers.pop();
@@ -77,7 +75,6 @@ const UserHeader = ({ user }) => {
         navigator.clipboard
             .writeText(currentURL)
             .then(() => {
-                console.log('URL copied to clipboard');
                 toast({
                     // title: 'Account created.',
                     description: 'Copied link successfully',
@@ -87,8 +84,8 @@ const UserHeader = ({ user }) => {
                     position: 'top-right',
                 });
             })
-            .catch((err) => {
-                console.error('Failed to copy: ', err);
+            .catch((error) => {
+                showToast('Error', error, 'error');
             });
     };
 

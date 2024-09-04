@@ -6,9 +6,7 @@ import PostPage from './pages/PostPage/PostPage';
 import HeaderComponent from './components/HeaderComponent/HeaderComponent';
 import { Container, Flex } from '@chakra-ui/react';
 import HomePage from './pages/HomePage/HomePage';
-import AuthPage from './pages/AuthPage/AuthPage';
 
-import React, { Fragment, useEffect, useState } from 'react';
 // import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import DefaultComponent from './components/DefaultComponent/DefaultComponent';
 import { routes } from './routes';

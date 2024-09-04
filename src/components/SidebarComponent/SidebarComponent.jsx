@@ -37,7 +37,7 @@ const SidebarComponent = () => {
                     <Icon as={FaHeart} boxSize={6} mb="30px" />
                 </Link>
                 {user && (
-                    <Link as={RouterLink} to={`/${user.userData.username}`} _hover={{ textDecoration: 'none' }}>
+                    <Link as={RouterLink} to={`/${user.userData?.username}`} _hover={{ textDecoration: 'none' }}>
                         <Icon as={FaUser} boxSize={6} mb="30px" />
                     </Link>
                 )}
