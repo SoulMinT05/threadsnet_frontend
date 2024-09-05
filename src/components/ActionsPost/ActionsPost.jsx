@@ -1,20 +1,47 @@
 import { Flex, Text } from '@chakra-ui/react';
 import './ActionsPost.scss';
-import { useToast } from '@chakra-ui/react';
-const ActionsPost = ({ likes, replies, liked, setLiked }) => {
-    const toast = useToast();
-    const handleLiked = () => {
-        // if (!liked) {
-        //     toast({
-        //         // title: 'Account created.',
-        //         description: 'Liked post successfully',
-        //         status: 'success',
-        //         duration: 1500,
-        //         isClosable: true,
-        //         position: 'top-right',
-        //     });
-        // }
-        setLiked(!liked);
+import { useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import userAtom from '../../atoms/userAtom';
+import useShowToast from '../../hooks/useShowToast';
+const ActionsPost = ({ followingPost: followingPost_ }) => {
+    console.log('followingPost_: ', followingPost_);
+    //destructuring: followingPost_ is object copied from followingPost
+    const user = useRecoilValue(userAtom);
+    const [liked, setLiked] = useState(followingPost_?.likes.includes(user?._id));
+    const showToast = useShowToast();
+    const [followingPost, setFollowingPost] = useState(followingPost_);
+    const [isLiking, setIsLiking] = useState(false);
+
+    const handleLiked = async () => {
+        if (!user) return showToast('Error', 'You need to be logged in to like a post', 'error');
+        if (isLiking) return;
+        setIsLiking(true);
+        try {
+            const userLogin = JSON.parse(localStorage.getItem('userLogin'));
+            const accessToken = userLogin?.accessToken;
+            const res = await fetch('/api/post/liked/' + followingPost._id, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
+            });
+            const data = await res.json();
+            if (!data.success) {
+                showToast('Error', data.message, 'error');
+                return;
+            }
+            console.log('data: ', data);
+            if (!liked) {
+                //liked: true --> already liked
+                setFollowingPost({ ...followingPost, likes: [...followingPost.likes, user._id] });
+            } else {
+                setFollowingPost({ ...followingPost, likes: followingPost?.likes?.filter((id) => user._id !== id) });
+            }
+            setLiked(!liked);
+        } catch (error) {
+            showToast('Error', error, 'error');
+        } finally {
+            setIsLiking(false);
+        }
     };
     return (
         <>
@@ -37,7 +64,8 @@ const ActionsPost = ({ likes, replies, liked, setLiked }) => {
                         ></path>
                     </svg>
                     <Text color={'gray.light'} fontSize={'sm'} style={{ marginLeft: '-22px' }} onClick={handleLiked}>
-                        {likes}
+                        {/* {likes} */}
+                        {followingPost?.likes.length}
                     </Text>
 
                     <svg aria-label="Comment" color="" fill="" height="20" role="img" viewBox="0 0 24 24" width="20">
@@ -51,11 +79,23 @@ const ActionsPost = ({ likes, replies, liked, setLiked }) => {
                         ></path>
                     </svg>
                     <Text color={'gray.light'} fontSize={'sm'} style={{ marginLeft: '-22px' }}>
-                        {replies}
+                        {/* {replies} */}
+                        {followingPost?.replies.length}
                     </Text>
 
                     <RepostSVG />
                     <ShareSVG />
+
+                    {/* <Flex gap={2} alignItems={'center'}>
+                        <Text color={'gray.light'} fontSize={'sm'}>
+                            {followingPost?.likes.length} likes
+                        </Text>
+
+                        <Box w={0.5} h={0.5} borderRadius={'full'} bg={'gray.light'}></Box>
+                        <Text color={'gray.light'} fontSize={'sm'}>
+                            {followingPost?.replies.length} replies
+                        </Text>
+                    </Flex> */}
                 </Flex>
             </Flex>
         </>

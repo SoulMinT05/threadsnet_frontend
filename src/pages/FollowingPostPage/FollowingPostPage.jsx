@@ -17,15 +17,12 @@ const FollowingPostPage = ({ followingPost, postedBy }) => {
     const showToast = useShowToast();
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
-    console.log('followingPost: ', followingPost);
-    // console.log('postedBy: ', postedBy);
 
     useEffect(() => {
         const getUser = async () => {
             try {
                 const res = await fetch(`/api/user/profile/` + postedBy);
                 const data = await res.json();
-                console.log('data: ', data);
                 if (!data.success) {
                     showToast('Error', data.message, 'error');
                 }
@@ -39,7 +36,6 @@ const FollowingPostPage = ({ followingPost, postedBy }) => {
     }, [postedBy, showToast]);
 
     if (!user) return null;
-    console.log('userAfter: ', user);
 
     return (
         <>
@@ -126,22 +122,13 @@ const FollowingPostPage = ({ followingPost, postedBy }) => {
                             </Box>
                         )}
                         <Flex gap={3} my={1} alignItems={'center'}>
-                            {/* <ActionsPost
-                                likes={followingPost.likes}
-                                replies={followingPost.replies}
-                                liked={liked}
-                                setLiked={setLiked}
-                            /> */}
-                        </Flex>
-                        <Flex gap={2} alignItems={'center'}>
-                            <Text color={'gray.light'} fontSize={'sm'}>
-                                {followingPost.likes.length} likes
-                            </Text>
-
-                            <Box w={0.5} h={0.5} borderRadius={'full'} bg={'gray.light'}></Box>
-                            <Text color={'gray.light'} fontSize={'sm'}>
-                                {followingPost.replies.length} replies
-                            </Text>
+                            <ActionsPost
+                                // likes={followingPost.likes.length}
+                                // replies={followingPost.replies.length}
+                                // liked={liked}
+                                // setLiked={setLiked}
+                                followingPost={followingPost}
+                            />
                         </Flex>
                     </Flex>
                 </Flex>
