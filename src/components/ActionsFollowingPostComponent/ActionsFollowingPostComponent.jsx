@@ -1,34 +1,11 @@
-import {
-    Avatar,
-    Box,
-    Button,
-    Flex,
-    FormControl,
-    IconButton,
-    Input,
-    InputGroup,
-    InputLeftElement,
-    InputRightElement,
-    Modal,
-    ModalBody,
-    ModalCloseButton,
-    ModalContent,
-    ModalFooter,
-    ModalHeader,
-    ModalOverlay,
-    Text,
-    Textarea,
-    useDisclosure,
-} from '@chakra-ui/react';
-import { FiSend, FiPlusCircle } from 'react-icons/fi';
-import { FiImage, FiSmile } from 'react-icons/fi';
-import { BiSticker } from 'react-icons/bi';
-import './ActionsPost.scss';
+import { Box, Button, Flex, Input, InputGroup, InputRightElement, Text, useDisclosure } from '@chakra-ui/react';
+import { FiSend } from 'react-icons/fi';
+import './ActionsFollowingPostComponent.scss';
 import { useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import userAtom from '../../atoms/userAtom';
 import useShowToast from '../../hooks/useShowToast';
-const ActionsPost = ({ followingPost: followingPost_ }) => {
+const ActionsFollowingPostComponent = ({ followingPost: followingPost_ }) => {
     //destructuring: followingPost_ is object copied from followingPost
     const user = useRecoilValue(userAtom);
     const [liked, setLiked] = useState(followingPost_?.likes.includes(user?._id));
@@ -39,7 +16,7 @@ const ActionsPost = ({ followingPost: followingPost_ }) => {
     const [isReplying, setIsReplying] = useState(false);
     const showToast = useShowToast();
     const { isOpen, onOpen, onClose } = useDisclosure();
-    console.log('userAtom: ', user);
+    // console.log('userAtom: ', user);
 
     const handleLiked = async () => {
         if (!user) return showToast('Error', 'You need to be logged in to like a post', 'error');
@@ -104,7 +81,7 @@ const ActionsPost = ({ followingPost: followingPost_ }) => {
             console.log('data: ', data);
             if (!data.success) return showToast('Error', data.message, 'error');
             setFollowingPost({ ...followingPost, replies: [...followingPost.replies, data.reply] });
-            showToast('Success', 'Created post successfully', 'success');
+            showToast('Success', 'Reply post successfully', 'success');
             console.log('followingPostAfter: ', followingPost);
             setReply('');
         } catch (error) {
@@ -265,7 +242,7 @@ const ActionsPost = ({ followingPost: followingPost_ }) => {
     );
 };
 
-export default ActionsPost;
+export default ActionsFollowingPostComponent;
 
 const RepostSVG = () => {
     return (

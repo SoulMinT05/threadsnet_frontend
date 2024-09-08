@@ -1,7 +1,7 @@
 import { Avatar, Box, Button, Divider, Flex, Image, Text } from '@chakra-ui/react';
 import './PostPage.scss';
 import { BsThreeDots } from 'react-icons/bs';
-import ActionsPost from '../../components/ActionsPost/ActionsPost';
+import ActionsFollowingPostComponent from '../../components/ActionsFollowingPostComponent/ActionsFollowingPostComponent';
 import { useState } from 'react';
 import Comment from '../../components/Comment/Comment';
 const PostPage = () => {
@@ -30,7 +30,7 @@ const PostPage = () => {
                 <Image src="/post1.png" w={'full'} />
             </Box>
             <Flex gap={3} my={3} alignItems={'center'}>
-                <ActionsPost liked={liked} setLiked={setLiked} />
+                <ActionsFollowingPostComponent liked={liked} setLiked={setLiked} />
             </Flex>
             <Flex gap={2} alignItems={'center'}>
                 <Text color={'gray.light'} fontSize={'sm'}>

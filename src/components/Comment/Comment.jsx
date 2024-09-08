@@ -1,7 +1,7 @@
 import { Avatar, Divider, Flex, Text } from '@chakra-ui/react';
 import './Comment.scss';
 import { BsThreeDots } from 'react-icons/bs';
-import ActionsPost from '../ActionsPost/ActionsPost';
+import ActionsFollowingPostComponent from '../ActionsFollowingPostComponent/ActionsFollowingPostComponent';
 import { useState } from 'react';
 const Comment = ({ comment, createdAt, likes, username, userAvatar }) => {
     const [liked, setLiked] = useState(false);
@@ -22,7 +22,7 @@ const Comment = ({ comment, createdAt, likes, username, userAvatar }) => {
                         </Flex>
                     </Flex>
                     <Text>{comment}</Text>
-                    <ActionsPost likes={likes} liked={liked} setLiked={setLiked} />
+                    <ActionsFollowingPostComponent likes={likes} liked={liked} setLiked={setLiked} />
                     <Text fontSize={'sm'} color={'gray.light'}>
                         {likes + (liked ? 1 : 0)} likes
                     </Text>

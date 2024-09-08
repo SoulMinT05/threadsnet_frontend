@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import './UserPost.scss';
 import { Avatar, Box, Flex, Image, Text } from '@chakra-ui/react';
 import { BsThreeDots } from 'react-icons/bs';
-import ActionsPost from '../ActionsPost/ActionsPost';
+import ActionsFollowingPostComponent from '../ActionsFollowingPostComponent/ActionsFollowingPostComponent';
 import { useState } from 'react';
 
 const UserPost = ({ likes, replies, postImg, postTitle }) => {
@@ -66,7 +66,12 @@ const UserPost = ({ likes, replies, postImg, postTitle }) => {
                             </Box>
                         )}
                         <Flex gap={3} my={1} alignItems={'center'}>
-                            <ActionsPost likes={likes} replies={replies} liked={liked} setLiked={setLiked} />
+                            <ActionsFollowingPostComponent
+                                likes={likes}
+                                replies={replies}
+                                liked={liked}
+                                setLiked={setLiked}
+                            />
                         </Flex>
                         <Flex gap={2} alignItems={'center'}>
                             <Text color={'gray.light'} fontSize={'sm'}>

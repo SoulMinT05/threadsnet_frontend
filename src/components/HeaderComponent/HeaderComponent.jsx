@@ -46,7 +46,7 @@ const YourComponent = () => {
                         // fontWeight={'bold'}
                         onClick={() => navigate('/')}
                     >
-                        Home {isCurrentPage('/') && <CheckIcon ml={2} />} {/* Tick */}
+                        For you {isCurrentPage('/') && <CheckIcon ml={2} />} {/* Tick */}
                     </MenuItem>
                     <MenuItem
                         display="flex"

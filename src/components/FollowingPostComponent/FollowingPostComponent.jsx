@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Avatar, Box, Flex, Image, Text } from '@chakra-ui/react';
 import { formatDistanceToNow } from 'date-fns';
-import ActionsPost from '../ActionsPost/ActionsPost';
+import ActionsFollowingPostComponent from '../ActionsFollowingPostComponent/ActionsFollowingPostComponent';
 import { useEffect, useState } from 'react';
 import useShowToast from '../../hooks/useShowToast';
 
@@ -122,7 +122,7 @@ const FollowingPostComponent = ({ followingPost, postedBy }) => {
                             </Box>
                         )}
                         <Flex gap={3} my={1} alignItems={'center'}>
-                            <ActionsPost
+                            <ActionsFollowingPostComponent
                                 // likes={followingPost.likes.length}
                                 // replies={followingPost.replies.length}
                                 // liked={liked}
