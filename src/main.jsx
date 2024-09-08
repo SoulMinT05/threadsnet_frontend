@@ -27,7 +27,25 @@ const colors = {
     },
 };
 
-const theme = extendTheme({ config, styles, colors });
+const components = {
+    Menu: {
+        baseStyle: (props) => ({
+            list: {
+                bg: mode('gray.100', '#101010')(props),
+                color: mode('gray.800', 'whiteAlpha.900')(props),
+                transform: 'translate3d(428px, 51px, 0px)',
+            },
+            item: {
+                bg: mode('gray.100', '#101010')(props),
+                _hover: {
+                    bg: mode('gray.200', '#1e1e1e')(props),
+                },
+            },
+        }),
+    },
+};
+
+const theme = extendTheme({ config, styles, colors, components });
 
 createRoot(document.getElementById('root')).render(
     <StrictMode>

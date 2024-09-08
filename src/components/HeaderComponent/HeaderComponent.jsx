@@ -1,99 +1,90 @@
-import { Flex, Image, Link, useColorMode, Menu, MenuButton, MenuList, MenuItem, Text, Box } from '@chakra-ui/react';
-import { Link as RouterLink, useLocation } from 'react-router-dom';
-import { AiFillHome } from 'react-icons/ai';
-import { useRecoilValue } from 'recoil';
-import userAtom from '../../atoms/userAtom';
+import { Menu, MenuButton, MenuList, MenuItem, Text, Box } from '@chakra-ui/react';
+import { ChevronDownIcon, CheckIcon } from '@chakra-ui/icons';
+import { useNavigate, useLocation } from 'react-router-dom';
+import './HeaderComponent.scss';
 
-import { ChevronDownIcon } from '@chakra-ui/icons';
-// import { Dropdown } from 'antd';
-// import { Col, Row } from 'antd';
-
-const HeaderComponent = () => {
-    const { colorMode, toggleColorMode } = useColorMode();
-    const user = useRecoilValue(userAtom);
+const YourComponent = () => {
+    const navigate = useNavigate();
     const location = useLocation();
-
-    const pageTitle = () => {
-        if (location.pathname === '/') return 'For you';
-        if (location.pathname === '/updateProfile') return 'Update Profile';
-        // if (location.pathname.includes('/login')) return 'Login';
-        // if (location.pathname.includes('/register')) return 'Register';
-        if (location.pathname.includes('/:username')) return 'Profile';
-        return '';
+    const getTitle = () => {
+        switch (location.pathname) {
+            case '/':
+                return 'For you';
+            case '/following':
+                return 'Following';
+            case '/liked':
+                return 'Liked';
+            case '/saved':
+                return 'Saved';
+            default:
+                return 'Menu'; // Tiêu đề mặc định
+        }
     };
 
-    return (
-        <>
-            <Flex justifyContent="center" alignItems="center" px={4} py={2}>
-                {/* <Flex alignItems="center">
-                    {user && (
-                        <Link as={RouterLink} to="/" mx={4}>
-                            <AiFillHome size={24} />
-                        </Link>
-                    )}
-                    <Image
-                        cursor="pointer"
-                        alt="logo"
-                        w={8}
-                        src={colorMode === 'dark' ? '/light-logo.svg' : '/dark-logo.svg'}
-                        onClick={toggleColorMode}
-                    />
-                </Flex> */}
+    const isCurrentPage = (path) => location.pathname === path;
 
-                {/* Dropdown Menu */}
-                {location.pathname === '/' ? (
-                    <Menu>
-                        <MenuButton
-                            as={Text}
-                            cursor="pointer"
-                            fontSize="lg"
-                            fontWeight="bold"
-                            display="flex"
-                            alignItems="center"
-                        >
-                            For you <ChevronDownIcon ml={2} />
-                        </MenuButton>
-                        <MenuList
-                            //  bg="gray.700" color="white"
-                            // bg="gray.800"
-                            // color="white"
-                            border="none"
-                        >
-                            <MenuItem
-                                // _hover={{ bg: 'gray.800' }}
-                                onClick={() => console.log('For you')}
-                            >
-                                For you
-                            </MenuItem>
-                            <MenuItem
-                                // _hover={{ bg: 'gray.800' }}
-                                onClick={() => console.log('Following')}
-                            >
-                                Following
-                            </MenuItem>
-                            <MenuItem
-                                // _hover={{ bg: 'gray.800' }}
-                                onClick={() => console.log('Liked')}
-                            >
-                                Liked
-                            </MenuItem>
-                            <MenuItem
-                                // _hover={{ bg: 'gray.800' }}
-                                onClick={() => console.log('Saved')}
-                            >
-                                Saved
-                            </MenuItem>
-                        </MenuList>
-                    </Menu>
-                ) : (
-                    // Hiển thị tên trang khi không ở trang Home
-                    <Text fontSize="lg" fontWeight="bold">
-                        {pageTitle()}
-                    </Text>
-                )}
-            </Flex>
-        </>
+    return (
+        <Box display="flex" justifyContent="center" mt="16px">
+            <Menu>
+                <MenuButton
+                    as={Text}
+                    cursor="pointer"
+                    fontSize="lg"
+                    fontWeight="bold"
+                    display="flex"
+                    alignItems="center"
+                >
+                    {getTitle()} <ChevronDownIcon ml={2} />
+                </MenuButton>
+                <MenuList style={{ transform: 'translate3d(428px, 51px, 0px)' }}>
+                    <MenuItem
+                        display="flex"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        minHeight={'26px'}
+                        padding={'12px'}
+                        // fontWeight={'bold'}
+                        onClick={() => navigate('/')}
+                    >
+                        Home {isCurrentPage('/') && <CheckIcon ml={2} />} {/* Tick */}
+                    </MenuItem>
+                    <MenuItem
+                        display="flex"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        minHeight={'26px'}
+                        padding={'12px'}
+                        // fontWeight={'bold'}
+                        onClick={() => navigate('/following')}
+                    >
+                        Following {isCurrentPage('/following') && <CheckIcon ml={2} />}
+                    </MenuItem>
+                    <MenuItem
+                        display="flex"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        minHeight={'26px'}
+                        padding={'12px'}
+                        // fontWeight={'bold'}
+                        onClick={() => navigate('/liked')}
+                    >
+                        Liked {isCurrentPage('/liked') && <CheckIcon ml={2} />}
+                    </MenuItem>
+                    <MenuItem
+                        display="flex"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        minHeight={'26px'}
+                        padding={'12px'}
+                        // fontWeight={'bold'}
+                        onClick={() => navigate('/saved')}
+                    >
+                        Saved {isCurrentPage('/saved') && <CheckIcon ml={2} />}
+                    </MenuItem>
+                </MenuList>
+            </Menu>
+        </Box>
     );
 };
 
-export default HeaderComponent;
+export default YourComponent;

@@ -1,17 +1,45 @@
-import { Flex, Text } from '@chakra-ui/react';
+import {
+    Avatar,
+    Box,
+    Button,
+    Flex,
+    FormControl,
+    IconButton,
+    Input,
+    InputGroup,
+    InputLeftElement,
+    InputRightElement,
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
+    Text,
+    Textarea,
+    useDisclosure,
+} from '@chakra-ui/react';
+import { FiSend, FiPlusCircle } from 'react-icons/fi';
+import { FiImage, FiSmile } from 'react-icons/fi';
+import { BiSticker } from 'react-icons/bi';
 import './ActionsPost.scss';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import userAtom from '../../atoms/userAtom';
 import useShowToast from '../../hooks/useShowToast';
 const ActionsPost = ({ followingPost: followingPost_ }) => {
-    console.log('followingPost_: ', followingPost_);
     //destructuring: followingPost_ is object copied from followingPost
     const user = useRecoilValue(userAtom);
     const [liked, setLiked] = useState(followingPost_?.likes.includes(user?._id));
-    const showToast = useShowToast();
+
     const [followingPost, setFollowingPost] = useState(followingPost_);
     const [isLiking, setIsLiking] = useState(false);
+    const [reply, setReply] = useState('');
+    const [isReplying, setIsReplying] = useState(false);
+    const showToast = useShowToast();
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    console.log('userAtom: ', user);
 
     const handleLiked = async () => {
         if (!user) return showToast('Error', 'You need to be logged in to like a post', 'error');
@@ -29,7 +57,6 @@ const ActionsPost = ({ followingPost: followingPost_ }) => {
                 showToast('Error', data.message, 'error');
                 return;
             }
-            console.log('data: ', data);
             if (!liked) {
                 //liked: true --> already liked
                 setFollowingPost({ ...followingPost, likes: [...followingPost.likes, user._id] });
@@ -43,60 +70,196 @@ const ActionsPost = ({ followingPost: followingPost_ }) => {
             setIsLiking(false);
         }
     };
+
+    const inputRef = useRef(null);
+    const handleCommentClick = () => {
+        if (inputRef.current) {
+            inputRef.current.focus(); // Focus vào input khi nhấn vào icon comment
+        }
+    };
+
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            handleReply();
+        }
+    };
+    const handleReply = async () => {
+        if (!user) {
+            return showToast('Error', 'You need to be logged in to reply', 'error');
+        }
+        if (isReplying) return;
+        setIsReplying(true);
+        try {
+            const userLogin = JSON.parse(localStorage.getItem('userLogin'));
+            const accessToken = userLogin?.accessToken;
+            const res = await fetch('/api/post/reply/' + followingPost._id, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
+                body: JSON.stringify({
+                    textComment: reply,
+                }),
+            });
+            const data = await res.json();
+            console.log('data: ', data);
+            if (!data.success) return showToast('Error', data.message, 'error');
+            setFollowingPost({ ...followingPost, replies: [...followingPost.replies, data.reply] });
+            showToast('Success', 'Created post successfully', 'success');
+            console.log('followingPostAfter: ', followingPost);
+            setReply('');
+        } catch (error) {
+            return showToast('Error', error, 'error');
+        } finally {
+            setIsReplying(false);
+        }
+    };
     return (
         <>
-            <Flex flexDirection="column">
-                <Flex gap={7} my={2} alignItems={'center'} onClick={(e) => e.preventDefault()}>
-                    <svg
-                        aria-label="Like"
-                        color={liked ? 'rgb(237, 73, 86)' : ''}
-                        fill={liked ? 'rgb(237, 73, 86)' : 'transparent'}
-                        height="19"
-                        role="img"
-                        viewBox="0 0 24 22"
-                        width="20"
-                        onClick={handleLiked}
-                    >
-                        <path
-                            d="M1 7.66c0 4.575 3.899 9.086 9.987 12.934.338.203.74.406 1.013.406.283 0 .686-.203 1.013-.406C19.1 16.746 23 12.234 23 7.66 23 3.736 20.245 1 16.672 1 14.603 1 12.98 1.94 12 3.352 11.042 1.952 9.408 1 7.328 1 3.766 1 1 3.736 1 7.66Z"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                        ></path>
-                    </svg>
-                    <Text color={'gray.light'} fontSize={'sm'} style={{ marginLeft: '-22px' }} onClick={handleLiked}>
-                        {/* {likes} */}
-                        {followingPost?.likes.length}
-                    </Text>
-
-                    <svg aria-label="Comment" color="" fill="" height="20" role="img" viewBox="0 0 24 24" width="20">
-                        <title>Comment</title>
-                        <path
-                            d="M20.656 17.008a9.993 9.993 0 1 0-3.59 3.615L22 22Z"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                        ></path>
-                    </svg>
-                    <Text color={'gray.light'} fontSize={'sm'} style={{ marginLeft: '-22px' }}>
-                        {/* {replies} */}
-                        {followingPost?.replies.length}
-                    </Text>
-
-                    <RepostSVG />
-                    <ShareSVG />
-
-                    {/* <Flex gap={2} alignItems={'center'}>
-                        <Text color={'gray.light'} fontSize={'sm'}>
-                            {followingPost?.likes.length} likes
+            <Flex justifyContent={'start'} flexDirection={'column'}>
+                <Flex flexDirection="column">
+                    <Flex gap={7} my={2} alignItems={'center'} onClick={(e) => e.preventDefault()}>
+                        <svg
+                            aria-label="Like"
+                            color={liked ? 'rgb(237, 73, 86)' : ''}
+                            fill={liked ? 'rgb(237, 73, 86)' : 'transparent'}
+                            height="19"
+                            role="img"
+                            viewBox="0 0 24 22"
+                            width="20"
+                            onClick={handleLiked}
+                        >
+                            <path
+                                d="M1 7.66c0 4.575 3.899 9.086 9.987 12.934.338.203.74.406 1.013.406.283 0 .686-.203 1.013-.406C19.1 16.746 23 12.234 23 7.66 23 3.736 20.245 1 16.672 1 14.603 1 12.98 1.94 12 3.352 11.042 1.952 9.408 1 7.328 1 3.766 1 1 3.736 1 7.66Z"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                            ></path>
+                        </svg>
+                        <Text
+                            color={'gray.light'}
+                            fontSize={'sm'}
+                            style={{ marginLeft: '-22px' }}
+                            onClick={handleLiked}
+                        >
+                            {/* {likes} */}
+                            {followingPost?.likes.length}
                         </Text>
 
-                        <Box w={0.5} h={0.5} borderRadius={'full'} bg={'gray.light'}></Box>
-                        <Text color={'gray.light'} fontSize={'sm'}>
-                            {followingPost?.replies.length} replies
+                        <svg
+                            aria-label="Comment"
+                            color=""
+                            fill=""
+                            height="20"
+                            role="img"
+                            viewBox="0 0 24 24"
+                            width="20"
+                            // onClick={onOpen}
+                            onClick={handleCommentClick}
+                        >
+                            <title>Comment</title>
+                            <path
+                                d="M20.656 17.008a9.993 9.993 0 1 0-3.59 3.615L22 22Z"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                            ></path>
+                        </svg>
+                        <Text color={'gray.light'} fontSize={'sm'} style={{ marginLeft: '-22px' }}>
+                            {/* {replies} */}
+                            {followingPost?.replies.length}
                         </Text>
-                    </Flex> */}
+
+                        <RepostSVG />
+                        <ShareSVG />
+
+                        {/* <Modal isOpen={isOpen} onClose={onClose}>
+                        <ModalOverlay />
+                        <ModalContent>
+                            <ModalHeader></ModalHeader>
+                            <ModalCloseButton />
+                            <ModalBody pb={6}>
+                                <FormControl>
+                                    <Input placeholder="Reply goes here.." />
+                                </FormControl>
+                            </ModalBody>
+
+                            <ModalFooter>
+                                <Button colorScheme="blue" size={'sm'} mr={3}>
+                                    Reply
+                                </Button>
+                            </ModalFooter>
+                        </ModalContent>
+                    </Modal> */}
+                    </Flex>
                 </Flex>
+                <Box mt={4} borderRadius="md" minWidth={'528px'} onClick={(e) => e.preventDefault()}>
+                    <InputGroup>
+                        <Flex gap={3} alignItems="center" w="100%">
+                            {/* <IconButton
+                                icon={<FiSmile />}
+                                aria-label="Emoji"
+                                color="gray.500"
+                                bg="transparent"
+                                fontSize="24px" // Kích thước icon lớn hơn
+                                _hover={{ bg: 'transparent' }}
+                            />
+                            <IconButton
+                                icon={<BiSticker />}
+                                aria-label="Sticker"
+                                color="gray.500"
+                                bg="transparent"
+                                fontSize="24px"
+                                _hover={{ bg: 'transparent' }}
+                            /> */}
+                            {/* <IconButton
+                                icon={<FiImage />}
+                                aria-label="Image"
+                                color="gray.500"
+                                bg="transparent"
+                                fontSize="24px"
+                                _hover={{ bg: 'transparent' }}
+                            /> */}
+                            {/* <IconButton
+                                icon={<FiImage />}
+                                aria-label="GIF"
+                                color="gray.500"
+                                bg="transparent"
+                                fontSize="24px"
+                                _hover={{ bg: 'transparent' }}
+                            /> */}
+                            <Input
+                                ref={inputRef}
+                                value={reply}
+                                onChange={(e) => setReply(e.target.value)}
+                                onKeyDown={handleKeyDown}
+                                placeholder={`Bình luận với vai trò ${user?.userData?.username || user?.username}`}
+                                borderRadius="full"
+                                _placeholder={{ color: 'gray.400' }}
+                                height="50px" // Chiều cao lớn hơn
+                                paddingLeft="20px" // Cách padding bên trong
+                                flex="1"
+                                fontSize="lg" // Font chữ lớn hơn
+                            />
+                            <InputRightElement
+                                isLoading={isReplying}
+                                onClick={handleReply}
+                                width="4.5rem"
+                                height="100%"
+                                //  isOpen={isOpen}
+                            >
+                                <Button
+                                    h="100%"
+                                    size="lg"
+                                    // colorScheme="teal"
+                                    borderRadius="full"
+                                    fontSize="24px" // Font icon lớn hơn
+                                >
+                                    <FiSend />
+                                </Button>
+                            </InputRightElement>
+                        </Flex>
+                    </InputGroup>
+                </Box>
             </Flex>
         </>
     );

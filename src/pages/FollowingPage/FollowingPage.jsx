@@ -1,7 +1,7 @@
 import { Flex, Spinner } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import useShowToast from '../../hooks/useShowToast';
-import HomePostComponent from '../../components/HomePostComponent/HomePostComponent';
+import FollowingPostComponent from '../../components/FollowingPostComponent/FollowingPostComponent';
 
 const HomePage = () => {
     const showToast = useShowToast();
@@ -9,13 +9,16 @@ const HomePage = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const getFeedPosts = async () => {
+        const getFollowingPosts = async () => {
             setLoading(true);
             try {
-                const res = await fetch(`/api/post/getAllPosts`, {
+                const userLogin = JSON.parse(localStorage.getItem('userLogin'));
+                const accessToken = userLogin?.accessToken;
+                const res = await fetch(`/api/post/following`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
+                        Authorization: `Bearer ${accessToken}`,
                     },
                 });
                 const data = await res.json();
@@ -30,21 +33,25 @@ const HomePage = () => {
                 setLoading(false);
             }
         };
-        getFeedPosts();
+        getFollowingPosts();
     }, [showToast]);
-    console.log('feedPostsAfter: ', posts);
+    console.log('postsss: ', posts);
     return (
         <>
-            {!loading && posts.post?.length === 0 && (
-                <h1 style={{ textAlign: 'center' }}>Bạn đã lướt hết bài viết rồi</h1>
+            {!loading && posts.followingPosts?.length === 0 && (
+                <h1 style={{ textAlign: 'center' }}>Theo dõi thêm người dùng để xem bài viết của họ</h1>
             )}
             {loading && (
                 <Flex justify={'center'}>
                     <Spinner size="xl" />
                 </Flex>
             )}
-            {posts?.posts?.map((post) => (
-                <HomePostComponent key={post._id} post={post} postedBy={post.postedBy} />
+            {posts?.followingPosts?.map((followingPost) => (
+                <FollowingPostComponent
+                    key={followingPost._id}
+                    followingPost={followingPost}
+                    postedBy={followingPost.postedBy}
+                />
             ))}
         </>
     );

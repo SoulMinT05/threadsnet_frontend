@@ -19,6 +19,7 @@ import LogoutComponent from './components/LogoutComponent/LogoutComponent';
 import UpdateProfilePage from './pages/UpdateProfilePage/UpdateProfilePage';
 import CreatePost from './components/CreatePost/CreatePost';
 import SidebarComponent from './components/SidebarComponent/SidebarComponent';
+import FollowingPage from './pages/FollowingPage/FollowingPage';
 
 function App() {
     const user = useRecoilValue(userAtom);
@@ -32,8 +33,10 @@ function App() {
                     <HeaderComponent />
                     <Routes>
                         <Route path="/" element={user ? <HomePage /> : <Navigate to="/login" />} />
+                        <Route path="/following" element={user ? <FollowingPage /> : <Navigate to="/login" />} />
                         <Route path="/register" element={<SignUpPage />} />
                         <Route path="/login" element={!user ? <LoginPage /> : <Navigate to="/" />} />
+
                         <Route
                             path="/updateProfile"
                             element={user ? <UpdateProfilePage /> : <Navigate to="/login" />}

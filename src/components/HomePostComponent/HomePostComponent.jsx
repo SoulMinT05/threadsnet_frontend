@@ -1,11 +1,11 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { Avatar, Box, Flex, Image, Text } from '@chakra-ui/react';
 import { formatDistanceToNow } from 'date-fns';
-import ActionsPost from '../../components/ActionsPost/ActionsPost';
+import ActionsPost from '../ActionsPost/ActionsPost';
 import { useEffect, useState } from 'react';
 import useShowToast from '../../hooks/useShowToast';
 
-const FollowingPostPage = ({ followingPost, postedBy }) => {
+const HomePostComponent = ({ post, postedBy }) => {
     const [liked, setLiked] = useState(false);
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -39,7 +39,7 @@ const FollowingPostPage = ({ followingPost, postedBy }) => {
 
     return (
         <>
-            <Link to={`/${user.username}/post/${followingPost._id}`}>
+            <Link to={`/${user.username}/post/${post._id}`}>
                 <Flex gap={3} mb={4} py={5}>
                     <Flex flexDirection={'column'} alignItems={'center'}>
                         <Avatar
@@ -53,12 +53,12 @@ const FollowingPostPage = ({ followingPost, postedBy }) => {
                         />
                         <Box w="1px" h={'full'} bg={'gray.light'} my={2}></Box>
                         <Box position={'relative'} w={'full'}>
-                            {followingPost.replies.length === 0 && <Text textAlign={'center'}>🥱</Text>}
-                            {followingPost.replies[0] && (
+                            {post.replies.length === 0 && <Text textAlign={'center'}>🥱</Text>}
+                            {post.replies[0] && (
                                 <Avatar
                                     size="xs"
                                     name="John Doe"
-                                    src={followingPost.replies[0].userId}
+                                    src={post.replies[0].userId}
                                     position={'absolute'}
                                     top={'0px'}
                                     left={'15px'}
@@ -66,11 +66,11 @@ const FollowingPostPage = ({ followingPost, postedBy }) => {
                                 />
                             )}
 
-                            {followingPost.replies[1] && (
+                            {post.replies[1] && (
                                 <Avatar
                                     size="xs"
                                     name="John Doe"
-                                    src={followingPost.replies[1].userId}
+                                    src={post.replies[1].userId}
                                     position={'absolute'}
                                     bottom={'0px'}
                                     right={'-5px'}
@@ -78,11 +78,11 @@ const FollowingPostPage = ({ followingPost, postedBy }) => {
                                 />
                             )}
 
-                            {followingPost.replies[2] && (
+                            {post.replies[2] && (
                                 <Avatar
                                     size="xs"
                                     name="John Doe"
-                                    src={followingPost.replies[2].userId}
+                                    src={post.replies[2].userId}
                                     position={'absolute'}
                                     bottom={'0px'}
                                     left={'4px'}
@@ -104,30 +104,30 @@ const FollowingPostPage = ({ followingPost, postedBy }) => {
                                 >
                                     {user.username}
                                 </Text>
-                                {/* {followingPost.followers.length >= 2 && ( */}
+                                {/* {post.followers.length >= 2 && ( */}
                                 <Image src="./verified.png" w={4} h={4} ml={1} />
                                 {/* )} */}
                             </Flex>
                             <Flex gap={4} alignItems={'center'}>
                                 <Text fontSize={'xs'} width={36} textAlign={'right'} color={'gray.light'}>
-                                    {/* {formatDate(followingPost.createdAt)} */}
-                                    {formatDistanceToNow(new Date(followingPost.createdAt))}
+                                    {/* {formatDate(post.createdAt)} */}
+                                    {formatDistanceToNow(new Date(post.createdAt))}
                                 </Text>
                             </Flex>
                         </Flex>
-                        <Text fontSize={'sm'}>{followingPost.text}</Text>
-                        {followingPost.image && (
+                        <Text fontSize={'sm'}>{post.text}</Text>
+                        {post.image && (
                             <Box borderRadius={6} overflow={'hidden'} border={'1px solid'} borderColor={'gray.light'}>
-                                <Image src={followingPost.image} w={'full'} alt="Image" />
+                                <Image src={post.image} w={'full'} alt="Image" />
                             </Box>
                         )}
                         <Flex gap={3} my={1} alignItems={'center'}>
                             <ActionsPost
-                                // likes={followingPost.likes.length}
-                                // replies={followingPost.replies.length}
+                                // likes={post.likes.length}
+                                // replies={post.replies.length}
                                 // liked={liked}
                                 // setLiked={setLiked}
-                                followingPost={followingPost}
+                                post={post}
                             />
                         </Flex>
                     </Flex>
@@ -137,4 +137,4 @@ const FollowingPostPage = ({ followingPost, postedBy }) => {
     );
 };
 
-export default FollowingPostPage;
+export default HomePostComponent;

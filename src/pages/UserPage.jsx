@@ -7,9 +7,12 @@ import { Spinner, Flex } from '@chakra-ui/react';
 
 const UserPage = () => {
     const [user, setUser] = useState(null);
+
     const { username } = useParams();
     const showToast = useShowToast();
     const [loading, setLoading] = useState(true);
+    const [posts, setPosts] = useState([]);
+    const [fetchingPosts, setFetchingPosts] = useState(true);
 
     useEffect(() => {
         const getUser = async () => {
@@ -28,7 +31,26 @@ const UserPage = () => {
                 setLoading(false);
             }
         };
+        // const getPosts = async () => {
+        //     setFetchingPosts(true);
+        //     try {
+        //         const res = await fetch(`/api/post/user/${username}`);
+        //         const data = await res.json();
+        //         console.log('data: ', data);
+        //         if (!data.success) {
+        //             showToast('Error', data.message, 'error');
+        //             return;
+        //         }
+        //         setPosts(data);
+        //     } catch (error) {
+        //         showToast('Error', error, 'error');
+        //         setPosts([]);
+        //     } finally {
+        //         setFetchingPosts(false);
+        //     }
+        // };
         getUser();
+        // getPosts();
     }, [username, showToast]);
 
     if (!user && loading) {
@@ -43,10 +65,15 @@ const UserPage = () => {
     return (
         <div>
             <UserHeader user={user} />
-            <UserPost likes={101} replies={200} postImg="/post1.png" postTitle="Let's talke about threads" />
-            <UserPost likes={202} replies={301} postImg="/post2.png" postTitle="Nice tutorial" />
-            <UserPost likes={303} replies={572} postImg="/post3.png" postTitle="Beautiful moment" />
-            <UserPost likes={405} replies={921} postTitle="Talent girl in this performance" />
+
+            {!fetchingPosts && posts.length === 0 && (
+                <h1 style={{ textAlign: 'center' }}>Người dùng chưa đăng bài viết nào</h1>
+            )}
+            {fetchingPosts && (
+                <Flex justifyContent={'center'} my={12}>
+                    <Spinner size={'xl'} />
+                </Flex>
+            )}
         </div>
     );
 };
