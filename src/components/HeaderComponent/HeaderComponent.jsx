@@ -1,11 +1,15 @@
 import { Menu, MenuButton, MenuList, MenuItem, Text, Box } from '@chakra-ui/react';
 import { ChevronDownIcon, CheckIcon } from '@chakra-ui/icons';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import './HeaderComponent.scss';
+import { useRecoilValue } from 'recoil';
+import userAtom from '../../atoms/userAtom';
 
-const YourComponent = () => {
+const HeaderComponent = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const user = useRecoilValue(userAtom);
+
     const getTitle = () => {
         switch (location.pathname) {
             case '/':
@@ -17,11 +21,23 @@ const YourComponent = () => {
             case '/saved':
                 return 'Saved';
             default:
-                return 'Menu'; // Tiêu đề mặc định
+                if (location.pathname === `/${user?.userData?.username}`) {
+                    return 'Profile';
+                }
+                return 'Menu';
         }
     };
 
     const isCurrentPage = (path) => location.pathname === path;
+    if (location.pathname === `/${user?.userData?.username}`) {
+        return (
+            <Box display="flex" justifyContent="center" mt="16px">
+                <Text fontSize="lg" fontWeight="bold">
+                    Profile
+                </Text>
+            </Box>
+        );
+    }
 
     return (
         <Box display="flex" justifyContent="center" mt="16px">
@@ -87,4 +103,4 @@ const YourComponent = () => {
     );
 };
 
-export default YourComponent;
+export default HeaderComponent;

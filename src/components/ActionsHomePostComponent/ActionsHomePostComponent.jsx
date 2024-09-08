@@ -9,10 +9,10 @@ const ActionsHomePostComponent = ({ post: post_ }) => {
     const user = useRecoilValue(userAtom);
     const [liked, setLiked] = useState(post_?.likes.includes(user?._id));
 
-    const [post, setpost] = useState(post_);
+    const [post, setPost] = useState(post_);
     const [isLiking, setIsLiking] = useState(false);
-    const [reply, setReply] = useState('');
     const [isReplying, setIsReplying] = useState(false);
+    const [reply, setReply] = useState('');
     const showToast = useShowToast();
     const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -34,9 +34,9 @@ const ActionsHomePostComponent = ({ post: post_ }) => {
             }
             if (!liked) {
                 //liked: true --> already liked
-                setpost({ ...post, likes: [...post.likes, user._id] });
+                setPost({ ...post, likes: [...post.likes, user._id] });
             } else {
-                setpost({ ...post, likes: post?.likes?.filter((id) => user._id !== id) });
+                setPost({ ...post, likes: post?.likes?.filter((id) => user._id !== id) });
             }
             setLiked(!liked);
         } catch (error) {
@@ -78,7 +78,7 @@ const ActionsHomePostComponent = ({ post: post_ }) => {
             const data = await res.json();
             console.log('data: ', data);
             if (!data.success) return showToast('Error', data.message, 'error');
-            setpost({ ...post, replies: [...post.replies, data.reply] });
+            setPost({ ...post, replies: [...post.replies, data.reply] });
             showToast('Success', 'Reply post successfully', 'success');
             console.log('postAfter: ', post);
             setReply('');
