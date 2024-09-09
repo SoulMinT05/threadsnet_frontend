@@ -2,7 +2,7 @@
 import { Col, Row } from 'antd';
 import { Navigate, Route, Router, Routes } from 'react-router-dom';
 import UserPage from './pages/UserPage';
-import PostPage from './pages/PostPage/PostPage';
+import HomeDetailPostPage from './pages/HomeDetailPostPage/HomeDetailPostPage';
 import HeaderComponent from './components/HeaderComponent/HeaderComponent';
 import { Container, Flex } from '@chakra-ui/react';
 import HomePage from './pages/HomePage/HomePage';
@@ -43,7 +43,7 @@ function App() {
                         />
                         {/* <Route path="/createPost" element={user ? <CreatePost /> : <Navigate to="/login" />} /> */}
 
-                        <Route path="/:username/post/:postId" element={<PostPage />} />
+                        <Route path="/:username/post/:postId" element={<HomeDetailPostPage />} />
                         <Route path="/:username" element={!user ? <LoginPage /> : <UserPage />} />
 
                         <Route path="*" element={<NotFoundPage />} />

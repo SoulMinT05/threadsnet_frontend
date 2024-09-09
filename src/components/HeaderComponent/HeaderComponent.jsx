@@ -24,6 +24,9 @@ const HeaderComponent = () => {
                 if (location.pathname === `/${user?.userData?.username}`) {
                     return 'Profile';
                 }
+                // else if(location.pathname === `/${user?.userData?.username}/post/${post?.userData?.username}`) {
+                //     return post.userData.username;
+                // }
                 return 'Menu';
         }
     };

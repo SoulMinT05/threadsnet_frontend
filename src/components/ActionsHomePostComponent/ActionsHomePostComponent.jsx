@@ -101,6 +101,7 @@ const ActionsHomePostComponent = ({ post: post_ }) => {
                             role="img"
                             viewBox="0 0 24 22"
                             width="20"
+                            cursor={'pointer'}
                             onClick={handleLiked}
                         >
                             <path
@@ -113,6 +114,7 @@ const ActionsHomePostComponent = ({ post: post_ }) => {
                             color={'gray.light'}
                             fontSize={'sm'}
                             style={{ marginLeft: '-22px' }}
+                            cursor={'pointer'}
                             onClick={handleLiked}
                         >
                             {/* {likes} */}
@@ -210,24 +212,23 @@ const ActionsHomePostComponent = ({ post: post_ }) => {
                                 placeholder={`Bình luận với vai trò ${user?.userData?.username || user?.username}`}
                                 borderRadius="full"
                                 _placeholder={{ color: 'gray.400' }}
-                                height="50px" // Chiều cao lớn hơn
-                                paddingLeft="20px" // Cách padding bên trong
+                                height="50px"
+                                paddingLeft="20px"
                                 flex="1"
-                                fontSize="lg" // Font chữ lớn hơn
+                                fontSize="lg"
                             />
                             <InputRightElement
                                 isLoading={isReplying}
                                 onClick={handleReply}
                                 width="4.5rem"
                                 height="100%"
-                                //  isOpen={isOpen}
                             >
                                 <Button
                                     h="100%"
                                     size="lg"
                                     // colorScheme="teal"
                                     borderRadius="full"
-                                    fontSize="24px" // Font icon lớn hơn
+                                    fontSize="24px"
                                 >
                                     <FiSend />
                                 </Button>

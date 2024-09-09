@@ -105,30 +105,6 @@ const HomePostComponent = ({ post, postedBy }) => {
                                     padding={'2px'}
                                 />
                             )}
-
-                            {post.replies[1] && (
-                                <Avatar
-                                    size="xs"
-                                    name="John Doe"
-                                    src={post.replies[1].userId}
-                                    position={'absolute'}
-                                    bottom={'0px'}
-                                    right={'-5px'}
-                                    padding={'2px'}
-                                />
-                            )}
-
-                            {post.replies[2] && (
-                                <Avatar
-                                    size="xs"
-                                    name="John Doe"
-                                    src={post.replies[2].userId}
-                                    position={'absolute'}
-                                    bottom={'0px'}
-                                    left={'4px'}
-                                    padding={'2px'}
-                                />
-                            )}
                         </Box> */}
                     </Flex>
                     <Flex flex={1} flexDirection={'column'} gap={2}>
@@ -149,7 +125,7 @@ const HomePostComponent = ({ post, postedBy }) => {
                                 </Text>
                                 <Image src="./verified.png" w={4} h={4} ml={1} />
                             </Flex>
-                            <Flex gap={4} alignItems={'center'}>
+                            <Flex gap={4} alignItems={'center'} marginRight={'-12px'}>
                                 <Text fontSize={'xs'} width={36} textAlign={'right'} color={'gray.light'}>
                                     {/* {formatDate(post.createdAt)} */}
                                     {formatDistanceToNow(new Date(post.createdAt))}
