@@ -15,11 +15,11 @@ import {
     ModalOverlay,
     Text,
     Textarea,
+    Divider,
     useColorModeValue,
     useDisclosure,
 } from '@chakra-ui/react';
-import TextArea from 'antd/es/input/TextArea';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import usePreviewImg from '../../hooks/usePreviewImg';
 import { BsFillImageFill } from 'react-icons/bs';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -108,37 +108,71 @@ const CreatePost = () => {
             <Modal isOpen={isOpen} onClose={onClose}>
                 <ModalOverlay />
                 <ModalContent>
-                    <ModalHeader>Create Post</ModalHeader>
-                    <ModalCloseButton />
+                    <Flex alignItems="center">
+                        <ModalHeader flex={1} textAlign="center" fontSize="20px">
+                            Create Post
+                        </ModalHeader>
+                        <ModalCloseButton marginTop={'8px'} />
+                    </Flex>
+                    <Divider />
                     <ModalBody pb={6}>
                         <FormControl>
-                            <TextArea placeholder="Post content go here" onChange={handleTextChange} value={postText} />
-                            <Text fontSize={'xs'} fontWeight={'bold'} textAlign={'right'} m={'1'} color={'gray.800'}>
-                                {remainingChar} / {MAX_CHAR}
-                            </Text>
-                            <Input type="file" hidden ref={imgRef} onChange={handleImgChange} />
-                            <BsFillImageFill
-                                style={{ marginLeft: '5px', cursor: 'pointer' }}
-                                size={16}
-                                onClick={() => imgRef.current.click()}
+                            <Textarea
+                                border={'none'}
+                                boxShadow={'none'}
+                                minHeight={'150px'}
+                                placeholder="Post content go here"
+                                onChange={handleTextChange}
+                                value={postText}
+                                p="0"
+                                lineHeight="short"
+                                _focus={{
+                                    border: 'none !important', // Tắt border khi focus
+                                    boxShadow: 'none !important', // Tắt shadow khi focus
+                                }}
+                                resize="none"
                             />
+                            <Flex alignItems={'center'} justifyContent="space-between">
+                                <Flex alignItems={'center'}>
+                                    <Input type="file" hidden ref={imgRef} onChange={handleImgChange} />
+                                    <BsFillImageFill
+                                        style={{ marginLeft: '5px', cursor: 'pointer' }}
+                                        size={16}
+                                        onClick={() => imgRef.current.click()}
+                                    />
+                                </Flex>
+                                <Text fontSize={'xs'} fontWeight={'bold'}>
+                                    {remainingChar} / {MAX_CHAR}
+                                </Text>
+                            </Flex>
                         </FormControl>
                         {imgUrl && (
                             <Flex mt={5} w={'full'} position={'relative'}>
                                 <Image src={imgUrl} alt="Selected img" />
-                                <CloseButton
-                                    onClick={() => setImgUrl('')}
-                                    bg={'gray.800'}
-                                    position={'absolute'}
-                                    top={2}
-                                    right={2}
-                                />
+                                <CloseButton onClick={() => setImgUrl('')} position={'absolute'} top={2} right={2} />
                             </Flex>
                         )}
                     </ModalBody>
 
                     <ModalFooter>
-                        <Button colorScheme="blue" mr={3} onClick={handleCreatePost} isLoading={loading}>
+                        <Button
+                            //  colorScheme="blue"
+                            width="100%" // Đặt chiều rộng 100%
+                            bg="gray.800" // Màu nền của nút giống màu nền của modal
+                            color="white" // Màu chữ của nút
+                            _hover={{ bg: 'gray.700' }}
+                            _disabled={{
+                                bg: 'gray.600',
+                                color: 'gray.400',
+                                cursor: 'not-allowed',
+                                _hover: {
+                                    bg: 'gray.600',
+                                },
+                            }}
+                            onClick={handleCreatePost}
+                            isLoading={loading}
+                            isDisabled={!postText}
+                        >
                             Post
                         </Button>
                     </ModalFooter>

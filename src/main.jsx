@@ -28,6 +28,11 @@ const colors = {
 };
 
 const components = {
+    Divider: {
+        baseStyle: (props) => ({
+            borderColor: mode('gray.300', 'whiteAlpha.300')(props),
+        }),
+    },
     Menu: {
         baseStyle: (props) => ({
             list: {
@@ -40,6 +45,26 @@ const components = {
                 _hover: {
                     bg: mode('gray.200', '#1e1e1e')(props),
                 },
+            },
+        }),
+    },
+    Modal: {
+        baseStyle: (props) => ({
+            dialog: {
+                bg: mode('gray.100', '#101010')(props),
+                color: mode('gray.800', 'whiteAlpha.900')(props),
+            },
+            header: {
+                bg: mode('gray.100', '#101010')(props),
+                color: mode('gray.800', 'whiteAlpha.900')(props),
+            },
+            body: {
+                bg: mode('gray.100', '#101010')(props),
+                color: mode('gray.800', 'whiteAlpha.900')(props),
+            },
+            footer: {
+                bg: mode('gray.100', '#101010')(props),
+                color: mode('gray.800', 'whiteAlpha.900')(props),
             },
         }),
     },
