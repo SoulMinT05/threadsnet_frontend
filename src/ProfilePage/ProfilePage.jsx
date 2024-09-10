@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import UserHeader from '../components/UserHeader/UserHeader';
-import UserPost from '../components/UserPost/UserPost';
+import ProfileInfoComponent from '../components/ProfileInfoComponent/ProfileInfoComponent';
 import { useParams } from 'react-router-dom';
 import useShowToast from '../hooks/useShowToast';
 import { Spinner, Flex } from '@chakra-ui/react';
@@ -9,7 +8,7 @@ import useGetUserProfile from '../hooks/useGetUserProfile';
 import { useRecoilState } from 'recoil';
 import postAtom from '../atoms/postAtom';
 
-const UserPage = () => {
+const ProfilePage = () => {
     const { loading, user } = useGetUserProfile();
     const { username } = useParams();
     const showToast = useShowToast();
@@ -47,7 +46,7 @@ const UserPage = () => {
 
     return (
         <>
-            <UserHeader user={user} />
+            <ProfileInfoComponent user={user} />
 
             {!fetchingPosts && posts.length === 0 && (
                 <h1 style={{ textAlign: 'center' }}>Người dùng chưa đăng bài viết nào</h1>
@@ -64,4 +63,4 @@ const UserPage = () => {
     );
 };
 
-export default UserPage;
+export default ProfilePage;

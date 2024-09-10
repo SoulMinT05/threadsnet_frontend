@@ -10,14 +10,14 @@ import {
     Avatar,
     Center,
 } from '@chakra-ui/react';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import userAtom from '../../atoms/userAtom';
 import { useRecoilState } from 'recoil';
 import usePreviewImg from '../../hooks/usePreviewImg';
 import useShowToast from '../../hooks/useShowToast';
 import { Link, useNavigate } from 'react-router-dom';
 
-const UpdateProfilePage = () => {
+const UpdateProfileComponent = () => {
     const [user, setUser] = useRecoilState(userAtom);
     const navigate = useNavigate();
 
@@ -206,4 +206,4 @@ const UpdateProfilePage = () => {
     );
 };
 
-export default UpdateProfilePage;
+export default UpdateProfileComponent;

@@ -13,17 +13,17 @@ import {
     VStack,
 } from '@chakra-ui/react';
 // import { Link } from 'react-router-dom';
-import './UserHeader.scss';
+import './ProfileInfoComponent.scss';
 import { BsInstagram } from 'react-icons/bs';
 import { CgMoreO } from 'react-icons/cg';
 import { useToast } from '@chakra-ui/react';
 import { useRecoilValue } from 'recoil';
 import userAtom from '../../atoms/userAtom';
 import { Link as RouterLink } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import useShowToast from '../../hooks/useShowToast';
 
-const UserHeader = ({ user }) => {
+const ProfileInfoComponent = ({ user }) => {
     const toast = useToast();
     const currentUser = useRecoilValue(userAtom);
     // user: username in params
@@ -181,4 +181,4 @@ const UserHeader = ({ user }) => {
     );
 };
 
-export default UserHeader;
+export default ProfileInfoComponent;

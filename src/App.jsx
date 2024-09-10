@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-import UserPage from './pages/UserPage';
+import ProfilePage from './ProfilePage/ProfilePage';
 import HomeDetailPostPage from './pages/HomeDetailPostPage/HomeDetailPostPage';
 import HeaderComponent from './components/HeaderComponent/HeaderComponent';
 import { Container, Flex } from '@chakra-ui/react';
@@ -11,8 +11,7 @@ import SignUpPage from './pages/SignUpPage/SignUpPage';
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
 import { useRecoilValue } from 'recoil';
 import userAtom from './atoms/userAtom';
-import LogoutComponent from './components/LogoutComponent/LogoutComponent';
-import UpdateProfilePage from './pages/UpdateProfilePage/UpdateProfilePage';
+import UpdateProfileComponent from './components/UpdateProfileComponent/UpdateProfileComponent';
 import CreatePost from './components/CreatePost/CreatePost';
 import SidebarComponent from './components/SidebarComponent/SidebarComponent';
 import FollowingPage from './pages/FollowingPage/FollowingPage';
@@ -35,7 +34,7 @@ function App() {
 
                         <Route
                             path="/updateProfile"
-                            element={user ? <UpdateProfilePage /> : <Navigate to="/login" />}
+                            element={user ? <UpdateProfileComponent /> : <Navigate to="/login" />}
                         />
                         {/* <Route path="/createPost" element={user ? <CreatePost /> : <Navigate to="/login" />} /> */}
 
@@ -45,15 +44,15 @@ function App() {
                             element={
                                 user ? (
                                     <>
-                                        <UserPage />
+                                        <ProfilePage />
                                         <CreatePost />
                                     </>
                                 ) : (
-                                    <UserPage />
+                                    <ProfilePage />
                                 )
                             }
                         />
-                        {/* <Route path="/:username" element={!user ? <LoginPage /> : <UserPage />} /> */}
+                        {/* <Route path="/:username" element={!user ? <LoginPage /> : <ProfilePage />} /> */}
 
                         <Route path="*" element={<NotFoundPage />} />
                     </Routes>
