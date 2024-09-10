@@ -1,13 +1,17 @@
 import { Box, Button, Flex, Input, InputGroup, InputRightElement, Text, useDisclosure } from '@chakra-ui/react';
 import { FiSend } from 'react-icons/fi';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import userAtom from '../../atoms/userAtom';
 import useShowToast from '../../hooks/useShowToast';
 const ActionsHomePostComponent = ({ post: post_ }) => {
     //destructuring: post_ is object copied from post
-    const user = useRecoilValue(userAtom);
-    const [liked, setLiked] = useState(post_?.likes.includes(user?._id));
+    const userByAtom = useRecoilValue(userAtom);
+    const user = userByAtom?.userData;
+    console.log('user: ', user);
+    const [liked, setLiked] = useState(post_.likes.includes(user?._id)); //problem
+    console.log('post_: ', post_);
+    console.log('post_.likes.includes(user._id): ', post_.likes.includes(user?._id));
 
     const [post, setPost] = useState(post_);
     const [isLiking, setIsLiking] = useState(false);
@@ -15,11 +19,14 @@ const ActionsHomePostComponent = ({ post: post_ }) => {
     const [reply, setReply] = useState('');
     const showToast = useShowToast();
     const { isOpen, onOpen, onClose } = useDisclosure();
+    console.log('liked: ', liked);
+    console.log('isLiking: ', isLiking);
 
     const handleLiked = async () => {
         if (!user) return showToast('Error', 'You need to be logged in to like a post', 'error');
         if (isLiking) return;
         setIsLiking(true);
+
         try {
             const userLogin = JSON.parse(localStorage.getItem('userLogin'));
             const accessToken = userLogin?.accessToken;
@@ -27,17 +34,30 @@ const ActionsHomePostComponent = ({ post: post_ }) => {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
             });
+
             const data = await res.json();
             if (!data.success) {
                 showToast('Error', data.message, 'error');
                 return;
             }
-            if (!liked) {
-                //liked: true --> already liked
-                setPost({ ...post, likes: [...post.likes, user._id] });
-            } else {
-                setPost({ ...post, likes: post?.likes?.filter((id) => user._id !== id) });
-            }
+            // if (!liked) {
+            //     //liked: true --> already liked
+            //     console.log('Liked');
+            //     setPost({ ...post, likes: [...post.likes, user._id] });
+            // } else {
+            //     console.log('Unliked');
+            //     setPost({ ...post, likes: post?.likes?.filter((id) => user._id !== id) });
+            // }
+            setPost((prevPost) => {
+                if (!liked) {
+                    // Người dùng chưa like -> thêm user._id vào mảng likes
+                    return { ...prevPost, likes: [...prevPost.likes, user._id] };
+                } else {
+                    // Người dùng đã like -> bỏ user._id ra khỏi mảng likes
+                    return { ...prevPost, likes: prevPost.likes.filter((id) => id !== user._id) };
+                }
+            });
+
             setLiked(!liked);
         } catch (error) {
             showToast('Error', error, 'error');
@@ -217,13 +237,9 @@ const ActionsHomePostComponent = ({ post: post_ }) => {
                                 flex="1"
                                 fontSize="lg"
                             />
-                            <InputRightElement
-                                isLoading={isReplying}
-                                onClick={handleReply}
-                                width="4.5rem"
-                                height="100%"
-                            >
+                            <InputRightElement onClick={handleReply} width="4.5rem" height="100%">
                                 <Button
+                                    isLoading={isReplying}
                                     h="100%"
                                     size="lg"
                                     // colorScheme="teal"

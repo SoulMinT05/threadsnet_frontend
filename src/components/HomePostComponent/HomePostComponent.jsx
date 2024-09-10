@@ -19,7 +19,7 @@ import ActionsHomePostComponent from '../ActionsHomePostComponent/ActionsHomePos
 import { useRecoilValue } from 'recoil';
 import userAtom from '../../atoms/userAtom';
 
-const HomePostComponent = ({ post, postedBy }) => {
+const HomePostComponent = ({ post, postedBy, setPosts }) => {
     const [liked, setLiked] = useState(false);
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -70,6 +70,10 @@ const HomePostComponent = ({ post, postedBy }) => {
                 return;
             }
             showToast('Success', 'Deleted post successfully', 'success');
+            setPosts((prev) => ({
+                ...prev,
+                posts: prev.posts.filter((p) => p._id !== post._id),
+            }));
         } catch (error) {
             showToast('Error', error, 'error');
         }

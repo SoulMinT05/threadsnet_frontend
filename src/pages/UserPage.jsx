@@ -45,7 +45,6 @@ const UserPage = () => {
         );
     }
     if (!user && !loading) return <h1 style={{ textAlign: 'center' }}>User not found</h1>;
-    console.log('posts: ', posts);
 
     return (
         <>
@@ -60,7 +59,7 @@ const UserPage = () => {
                 </Flex>
             )}
             {posts?.posts?.map((post) => (
-                <HomePostComponent key={post._id} post={post} postedBy={post.postedBy} />
+                <HomePostComponent key={post._id} post={post} postedBy={post.postedBy} setPosts={setPosts} />
             ))}
         </>
     );

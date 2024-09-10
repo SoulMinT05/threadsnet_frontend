@@ -2,35 +2,48 @@ import {
     Avatar,
     Box,
     Button,
+    CloseButton,
     Divider,
     Flex,
+    FormControl,
     Image,
     Menu,
     MenuButton,
     MenuItem,
     MenuList,
+    Modal,
+    ModalBody,
+    ModalCloseButton,
+    ModalContent,
+    ModalFooter,
+    ModalHeader,
+    ModalOverlay,
     Portal,
     Spinner,
     Text,
+    useDisclosure,
 } from '@chakra-ui/react';
 import './HomeDetailPostPage.scss';
-import { BsThreeDots } from 'react-icons/bs';
+import { BsFillImageFill, BsThreeDots } from 'react-icons/bs';
 import ActionsFollowingPostComponent from '../../components/ActionsFollowingPostComponent/ActionsFollowingPostComponent';
 import { useEffect, useState } from 'react';
-import Comment from '../../components/Comment/Comment';
+import CommentComponent from '../../components/CommentComponent/CommentComponent';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import useGetUserProfile from '../../hooks/useGetUserProfile';
 import useShowToast from '../../hooks/useShowToast';
 import { formatDistanceToNow } from 'date-fns';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import userAtom from '../../atoms/userAtom';
 import ActionsHomePostComponent from '../../components/ActionsHomePostComponent/ActionsHomePostComponent';
 const HomeDetailPostPage = () => {
+    const { isOpen, onOpen, onClose } = useDisclosure();
     const { loading, user } = useGetUserProfile();
+
     const { postId } = useParams();
     const [post, setPost] = useState(null);
     const showToast = useShowToast();
     const currentUser = useRecoilValue(userAtom);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const getDetailPost = async () => {
@@ -83,6 +96,7 @@ const HomeDetailPostPage = () => {
                 return;
             }
             showToast('Success', 'Deleted post successfully', 'success');
+            navigate(`/${user?.username}`);
         } catch (error) {
             showToast('Error', error, 'error');
         }
@@ -92,7 +106,7 @@ const HomeDetailPostPage = () => {
             <Flex>
                 <Flex w={'full'} alignItems={'center'} gap={3}>
                     <Avatar src={user?.avatar} size={'md'} name={user?.name} />
-                    <Flex>
+                    <Flex w={'full'} alignItems={'center'}>
                         <Text
                             fontSize={'sm'}
                             fontWeight={'bold'}
@@ -103,7 +117,7 @@ const HomeDetailPostPage = () => {
                         >
                             {user?.username}
                         </Text>
-                        <Image src="/verified.png" w="4" h={4} ml={4} />
+                        <Image src="/verified.png" w="4" h={4} marginLeft={'4px'} />
                     </Flex>
                 </Flex>
                 {/* <Flex gap={4} alignItems={'center'}>
@@ -161,50 +175,61 @@ const HomeDetailPostPage = () => {
             )}
 
             <Flex gap={3} my={3} alignItems={'center'}>
-                <ActionsHomePostComponent
-                    post={post}
-                    // liked={liked} setLiked={setLiked}
-                />
-            </Flex>
-            <Flex gap={2} alignItems={'center'}>
-                <Text color={'gray.light'} fontSize={'sm'}>
-                    {post?.likes.length} likes
-                </Text>
-                <Box w={0.5} h={0.5} borderRadius={'full'} bg={'gray.light'}></Box>
-                <Text color={'gray.light'} fontSize={'sm'}>
-                    {post?.replies.length} replies
-                </Text>
+                <ActionsHomePostComponent post={post} />
             </Flex>
             <Divider my={4} />
             <Flex justifyContent={'space-between'}>
                 <Flex gap={2} alignItems={'center'}>
-                    <Text fontSize={'2xl'}>👋</Text>
-                    <Text color={'gray.light'}>Get the app to like, reply and post.</Text>
+                    <Text fontSize={'15px'}>Replies</Text>
+                    <Modal isOpen={isOpen} onClose={onClose}>
+                        <ModalOverlay />
+                        <ModalContent>
+                            <ModalHeader>Create Post</ModalHeader>
+                            <ModalCloseButton />
+                            <ModalBody pb={6}>
+                                <FormControl>
+                                    {/* <TextArea placeholder="Post content go here" onChange={handleTextChange} value={postText} /> */}
+                                    <Text
+                                        fontSize={'xs'}
+                                        fontWeight={'bold'}
+                                        textAlign={'right'}
+                                        m={'1'}
+                                        color={'gray.800'}
+                                    >
+                                        500
+                                    </Text>
+                                    {/* <Input type="file" hidden ref={imgRef} onChange={handleImgChange} /> */}
+                                    <BsFillImageFill style={{ marginLeft: '5px', cursor: 'pointer' }} size={16} />
+                                </FormControl>
+                                <Flex mt={5} w={'full'} position={'relative'}>
+                                    <Image
+                                        src="https://res.cloudinary.com/dd4zrjxvc/image/upload/v1725809723/threadsnet/d5mxouhgydlkltvvnx51.jpg"
+                                        alt="Selected img"
+                                    />
+                                    <CloseButton bg={'gray.800'} position={'absolute'} top={2} right={2} />
+                                </Flex>
+                            </ModalBody>
+
+                            <ModalFooter>
+                                <Button colorScheme="blue" mr={3}>
+                                    Post
+                                </Button>
+                            </ModalFooter>
+                        </ModalContent>
+                    </Modal>
                 </Flex>
-                <Button>Get</Button>
+                <Text>View Activity</Text>
+                <RightArrowSVG />
+                {/* <Button>Get</Button> */}
             </Flex>
             <Divider my={4} />
-            <Comment
-                comment="Looks good"
-                createdAt="14d"
-                likes={150}
-                username="jack"
-                userAvatar="https://bit.ly/code-beast"
-            />
-            <Comment
-                comment="Looks bad"
-                createdAt="3d"
-                likes={300}
-                username="jsol"
-                userAvatar="https://bit.ly/prosper-baba"
-            />
-            <Comment
-                comment="Have good day"
-                createdAt="5d"
-                likes={120}
-                username="erik"
-                userAvatar="https://bit.ly/ryan-florence"
-            />
+            {post?.replies?.map((reply) => (
+                <CommentComponent
+                    key={reply?._id}
+                    reply={reply}
+                    lastReply={reply._id === post.replies[post.replies.length - 1]._id}
+                />
+            ))}
         </>
     );
 };
@@ -294,6 +319,23 @@ const DeleteSVG = () => {
                 strokeLinecap="round"
                 strokeWidth="1.5"
             ></path>
+        </svg>
+    );
+};
+
+const RightArrowSVG = () => {
+    return (
+        <svg
+            aria-label="View activity"
+            role="img"
+            viewBox="0 0 24 24"
+            color="currentColor"
+            fill="currentColor"
+            height="12"
+            width="12"
+        >
+            <title>View activity</title>
+            <polyline points="16.502 3 7.498 12 16.502 21"></polyline>
         </svg>
     );
 };
