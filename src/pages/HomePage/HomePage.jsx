@@ -2,11 +2,14 @@ import { Flex, Spinner } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import useShowToast from '../../hooks/useShowToast';
 import HomePostComponent from '../../components/HomePostComponent/HomePostComponent';
+import { useRecoilState } from 'recoil';
+import postAtom from '../../atoms/postAtom';
 
 const HomePage = () => {
     const showToast = useShowToast();
-    const [posts, setPosts] = useState([]);
+    const [posts, setPosts] = useRecoilState(postAtom);
     const [loading, setLoading] = useState(true);
+    console.log('postsHome: ', posts);
 
     useEffect(() => {
         const getFeedPosts = async () => {
@@ -19,11 +22,12 @@ const HomePage = () => {
                     },
                 });
                 const data = await res.json();
+                console.log('dataHome: ', data);
                 if (!data.success) {
                     showToast('Error', data.message, 'error');
                     return;
                 }
-                setPosts(data);
+                setPosts(data.posts);
             } catch (error) {
                 showToast('Error', error, 'error');
             } finally {
@@ -31,8 +35,7 @@ const HomePage = () => {
             }
         };
         getFeedPosts();
-    }, [showToast]);
-    console.log('feedPostsAfter: ', posts);
+    }, [showToast, setPosts]);
     return (
         <>
             {!loading && posts.post?.length === 0 && (
@@ -43,7 +46,7 @@ const HomePage = () => {
                     <Spinner size="xl" />
                 </Flex>
             )}
-            {posts?.posts?.map((post) => (
+            {posts?.map((post) => (
                 <HomePostComponent key={post._id} post={post} postedBy={post.postedBy} />
             ))}
         </>

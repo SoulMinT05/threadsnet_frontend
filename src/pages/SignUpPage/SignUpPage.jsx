@@ -47,12 +47,10 @@ const SignUpPage = () => {
                 body: JSON.stringify(inputsRegister),
             });
             const data = await res.json();
-            console.log('data: ', data);
             if (!data.success) {
                 showToast('Error', data.message, 'error');
                 return;
             }
-            console.log('data: ', data);
             showToast('Success', 'Register successfully', 'success');
             navigate('/login');
         } catch (err) {

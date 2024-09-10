@@ -35,22 +35,25 @@ import { formatDistanceToNow } from 'date-fns';
 import { useNavigate, useParams } from 'react-router-dom';
 import userAtom from '../../atoms/userAtom';
 import ActionsHomePostComponent from '../../components/ActionsHomePostComponent/ActionsHomePostComponent';
+import postAtom from '../../atoms/postAtom';
 const HomeDetailPostPage = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { loading, user } = useGetUserProfile();
 
     const { postId } = useParams();
-    const [post, setPost] = useState(null);
     const showToast = useShowToast();
     const currentUser = useRecoilValue(userAtom);
+    const [posts, setPosts] = useRecoilState(postAtom);
     const navigate = useNavigate();
-
+    const currentPost = posts[0];
+    console.log('currentPostDetailHome: ', currentPost);
     useEffect(() => {
         const getDetailPost = async () => {
             try {
                 const res = await fetch(`/api/post/${postId}`);
                 const data = await res.json();
-                console.log('data: ', data);
+                console.log('dataGetDetail: ', data);
+
                 // if (!data.success) {
                 //     showToast('Error', data.message, 'error');
                 //     return;
@@ -59,14 +62,13 @@ const HomeDetailPostPage = () => {
                     showToast('Error', data.message, 'error');
                     return;
                 }
-                setPost(data);
+                setPosts([data]);
             } catch (error) {
                 showToast('Error', error, 'error');
             }
         };
         getDetailPost();
-    }, [postId, showToast]);
-    console.log('postPage: ', post);
+    }, [postId, showToast, setPosts]);
 
     if (!user && loading) {
         return (
@@ -76,13 +78,13 @@ const HomeDetailPostPage = () => {
         );
     }
 
-    if (!post) return null;
+    if (!currentPost) return null;
     const handleDeletePost = async () => {
         try {
             if (!window.confirm('Are you sure you want to delete this post?')) return;
             const userLogin = JSON.parse(localStorage.getItem('userLogin'));
             const accessToken = userLogin?.accessToken;
-            const res = await fetch(`/api/post/${post._id}`, {
+            const res = await fetch(`/api/post/${currentPost._id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -90,7 +92,6 @@ const HomeDetailPostPage = () => {
                 },
             });
             const data = await res.json();
-            console.log('data: ', data);
             if (!data.success) {
                 showToast('Error', data.message, 'error');
                 return;
@@ -129,7 +130,7 @@ const HomeDetailPostPage = () => {
                 <Flex gap={4} alignItems={'center'} marginRight={'-12px'}>
                     <Text fontSize={'xs'} width={36} textAlign={'right'} color={'gray.light'}>
                         {/* {formatDistanceToNow(new Date(post?.post?.createdAt))} */}
-                        {formatDistanceToNow(new Date(post?.createdAt))}
+                        {formatDistanceToNow(new Date(currentPost?.createdAt))}
                     </Text>
                     <Box className="icon-container" onClick={(e) => e.preventDefault()}>
                         <Menu>
@@ -165,17 +166,17 @@ const HomeDetailPostPage = () => {
                 </Flex>
             </Flex>
             <Text fontSize={'sm'} my={'10px'}>
-                {post?.text}
+                {currentPost?.text}
             </Text>
 
-            {post?.image && (
+            {currentPost?.image && (
                 <Box borderRadius={6} overflow={'hidden'} border={'1px solid'} borderColor={'gray.light'}>
-                    <Image src={post?.image} w={'full'} />
+                    <Image src={currentPost?.image} w={'full'} />
                 </Box>
             )}
 
             <Flex gap={3} my={3} alignItems={'center'}>
-                <ActionsHomePostComponent post={post} />
+                <ActionsHomePostComponent post={currentPost} />
             </Flex>
             <Divider my={4} />
             <Flex justifyContent={'space-between'}>
@@ -223,11 +224,11 @@ const HomeDetailPostPage = () => {
                 {/* <Button>Get</Button> */}
             </Flex>
             <Divider my={4} />
-            {post?.replies?.map((reply) => (
+            {currentPost?.replies?.map((reply) => (
                 <CommentComponent
                     key={reply?._id}
                     reply={reply}
-                    lastReply={reply._id === post.replies[post.replies.length - 1]._id}
+                    lastReply={reply._id === currentPost.replies[currentPost.replies.length - 1]._id}
                 />
             ))}
         </>

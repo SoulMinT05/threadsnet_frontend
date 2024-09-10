@@ -6,14 +6,15 @@ import useShowToast from '../hooks/useShowToast';
 import { Spinner, Flex } from '@chakra-ui/react';
 import HomePostComponent from '../components/HomePostComponent/HomePostComponent';
 import useGetUserProfile from '../hooks/useGetUserProfile';
+import { useRecoilState } from 'recoil';
+import postAtom from '../atoms/postAtom';
 
 const UserPage = () => {
     const { loading, user } = useGetUserProfile();
     const { username } = useParams();
     const showToast = useShowToast();
-    const [posts, setPosts] = useState([]);
+    const [posts, setPosts] = useRecoilState(postAtom);
     const [fetchingPosts, setFetchingPosts] = useState(true);
-    console.log('userProfile: ', user);
 
     useEffect(() => {
         const getPosts = async () => {
@@ -21,12 +22,12 @@ const UserPage = () => {
             try {
                 const res = await fetch(`/api/post/user/${username}`);
                 const data = await res.json();
-                console.log('data: ', data);
+                console.log('dataProfile: ', data);
                 if (!data.success) {
                     showToast('Error', data.message, 'error');
                     return;
                 }
-                setPosts(data);
+                setPosts(data.posts);
             } catch (error) {
                 showToast('Error', error, 'error');
                 setPosts([]);
@@ -35,8 +36,7 @@ const UserPage = () => {
             }
         };
         getPosts();
-    }, [username, showToast]);
-
+    }, [username, showToast, setPosts, user]);
     if (!user && loading) {
         return (
             <Flex justifyContent={'center'} alignItems={'center'}>
@@ -58,8 +58,8 @@ const UserPage = () => {
                     <Spinner size={'xl'} />
                 </Flex>
             )}
-            {posts?.posts?.map((post) => (
-                <HomePostComponent key={post._id} post={post} postedBy={post.postedBy} setPosts={setPosts} />
+            {posts?.map((post) => (
+                <HomePostComponent key={post._id} post={post} postedBy={post.postedBy} />
             ))}
         </>
     );

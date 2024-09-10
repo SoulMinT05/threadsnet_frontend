@@ -22,9 +22,10 @@ import TextArea from 'antd/es/input/TextArea';
 import { useEffect, useRef, useState } from 'react';
 import usePreviewImg from '../../hooks/usePreviewImg';
 import { BsFillImageFill } from 'react-icons/bs';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import userAtom from '../../atoms/userAtom';
 import useShowToast from '../../hooks/useShowToast';
+import postAtom from '../../atoms/postAtom';
 
 const MAX_CHAR = 500;
 
@@ -34,7 +35,7 @@ const CreatePost = () => {
     const imgRef = useRef(null);
     const [remainingChar, setRemainingChar] = useState(MAX_CHAR);
     const user = useRecoilValue(userAtom);
-    console.log('userAtom: ', user);
+    const [posts, setPosts] = useRecoilState(postAtom);
     const showToast = useShowToast();
 
     const { handleImgChange, imgUrl, setImgUrl } = usePreviewImg();
@@ -52,15 +53,6 @@ const CreatePost = () => {
         }
     };
 
-    // useEffect(() => {
-    //     // Kiểm tra dữ liệu user
-    //     console.log('userEffect: ', user);
-    //     console.log('user.userDataEffect: ', user.userData);
-    //     if (!user || !user.userData) {
-    //         showToast('Error', 'User data not found. Please log in again.', 'error');
-    //         return;
-    //     }
-    // }, [user, showToast]);
     const handleCreatePost = async () => {
         setLoading(true);
         try {
@@ -89,6 +81,10 @@ const CreatePost = () => {
             onClose();
             setPostText('');
             setImgUrl('');
+            setPosts({
+                ...posts,
+                posts: [data.newPost, ...posts.posts],
+            });
         } catch (error) {
             console.log(3);
             showToast('Error', error, 'error');

@@ -51,7 +51,6 @@ const UserHeader = ({ user }) => {
                 showToast('Error', data.message, 'error');
                 return;
             }
-            console.log('data: ', data);
             setFollowing(!following);
             // 2 user unfollow
             // true: followed --> unfollow

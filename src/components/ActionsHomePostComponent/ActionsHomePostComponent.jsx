@@ -1,26 +1,22 @@
 import { Box, Button, Flex, Input, InputGroup, InputRightElement, Text, useDisclosure } from '@chakra-ui/react';
 import { FiSend } from 'react-icons/fi';
 import { useEffect, useRef, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import userAtom from '../../atoms/userAtom';
 import useShowToast from '../../hooks/useShowToast';
-const ActionsHomePostComponent = ({ post: post_ }) => {
+import postAtom from '../../atoms/postAtom';
+const ActionsHomePostComponent = ({ post }) => {
     //destructuring: post_ is object copied from post
     const userByAtom = useRecoilValue(userAtom);
     const user = userByAtom?.userData;
-    console.log('user: ', user);
-    const [liked, setLiked] = useState(post_.likes.includes(user?._id)); //problem
-    console.log('post_: ', post_);
-    console.log('post_.likes.includes(user._id): ', post_.likes.includes(user?._id));
+    const [liked, setLiked] = useState(post.likes.includes(user?._id)); //problem
 
-    const [post, setPost] = useState(post_);
+    const [posts, setPosts] = useRecoilState(postAtom);
     const [isLiking, setIsLiking] = useState(false);
     const [isReplying, setIsReplying] = useState(false);
     const [reply, setReply] = useState('');
     const showToast = useShowToast();
     const { isOpen, onOpen, onClose } = useDisclosure();
-    console.log('liked: ', liked);
-    console.log('isLiking: ', isLiking);
 
     const handleLiked = async () => {
         if (!user) return showToast('Error', 'You need to be logged in to like a post', 'error');
@@ -40,23 +36,30 @@ const ActionsHomePostComponent = ({ post: post_ }) => {
                 showToast('Error', data.message, 'error');
                 return;
             }
-            // if (!liked) {
-            //     //liked: true --> already liked
-            //     console.log('Liked');
-            //     setPost({ ...post, likes: [...post.likes, user._id] });
-            // } else {
-            //     console.log('Unliked');
-            //     setPost({ ...post, likes: post?.likes?.filter((id) => user._id !== id) });
-            // }
-            setPost((prevPost) => {
-                if (!liked) {
-                    // Người dùng chưa like -> thêm user._id vào mảng likes
-                    return { ...prevPost, likes: [...prevPost.likes, user._id] };
-                } else {
-                    // Người dùng đã like -> bỏ user._id ra khỏi mảng likes
-                    return { ...prevPost, likes: prevPost.likes.filter((id) => id !== user._id) };
-                }
-            });
+
+            if (!liked) {
+                const updatedPosts = posts.map((p) => {
+                    if (p._id === post._id) {
+                        return {
+                            ...p,
+                            likes: [...p.likes, user._id],
+                        };
+                    }
+                    return p;
+                });
+                setPosts(updatedPosts);
+            } else {
+                const updatedPosts = posts.map((p) => {
+                    if (p._id === post._id) {
+                        return {
+                            ...p,
+                            likes: p.likes.filter((id) => id !== user._id),
+                        };
+                    }
+                    return p;
+                });
+                setPosts(updatedPosts);
+            }
 
             setLiked(!liked);
         } catch (error) {
@@ -96,11 +99,19 @@ const ActionsHomePostComponent = ({ post: post_ }) => {
                 }),
             });
             const data = await res.json();
-            console.log('data: ', data);
             if (!data.success) return showToast('Error', data.message, 'error');
-            setPost({ ...post, replies: [...post.replies, data.reply] });
+            const updatedPosts = posts?.map((p) => {
+                if (p._id === post._id) {
+                    return {
+                        ...p,
+                        replies: [...p.replies, data.reply],
+                    };
+                }
+                return p;
+            });
+
+            setPosts(updatedPosts);
             showToast('Success', 'Reply post successfully', 'success');
-            console.log('postAfter: ', post);
             setReply('');
         } catch (error) {
             return showToast('Error', error, 'error');

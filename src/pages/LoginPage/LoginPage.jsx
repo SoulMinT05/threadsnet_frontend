@@ -45,12 +45,10 @@ const LoginPage = () => {
                 body: JSON.stringify(inputsLogin),
             });
             const data = await res.json();
-            console.log('data: ', data);
             if (!data.success) {
                 showToast('Error', data.message, 'error');
                 return;
             }
-            console.log('data: ', data);
             localStorage.setItem('userLogin', JSON.stringify(data));
             setUser(data);
             showToast('Success', 'Login successfully', 'success');

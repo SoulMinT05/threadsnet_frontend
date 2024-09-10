@@ -16,10 +16,11 @@ import { formatDistanceToNow } from 'date-fns';
 import { useEffect, useState } from 'react';
 import useShowToast from '../../hooks/useShowToast';
 import ActionsHomePostComponent from '../ActionsHomePostComponent/ActionsHomePostComponent';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import userAtom from '../../atoms/userAtom';
+import postAtom from '../../atoms/postAtom';
 
-const HomePostComponent = ({ post, postedBy, setPosts }) => {
+const HomePostComponent = ({ post, postedBy }) => {
     const [liked, setLiked] = useState(false);
     const formatDate = (dateString) => {
         const date = new Date(dateString);
@@ -32,6 +33,7 @@ const HomePostComponent = ({ post, postedBy, setPosts }) => {
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const currentUser = useRecoilValue(userAtom);
+    const [posts, setPosts] = useRecoilState(postAtom);
 
     useEffect(() => {
         const getUser = async () => {

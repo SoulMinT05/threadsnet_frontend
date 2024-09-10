@@ -5,7 +5,6 @@ import ActionsFollowingPostComponent from '../ActionsFollowingPostComponent/Acti
 import { useState } from 'react';
 const CommentComponent = ({ reply, lastReply }) => {
     const [liked, setLiked] = useState(false);
-    console.log('reply: ', reply);
     return (
         <>
             <Flex gap={4} py={2} my={4} w={'full'}>
