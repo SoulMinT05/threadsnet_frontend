@@ -20,7 +20,6 @@ import { useRecoilValue } from 'recoil';
 import userAtom from '../../atoms/userAtom';
 
 const FollowingPostComponent = ({ followingPost, postedBy }) => {
-    const [liked, setLiked] = useState(false);
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         const day = String(date.getDate()).padStart(2, '0');

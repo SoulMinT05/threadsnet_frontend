@@ -40,13 +40,23 @@ function App() {
                         {/* <Route path="/createPost" element={user ? <CreatePost /> : <Navigate to="/login" />} /> */}
 
                         <Route path="/:username/post/:postId" element={<HomeDetailPostPage />} />
-                        <Route path="/:username" element={!user ? <LoginPage /> : <UserPage />} />
+                        <Route
+                            path="/:username"
+                            element={
+                                user ? (
+                                    <>
+                                        <UserPage />
+                                        <CreatePost />
+                                    </>
+                                ) : (
+                                    <UserPage />
+                                )
+                            }
+                        />
+                        {/* <Route path="/:username" element={!user ? <LoginPage /> : <UserPage />} /> */}
 
                         <Route path="*" element={<NotFoundPage />} />
                     </Routes>
-
-                    {user && <LogoutComponent />}
-                    {user && <CreatePost />}
                 </Container>
             </Flex>
         </Flex>

@@ -72,8 +72,11 @@ const UpdateProfilePage = () => {
 
             localStorage.setItem('userLogin', JSON.stringify(newUpdatedUser));
             showToast('Success', 'Update info successfully', 'success');
-            setUser(newUpdatedUser.userData);
-            console.log('newUpdatedUser.userData: ', newUpdatedUser.userData);
+            setUser({
+                ...newUpdatedUser,
+                ...newUpdatedUser.userData,
+            });
+            navigate(`/${newUpdatedUser.userData.username}`);
         } catch (error) {
             showToast('Error', error, 'error');
         } finally {

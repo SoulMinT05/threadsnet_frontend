@@ -45,9 +45,9 @@ const HomeDetailPostPage = () => {
     const [posts, setPosts] = useRecoilState(postAtom);
     const navigate = useNavigate();
     const currentPost = posts[0];
-    console.log('currentPostDetailHome: ', currentPost);
     useEffect(() => {
         const getDetailPost = async () => {
+            setPosts([]);
             try {
                 const res = await fetch(`/api/post/${postId}`);
                 const data = await res.json();

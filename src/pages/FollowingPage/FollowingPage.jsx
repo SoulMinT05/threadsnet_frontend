@@ -13,6 +13,7 @@ const FollowingPage = () => {
     useEffect(() => {
         const getFollowingPosts = async () => {
             setLoading(true);
+            setPosts([]);
             try {
                 const userLogin = JSON.parse(localStorage.getItem('userLogin'));
                 const accessToken = userLogin?.accessToken;

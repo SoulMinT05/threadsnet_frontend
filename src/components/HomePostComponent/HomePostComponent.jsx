@@ -21,14 +21,13 @@ import userAtom from '../../atoms/userAtom';
 import postAtom from '../../atoms/postAtom';
 
 const HomePostComponent = ({ post, postedBy }) => {
-    const [liked, setLiked] = useState(false);
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const year = date.getFullYear();
-        return `${day}/${month}/${year}`;
-    };
+    // const formatDate = (dateString) => {
+    //     const date = new Date(dateString);
+    //     const day = String(date.getDate()).padStart(2, '0');
+    //     const month = String(date.getMonth() + 1).padStart(2, '0');
+    //     const year = date.getFullYear();
+    //     return `${day}/${month}/${year}`;
+    // };
     const showToast = useShowToast();
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
@@ -71,10 +70,7 @@ const HomePostComponent = ({ post, postedBy }) => {
                 return;
             }
             showToast('Success', 'Deleted post successfully', 'success');
-            setPosts((prev) => ({
-                ...prev,
-                posts: prev.posts.filter((p) => p._id !== post._id),
-            }));
+            setPosts(posts.filter((p) => p._id !== post._id));
         } catch (error) {
             showToast('Error', error, 'error');
         }
@@ -181,13 +177,7 @@ const HomePostComponent = ({ post, postedBy }) => {
                             </Box>
                         )}
                         <Flex gap={3} my={1} alignItems={'center'}>
-                            <ActionsHomePostComponent
-                                // likes={post.likes.length}
-                                // replies={post.replies.length}
-                                // liked={liked}
-                                // setLiked={setLiked}
-                                post={post}
-                            />
+                            <ActionsHomePostComponent post={post} />
                         </Flex>
                     </Flex>
                 </Flex>

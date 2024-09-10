@@ -22,7 +22,6 @@ const UserPage = () => {
             try {
                 const res = await fetch(`/api/post/user/${username}`);
                 const data = await res.json();
-                console.log('dataProfile: ', data);
                 if (!data.success) {
                     showToast('Error', data.message, 'error');
                     return;
