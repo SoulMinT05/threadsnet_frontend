@@ -66,7 +66,6 @@ const HomePostComponent = ({ post, postedBy }) => {
                 },
             });
             const data = await res.json();
-            console.log('data: ', data);
             if (!data.success) {
                 showToast('Error', data.message, 'error');
                 return;

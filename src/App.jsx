@@ -1,6 +1,4 @@
-// import { Button } from '@chakra-ui/react';
-import { Col, Row } from 'antd';
-import { Navigate, Route, Router, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import UserPage from './pages/UserPage';
 import HomeDetailPostPage from './pages/HomeDetailPostPage/HomeDetailPostPage';
 import HeaderComponent from './components/HeaderComponent/HeaderComponent';
@@ -8,8 +6,6 @@ import { Container, Flex } from '@chakra-ui/react';
 import HomePage from './pages/HomePage/HomePage';
 
 // import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import DefaultComponent from './components/DefaultComponent/DefaultComponent';
-import { routes } from './routes';
 import LoginPage from './pages/LoginPage/LoginPage';
 import SignUpPage from './pages/SignUpPage/SignUpPage';
 import NotFoundPage from './pages/NotFoundPage/NotFoundPage';

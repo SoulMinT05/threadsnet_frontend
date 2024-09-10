@@ -9,7 +9,6 @@ const HomePage = () => {
     const showToast = useShowToast();
     const [posts, setPosts] = useRecoilState(postAtom);
     const [loading, setLoading] = useState(true);
-    console.log('postsHome: ', posts);
 
     useEffect(() => {
         const getFeedPosts = async () => {
@@ -22,7 +21,6 @@ const HomePage = () => {
                     },
                 });
                 const data = await res.json();
-                console.log('dataHome: ', data);
                 if (!data.success) {
                     showToast('Error', data.message, 'error');
                     return;

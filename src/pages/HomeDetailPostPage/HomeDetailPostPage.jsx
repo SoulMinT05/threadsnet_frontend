@@ -24,9 +24,8 @@ import {
     useDisclosure,
 } from '@chakra-ui/react';
 import './HomeDetailPostPage.scss';
-import { BsFillImageFill, BsThreeDots } from 'react-icons/bs';
-import ActionsFollowingPostComponent from '../../components/ActionsFollowingPostComponent/ActionsFollowingPostComponent';
-import { useEffect, useState } from 'react';
+import { BsFillImageFill } from 'react-icons/bs';
+import { useEffect } from 'react';
 import CommentComponent from '../../components/CommentComponent/CommentComponent';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import useGetUserProfile from '../../hooks/useGetUserProfile';

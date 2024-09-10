@@ -135,13 +135,7 @@ const FollowingPostComponent = ({ followingPost, postedBy }) => {
                             </Box>
                         )}
                         <Flex gap={3} my={1} alignItems={'center'}>
-                            <ActionsFollowingPostComponent
-                                // likes={followingPost.likes.length}
-                                // replies={followingPost.replies.length}
-                                // liked={liked}
-                                // setLiked={setLiked}
-                                followingPost={followingPost}
-                            />
+                            <ActionsFollowingPostComponent followingPost={followingPost} />
                         </Flex>
                     </Flex>
                 </Flex>

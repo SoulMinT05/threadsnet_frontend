@@ -2,26 +2,29 @@ import { Box, Button, Flex, Input, InputGroup, InputRightElement, Text, useDiscl
 import { FiSend } from 'react-icons/fi';
 import './ActionsFollowingPostComponent.scss';
 import { useRef, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import userAtom from '../../atoms/userAtom';
 import useShowToast from '../../hooks/useShowToast';
-const ActionsFollowingPostComponent = ({ followingPost: followingPost_ }) => {
+import postAtom from '../../atoms/postAtom';
+const ActionsFollowingPostComponent = ({ followingPost }) => {
     //destructuring: followingPost_ is object copied from followingPost
-    const user = useRecoilValue(userAtom);
-    const [liked, setLiked] = useState(followingPost_?.likes.includes(user?._id));
+    const userByAtom = useRecoilValue(userAtom);
+    const user = userByAtom?.userData;
+    const [liked, setLiked] = useState(followingPost?.likes.includes(user?._id));
 
-    const [followingPost, setFollowingPost] = useState(followingPost_);
+    const [followingPosts, setFollowingPosts] = useRecoilState(postAtom);
     const [isLiking, setIsLiking] = useState(false);
     const [reply, setReply] = useState('');
     const [isReplying, setIsReplying] = useState(false);
     const showToast = useShowToast();
     const { isOpen, onOpen, onClose } = useDisclosure();
-    // console.log('userAtom: ', user);
 
     const handleLiked = async () => {
         if (!user) return showToast('Error', 'You need to be logged in to like a post', 'error');
         if (isLiking) return;
         setIsLiking(true);
+        console.log('followingPostActions: ', followingPost);
+        console.log('followingPostsActions: ', followingPosts);
         try {
             const userLogin = JSON.parse(localStorage.getItem('userLogin'));
             const accessToken = userLogin?.accessToken;
@@ -35,10 +38,29 @@ const ActionsFollowingPostComponent = ({ followingPost: followingPost_ }) => {
                 return;
             }
             if (!liked) {
-                //liked: true --> already liked
-                setFollowingPost({ ...followingPost, likes: [...followingPost.likes, user._id] });
+                const updatedPosts = followingPosts.map((p) => {
+                    if (p._id === followingPost._id) {
+                        return {
+                            ...p,
+                            likes: [...p.likes, user._id],
+                        };
+                    }
+                    return p;
+                });
+                console.log('updatedPosts: ', updatedPosts);
+                setFollowingPosts(updatedPosts);
             } else {
-                setFollowingPost({ ...followingPost, likes: followingPost?.likes?.filter((id) => user._id !== id) });
+                const updatedPosts = followingPosts.map((p) => {
+                    if (p._id === followingPost._id) {
+                        return {
+                            ...p,
+                            likes: p.likes.filter((id) => id !== user._id),
+                        };
+                    }
+                    return p;
+                });
+                console.log('updatedPosts: ', updatedPosts);
+                setFollowingPosts(updatedPosts);
             }
             setLiked(!liked);
         } catch (error) {
@@ -78,11 +100,21 @@ const ActionsFollowingPostComponent = ({ followingPost: followingPost_ }) => {
                 }),
             });
             const data = await res.json();
-            console.log('data: ', data);
+            console.log('dataFollowingReply: ', data);
             if (!data.success) return showToast('Error', data.message, 'error');
-            setFollowingPost({ ...followingPost, replies: [...followingPost.replies, data.reply] });
+            const updatedPosts = followingPosts?.map((p) => {
+                if (p._id === followingPost._id) {
+                    return {
+                        ...p,
+                        replies: [...p.replies, data.reply],
+                    };
+                }
+                return p;
+            });
+
+            setFollowingPosts(updatedPosts);
+            // setFollowingPost({ ...followingPost, replies: [...followingPost.replies, data.reply] });
             showToast('Success', 'Reply post successfully', 'success');
-            console.log('followingPostAfter: ', followingPost);
             setReply('');
         } catch (error) {
             return showToast('Error', error, 'error');

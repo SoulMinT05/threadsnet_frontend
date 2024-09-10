@@ -2,10 +2,12 @@ import { Flex, Spinner } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import useShowToast from '../../hooks/useShowToast';
 import FollowingPostComponent from '../../components/FollowingPostComponent/FollowingPostComponent';
+import { useRecoilState } from 'recoil';
+import postAtom from '../../atoms/postAtom';
 
-const HomePage = () => {
+const FollowingPage = () => {
     const showToast = useShowToast();
-    const [posts, setPosts] = useState([]);
+    const [posts, setPosts] = useRecoilState(postAtom);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -26,7 +28,7 @@ const HomePage = () => {
                     showToast('Error', data.message, 'error');
                     return;
                 }
-                setPosts(data);
+                setPosts(data.followingPosts);
             } catch (error) {
                 showToast('Error', error, 'error');
             } finally {
@@ -34,8 +36,7 @@ const HomePage = () => {
             }
         };
         getFollowingPosts();
-    }, [showToast]);
-    console.log('postsss: ', posts);
+    }, [showToast, setPosts]);
     return (
         <>
             {!loading && posts.followingPosts?.length === 0 && (
@@ -46,7 +47,7 @@ const HomePage = () => {
                     <Spinner size="xl" />
                 </Flex>
             )}
-            {posts?.followingPosts?.map((followingPost) => (
+            {posts?.map((followingPost) => (
                 <FollowingPostComponent
                     key={followingPost._id}
                     followingPost={followingPost}
@@ -57,4 +58,4 @@ const HomePage = () => {
     );
 };
 
-export default HomePage;
+export default FollowingPage;
