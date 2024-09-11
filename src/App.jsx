@@ -15,6 +15,10 @@ import UpdateProfileComponent from './components/UpdateProfileComponent/UpdatePr
 import CreatePostComponent from './components/CreatePostComponent/CreatePostComponent';
 import SidebarComponent from './components/SidebarComponent/SidebarComponent';
 import FollowingPage from './pages/FollowingPage/FollowingPage';
+import SearchPage from './pages/SearchPage/SearchPage';
+import MessagePage from './pages/MessagePage/MessagePage';
+import NotificationPage from './pages/NotificationPage/NotificationPage';
+import MorePage from './pages/MorePage/MorePage';
 
 function App() {
     const user = useRecoilValue(userAtom);
@@ -53,7 +57,11 @@ function App() {
                             }
                         />
 
-                        <Route path="/message" element={!user ? <LoginPage /> : <ProfilePage />} />
+                        <Route path="/search" element={user && <SearchPage />} />
+                        <Route path="/message" element={user && <MessagePage />} />
+                        <Route path="/notification" element={user && <NotificationPage />} />
+                        <Route path="/more" element={user && <MorePage />} />
+
                         {/* <Route path="/:username" element={!user ? <LoginPage /> : <ProfilePage />} /> */}
 
                         <Route path="*" element={<NotFoundPage />} />

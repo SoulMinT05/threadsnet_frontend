@@ -1,10 +1,9 @@
-import { Flex, Icon, Link, Box, Image, useColorMode, IconButton } from '@chakra-ui/react';
+import { Flex, Icon, Link, Box, useColorMode, IconButton } from '@chakra-ui/react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import { FaHome, FaSearch, FaPlus, FaHeart, FaUser, FaRegCommentDots, FaThumbtack } from 'react-icons/fa';
-import { AiFillHome } from 'react-icons/ai';
+import { FaHome, FaHeart, FaUser } from 'react-icons/fa';
 import { useRecoilValue } from 'recoil';
 import userAtom from '../../atoms/userAtom';
-import { FaSun, FaMoon } from 'react-icons/fa';
+import { FaMoon } from 'react-icons/fa';
 import { BsFillSunFill } from 'react-icons/bs';
 
 const SidebarComponent = () => {
@@ -23,34 +22,34 @@ const SidebarComponent = () => {
             padding="20px"
         >
             <Box>
-                <Link onClick={() => navigate('/')} _hover={{ textDecoration: 'none' }}>
+                <Link onClick={() => navigate('/')} _hover={{ opacity: '0.6' }}>
                     <Icon as={FaHome} boxSize={6} mb="30px" />
                     {/* <AiFillHome size={24} /> */}
                 </Link>
-                <Link onClick={() => navigate('/search')} _hover={{ textDecoration: 'none' }}>
-                    <Icon as={FaSearch} boxSize={6} mb="30px" />
+                <Link onClick={() => navigate('/search')} _hover={{ opacity: '0.6' }} marginBottom={'30px'}>
+                    <SearchSVG />
                 </Link>
-                <Link onClick={() => navigate('/message')} _hover={{ textDecoration: 'none' }} marginBottom={'30px'}>
-                    {/* <Icon as={FaHeart} boxSize={6} mb="30px" /> */}
+                <Link onClick={() => navigate('/message')} _hover={{ opacity: '0.6' }} marginBottom={'30px'}>
                     <MessageSVG />
                 </Link>
-                <Link onClick={() => navigate('/favorites')} _hover={{ textDecoration: 'none' }}>
+                <Link onClick={() => navigate('/notification')} _hover={{ opacity: '0.6' }}>
                     <Icon as={FaHeart} boxSize={6} mb="30px" />
                 </Link>
 
                 {user && (
-                    <Link as={RouterLink} to={`/${user.userData?.username}`} _hover={{ textDecoration: 'none' }}>
+                    <Link as={RouterLink} to={`/${user.userData?.username}`} _hover={{ opacity: '0.6' }}>
                         <Icon as={FaUser} boxSize={6} mb="30px" />
                     </Link>
                 )}
             </Box>
 
             <Box>
-                <Link onClick={() => navigate('/pins')} _hover={{ textDecoration: 'none' }}>
-                    <Icon as={FaThumbtack} boxSize={6} mb="30px" />
+                <Link onClick={() => navigate('/more')} _hover={{ opacity: '0.6' }} marginBottom={'30px'}>
+                    <MoreSVG />
                 </Link>
                 <IconButton
                     aria-label="Toggle color mode"
+                    _hover={{ opacity: '0.6' }}
                     icon={colorMode === 'dark' ? <BsFillSunFill /> : <FaMoon />} // Thay đổi icon dựa trên colorMode
                     onClick={toggleColorMode}
                     variant="ghost"
@@ -84,6 +83,41 @@ const HomeDarkSVG = () => {
     );
 };
 
+const SearchSVG = () => {
+    return (
+        <svg
+            aria-label="Search"
+            fill="currentColor"
+            height="24"
+            role="img"
+            viewBox="0 0 24 24"
+            width="24"
+            style={{ marginBottom: '30px' }}
+        >
+            <title>Search</title>
+            <path
+                d="M19 10.5A8.5 8.5 0 1 1 10.5 2a8.5 8.5 0 0 1 8.5 8.5Z"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+            ></path>
+            <line
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                x1="16.511"
+                x2="22"
+                y1="16.511"
+                y2="22"
+            ></line>
+        </svg>
+    );
+};
+
 const MessageSVG = () => {
     return (
         <svg
@@ -113,6 +147,55 @@ const MessageSVG = () => {
                 strokeLinejoin="round"
                 strokeWidth="2"
             ></polygon>
+        </svg>
+    );
+};
+
+const MoreSVG = () => {
+    return (
+        <svg
+            aria-label="Settings"
+            fill="currentColor"
+            height="24"
+            role="img"
+            viewBox="0 0 24 24"
+            width="24"
+            style={{ marginBottom: '30px' }}
+        >
+            <title>Settings</title>
+            <line
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                x1="3"
+                x2="21"
+                y1="4"
+                y2="4"
+            ></line>
+            <line
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                x1="3"
+                x2="21"
+                y1="12"
+                y2="12"
+            ></line>
+            <line
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                x1="3"
+                x2="21"
+                y1="20"
+                y2="20"
+            ></line>
         </svg>
     );
 };
