@@ -48,8 +48,8 @@ const HeaderComponent = () => {
     }
 
     return (
-        <Flex justifyContent="space-between" alignItems="center">
-            <Box flex={1} display="flex" justifyContent="center" mt="16px">
+        <Flex justifyContent="space-between" alignItems="center" width={'640px'}>
+            <Box flex={1} display="flex" justifyContent="center" mt="16px" width={'640px'}>
                 <Menu>
                     <MenuButton
                         as={Text}
@@ -120,9 +120,9 @@ const HeaderComponent = () => {
                     <Link as={RouterLink} to={`/settings`}>
                         <MdOutlineSettings size={20} />
                     </Link> */}
-                    <Button size={'xs'}>
+                    {/* <Button size={'xs'}>
                         <FiLogOut size={20} onClick={logout} />
-                    </Button>
+                    </Button> */}
                 </Flex>
             )}
         </Flex>

@@ -20,7 +20,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import userAtom from '../../atoms/userAtom';
 import postAtom from '../../atoms/postAtom';
 
-const HomePostComponent = ({ post, postedBy }) => {
+const HomePostComponent = ({ post, postedBy, isLastPost }) => {
     // const formatDate = (dateString) => {
     //     const date = new Date(dateString);
     //     const day = String(date.getDate()).padStart(2, '0');
@@ -182,6 +182,7 @@ const HomePostComponent = ({ post, postedBy }) => {
                     </Flex>
                 </Flex>
             </Link>
+            {!isLastPost && <Divider orientation="horizontal" />}
         </>
     );
 };

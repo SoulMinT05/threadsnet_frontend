@@ -12,7 +12,7 @@ import NotFoundPage from './pages/NotFoundPage/NotFoundPage';
 import { useRecoilValue } from 'recoil';
 import userAtom from './atoms/userAtom';
 import UpdateProfileComponent from './components/UpdateProfileComponent/UpdateProfileComponent';
-import CreatePost from './components/CreatePost/CreatePost';
+import CreatePostComponent from './components/CreatePostComponent/CreatePostComponent';
 import SidebarComponent from './components/SidebarComponent/SidebarComponent';
 import FollowingPage from './pages/FollowingPage/FollowingPage';
 
@@ -24,7 +24,7 @@ function App() {
 
             {/* Main Content */}
             <Flex flex="1" ml="80px" justifyContent="center">
-                <Container maxW="620px">
+                <Container maxW="640px">
                     <HeaderComponent />
                     <Routes>
                         <Route path="/" element={user ? <HomePage /> : <Navigate to="/login" />} />
@@ -36,7 +36,7 @@ function App() {
                             path="/updateProfile"
                             element={user ? <UpdateProfileComponent /> : <Navigate to="/login" />}
                         />
-                        {/* <Route path="/createPost" element={user ? <CreatePost /> : <Navigate to="/login" />} /> */}
+                        {/* <Route path="/createPost" element={user ? <CreatePostComponent /> : <Navigate to="/login" />} /> */}
 
                         <Route path="/:username/post/:postId" element={<HomeDetailPostPage />} />
                         <Route
@@ -45,13 +45,15 @@ function App() {
                                 user ? (
                                     <>
                                         <ProfilePage />
-                                        <CreatePost />
+                                        <CreatePostComponent />
                                     </>
                                 ) : (
                                     <ProfilePage />
                                 )
                             }
                         />
+
+                        <Route path="/message" element={!user ? <LoginPage /> : <ProfilePage />} />
                         {/* <Route path="/:username" element={!user ? <LoginPage /> : <ProfilePage />} /> */}
 
                         <Route path="*" element={<NotFoundPage />} />

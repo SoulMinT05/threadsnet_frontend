@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react';
 import ProfileInfoComponent from '../components/ProfileInfoComponent/ProfileInfoComponent';
 import { useParams } from 'react-router-dom';
 import useShowToast from '../hooks/useShowToast';
-import { Spinner, Flex } from '@chakra-ui/react';
+import { Spinner, Flex, Divider, Avatar, Button, Box } from '@chakra-ui/react';
 import HomePostComponent from '../components/HomePostComponent/HomePostComponent';
 import useGetUserProfile from '../hooks/useGetUserProfile';
 import { useRecoilState } from 'recoil';
 import postAtom from '../atoms/postAtom';
+import CreatePostProfileComponent from '../components/CreatePostProfileComponent/CreatePostProfileComponent';
 
 const ProfilePage = () => {
     const { loading, user } = useGetUserProfile();
@@ -45,7 +46,7 @@ const ProfilePage = () => {
     if (!user && !loading) return <h1 style={{ textAlign: 'center' }}>User not found</h1>;
 
     return (
-        <>
+        <Box width="640px" borderRadius="lg" borderWidth="1px" boxShadow="md" p={4} m={4} mx="auto" marginRight={'0'}>
             <ProfileInfoComponent user={user} />
 
             {!fetchingPosts && posts.length === 0 && (
@@ -56,10 +57,19 @@ const ProfilePage = () => {
                     <Spinner size={'xl'} />
                 </Flex>
             )}
+            <Flex align="center" paddingTop={'16px'}>
+                <Avatar src={user?.avatar} mr={4} />
+                <Flex flex="1" fontSize={'md'}>
+                    <CreatePostProfileComponent />
+                </Flex>
+                <Button>Post</Button>
+            </Flex>
+            <Divider orientation="horizontal" mt={'20px'} mb={'8px'} />
+
             {posts?.map((post) => (
                 <HomePostComponent key={post._id} post={post} postedBy={post.postedBy} />
             ))}
-        </>
+        </Box>
     );
 };
 

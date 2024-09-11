@@ -1,14 +1,17 @@
-import { Flex, Spinner } from '@chakra-ui/react';
+import { Avatar, Box, Button, Divider, Flex, Spinner, Text } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import useShowToast from '../../hooks/useShowToast';
 import HomePostComponent from '../../components/HomePostComponent/HomePostComponent';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import postAtom from '../../atoms/postAtom';
+import userAtom from '../../atoms/userAtom';
+import './HomePage.scss';
 
 const HomePage = () => {
     const showToast = useShowToast();
     const [posts, setPosts] = useRecoilState(postAtom);
     const [loading, setLoading] = useState(true);
+    const user = useRecoilValue(userAtom);
 
     useEffect(() => {
         const getFeedPosts = async () => {
@@ -36,7 +39,16 @@ const HomePage = () => {
         getFeedPosts();
     }, [showToast, setPosts]);
     return (
-        <>
+        <Box
+            width="640px" // Đặt chiều rộng của Box
+            borderRadius="lg" // Thay đổi kích thước borderRadius nếu cần
+            borderWidth="1px" // Thêm border nếu cần
+            boxShadow="md" // Thêm bóng cho phần tử để làm nổi bật hơn
+            p={4} // Padding cho phần tử
+            m={4} // Margin cho phần tử, nếu cần
+            mx="auto"
+            marginRight={'0'}
+        >
             {!loading && posts.post?.length === 0 && (
                 <h1 style={{ textAlign: 'center' }}>Bạn đã lướt hết bài viết rồi</h1>
             )}
@@ -45,10 +57,24 @@ const HomePage = () => {
                     <Spinner size="xl" />
                 </Flex>
             )}
-            {posts?.map((post) => (
-                <HomePostComponent key={post._id} post={post} postedBy={post.postedBy} />
+            {/* <Flex align="center" py={'16px'}>
+                <Avatar src={user.userData.avatar} mr={4} />
+                <Text flex="1" fontSize={'md'}>
+                    Start a post ...
+                </Text>
+                <Button>Post</Button>
+            </Flex>
+            <Divider orientation="horizontal" mt={'20px'} mb={'8px'} /> */}
+
+            {posts?.map((post, index) => (
+                <HomePostComponent
+                    key={post._id}
+                    post={post}
+                    isLastPost={index === posts.length - 1}
+                    postedBy={post.postedBy}
+                />
             ))}
-        </>
+        </Box>
     );
 };
 
