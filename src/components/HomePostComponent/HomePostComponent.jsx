@@ -92,22 +92,9 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
                                 navigate(`/${user?.username}`);
                             }}
                         />
-                        {/* <Box w="1px" h={'full'} bg={'gray.light'} my={2}></Box>
-                        <Box position={'relative'} w={'full'}>
-                            {post.replies.length === 0 && <Text textAlign={'center'}>🥱</Text>}
-                            {post.replies[0] && (
-                                <Avatar
-                                    size="xs"
-                                    name="John Doe"
-                                    src={post.replies[0].userId}
-                                    position={'absolute'}
-                                    top={'0px'}
-                                    left={'15px'}
-                                    padding={'2px'}
-                                />
-                            )}
-                        </Box> */}
                     </Flex>
+
+                    {/* Problem */}
                     <Flex flex={1} flexDirection={'column'} gap={2}>
                         <Flex justifyContent={'space-between'} w={'full'}>
                             <Flex w={'full'} alignItems={'center'}>

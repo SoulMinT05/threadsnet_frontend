@@ -128,7 +128,6 @@ const HomeDetailPostPage = () => {
                 </Flex> */}
                 <Flex gap={4} alignItems={'center'} marginRight={'-12px'}>
                     <Text fontSize={'xs'} width={36} textAlign={'right'} color={'gray.light'}>
-                        {/* {formatDistanceToNow(new Date(post?.post?.createdAt))} */}
                         {formatDistanceToNow(new Date(currentPost?.createdAt))}
                     </Text>
                     <Box className="icon-container" onClick={(e) => e.preventDefault()}>
@@ -218,9 +217,12 @@ const HomeDetailPostPage = () => {
                         </ModalContent>
                     </Modal>
                 </Flex>
-                <Text>View Activity</Text>
-                <RightArrowSVG />
-                {/* <Button>Get</Button> */}
+                <Flex alignItems={'center'} justifyContent={'end'}>
+                    <Text fontSize={'15px'} opacity={0.6}>
+                        View Activity
+                    </Text>
+                    {/* <RightArrowSVG /> */}
+                </Flex>
             </Flex>
             <Divider my={4} />
             {currentPost?.replies?.map((reply) => (
@@ -329,10 +331,9 @@ const RightArrowSVG = () => {
             aria-label="View activity"
             role="img"
             viewBox="0 0 24 24"
-            color="currentColor"
             fill="currentColor"
-            height="12"
-            width="12"
+            height={'12px'}
+            width={'12px'}
         >
             <title>View activity</title>
             <polyline points="16.502 3 7.498 12 16.502 21"></polyline>

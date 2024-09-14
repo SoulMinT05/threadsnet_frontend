@@ -5,7 +5,6 @@ import HomePostComponent from '../../components/HomePostComponent/HomePostCompon
 import { useRecoilState, useRecoilValue } from 'recoil';
 import postAtom from '../../atoms/postAtom';
 import userAtom from '../../atoms/userAtom';
-import './HomePage.scss';
 
 const HomePage = () => {
     const showToast = useShowToast();

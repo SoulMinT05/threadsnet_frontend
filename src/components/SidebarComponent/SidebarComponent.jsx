@@ -1,15 +1,19 @@
-import { Flex, Icon, Link, Box, useColorMode, IconButton } from '@chakra-ui/react';
+import { Flex, Icon, Link, Box, useColorMode, IconButton, Button } from '@chakra-ui/react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { FaHome, FaHeart, FaUser } from 'react-icons/fa';
 import { useRecoilValue } from 'recoil';
 import userAtom from '../../atoms/userAtom';
 import { FaMoon } from 'react-icons/fa';
 import { BsFillSunFill } from 'react-icons/bs';
+import { FiLogOut } from 'react-icons/fi';
+import { MdDashboard } from 'react-icons/md';
+import useLogout from '../../hooks/useLogout';
 
 const SidebarComponent = () => {
     const navigate = useNavigate();
     const user = useRecoilValue(userAtom);
     const { colorMode, toggleColorMode } = useColorMode();
+    const logout = useLogout();
 
     return (
         <Flex
@@ -22,9 +26,11 @@ const SidebarComponent = () => {
             padding="20px"
         >
             <Box>
+                <Link onClick={() => navigate('/admin')} _hover={{ opacity: '0.6' }}>
+                    <Icon as={MdDashboard} boxSize={6} mb="30px" />
+                </Link>
                 <Link onClick={() => navigate('/')} _hover={{ opacity: '0.6' }}>
                     <Icon as={FaHome} boxSize={6} mb="30px" />
-                    {/* <AiFillHome size={24} /> */}
                 </Link>
                 <Link onClick={() => navigate('/search')} _hover={{ opacity: '0.6' }} marginBottom={'30px'}>
                     <SearchSVG />
@@ -59,6 +65,14 @@ const SidebarComponent = () => {
                     mb="30px"
                     ml={'-8px'}
                 />
+                {/* <Button size={'xs'}>
+                    <FiLogOut size={20} onClick={logout} />
+                </Button> */}
+                {user && (
+                    <Link onClick={logout} _hover={{ opacity: '0.6' }} marginBottom={'30px'}>
+                        <Icon color={'red'} as={FiLogOut} boxSize={6} mb="30px" />
+                    </Link>
+                )}
             </Box>
         </Flex>
     );

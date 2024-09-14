@@ -1,4 +1,14 @@
-import { Box, Button, Flex, Input, InputGroup, InputRightElement, Text, useDisclosure } from '@chakra-ui/react';
+import {
+    Box,
+    Button,
+    Flex,
+    Input,
+    InputGroup,
+    InputRightElement,
+    Text,
+    Textarea,
+    useDisclosure,
+} from '@chakra-ui/react';
 import { FiSend } from 'react-icons/fi';
 import { useEffect, useRef, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -179,89 +189,38 @@ const ActionsHomePostComponent = ({ post }) => {
 
                         <RepostSVG />
                         <ShareSVG />
-
-                        {/* <Modal isOpen={isOpen} onClose={onClose}>
-                        <ModalOverlay />
-                        <ModalContent>
-                            <ModalHeader></ModalHeader>
-                            <ModalCloseButton />
-                            <ModalBody pb={6}>
-                                <FormControl>
-                                    <Input placeholder="Reply goes here.." />
-                                </FormControl>
-                            </ModalBody>
-
-                            <ModalFooter>
-                                <Button colorScheme="blue" size={'sm'} mr={3}>
-                                    Reply
-                                </Button>
-                            </ModalFooter>
-                        </ModalContent>
-                    </Modal> */}
                     </Flex>
                 </Flex>
-                <Box mt={4} borderRadius="md" minWidth={'528px'} onClick={(e) => e.preventDefault()}>
-                    <InputGroup>
-                        <Flex gap={3} alignItems="center" w="100%">
-                            {/* <IconButton
-                                icon={<FiSmile />}
-                                aria-label="Emoji"
-                                color="gray.500"
-                                bg="transparent"
-                                fontSize="24px" // Kích thước icon lớn hơn
-                                _hover={{ bg: 'transparent' }}
-                            />
-                            <IconButton
-                                icon={<BiSticker />}
-                                aria-label="Sticker"
-                                color="gray.500"
-                                bg="transparent"
-                                fontSize="24px"
-                                _hover={{ bg: 'transparent' }}
-                            /> */}
-                            {/* <IconButton
-                                icon={<FiImage />}
-                                aria-label="Image"
-                                color="gray.500"
-                                bg="transparent"
-                                fontSize="24px"
-                                _hover={{ bg: 'transparent' }}
-                            /> */}
-                            {/* <IconButton
-                                icon={<FiImage />}
-                                aria-label="GIF"
-                                color="gray.500"
-                                bg="transparent"
-                                fontSize="24px"
-                                _hover={{ bg: 'transparent' }}
-                            /> */}
-                            <Input
-                                ref={inputRef}
-                                value={reply}
-                                onChange={(e) => setReply(e.target.value)}
-                                onKeyDown={handleKeyDown}
-                                placeholder={`Bình luận với vai trò ${user?.userData?.username || user?.username}`}
-                                borderRadius="full"
-                                _placeholder={{ color: 'gray.400' }}
-                                height="50px"
-                                paddingLeft="20px"
-                                flex="1"
-                                fontSize="lg"
-                            />
-                            <InputRightElement onClick={handleReply} width="4.5rem" height="100%">
-                                <Button
-                                    isLoading={isReplying}
-                                    h="100%"
-                                    size="lg"
-                                    // colorScheme="teal"
-                                    borderRadius="full"
-                                    fontSize="24px"
-                                >
+                <Box borderRadius="md" minWidth={'528px'} marginTop={'8px'} onClick={(e) => e.preventDefault()}>
+                    <Flex gap={3} alignItems="center" w="100%">
+                        <Textarea
+                            ref={inputRef}
+                            value={reply}
+                            onChange={(e) => setReply(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                            placeholder={`Bình luận với vai trò ${user?.userData?.username || user?.username}...`}
+                            _placeholder={{ color: 'gray.400' }}
+                            height={'36px'}
+                            minHeight={'36px'}
+                            padding={'8px'}
+                            flex="1"
+                            border={'none'}
+                            boxShadow={'none'}
+                            lineHeight="short"
+                            width={'100%'}
+                            _focus={{
+                                border: 'none !important', // Tắt border khi focus
+                                boxShadow: 'none !important', // Tắt shadow khi focus
+                            }}
+                            resize="none"
+                        />
+                        {/* <InputRightElement onClick={handleReply} width="4.5rem" height="100%">
+                                <Button isLoading={isReplying} h="100%" size="lg" borderRadius="full" fontSize="24px">
                                     <FiSend />
                                 </Button>
-                            </InputRightElement>
-                        </Flex>
-                    </InputGroup>
+                            </InputRightElement> */}
+                        <Button onClick={handleReply}>Post</Button>
+                    </Flex>
                 </Box>
             </Flex>
         </>
