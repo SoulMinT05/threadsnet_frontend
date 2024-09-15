@@ -101,6 +101,7 @@ const HomeDetailPostPage = () => {
             showToast('Error', error, 'error');
         }
     };
+    console.log('currentPostHomeDetail: ', currentPost);
     return (
         <>
             <Flex>
@@ -169,7 +170,7 @@ const HomeDetailPostPage = () => {
 
             {currentPost?.image && (
                 <Box borderRadius={6} overflow={'hidden'} border={'1px solid'} borderColor={'gray.light'}>
-                    <Image src={currentPost?.image} w={'full'} />
+                    <Image maxHeight={'560px'} src={currentPost?.image} objectFit="cover" w={'full'} />
                 </Box>
             )}
 
@@ -225,13 +226,23 @@ const HomeDetailPostPage = () => {
                 </Flex>
             </Flex>
             <Divider my={4} />
-            {currentPost?.replies?.map((reply) => (
+            {/* {currentPost?.comments?.map((comment) => (
                 <CommentComponent
-                    key={reply?._id}
-                    reply={reply}
-                    lastReply={reply._id === currentPost.replies[currentPost.replies.length - 1]._id}
+                    key={comment?._id}
+                    comment={comment}
+                    lastComment={comment._id === currentPost.comments[currentPost.comments.length - 1]._id}
                 />
-            ))}
+            ))} */}
+            {currentPost?.comments?.map((comment) => {
+                console.log('commentInCurrentPost: ', comment); // In ra mỗi comment trong quá trình lặp
+                return (
+                    <CommentComponent
+                        key={comment?._id}
+                        comment={comment}
+                        lastComment={comment._id === currentPost.comments[currentPost.comments.length - 1]._id}
+                    />
+                );
+            })}
         </>
     );
 };

@@ -175,7 +175,8 @@ const ActionsFollowingPostComponent = ({ followingPost }) => {
                         </svg>
                         <Text color={'gray.light'} fontSize={'sm'} style={{ marginLeft: '-22px' }}>
                             {/* {replies} */}
-                            {followingPost?.replies.length}
+                            {/* {followingPost?.replies.length || 10} */}
+                            10
                         </Text>
 
                         <RepostSVG />

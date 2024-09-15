@@ -33,6 +33,12 @@ const components = {
             borderColor: mode('gray.300', 'whiteAlpha.300')(props),
         }),
     },
+    Image: {
+        baseStyle: {
+            minHeight: '480px',
+            objectFit: 'cover',
+        },
+    },
     Menu: {
         baseStyle: (props) => ({
             list: {
@@ -53,6 +59,13 @@ const components = {
             dialog: {
                 bg: mode('gray.100', '#101010')(props),
                 color: mode('gray.800', 'whiteAlpha.900')(props),
+                minWidth: '480px',
+                minHeight: '200px',
+                marginLeft: '96px',
+                // display: 'flex',
+                // flexDirection: 'column',
+                // justifyContent: 'center',
+                // alignItems: 'center',
             },
             header: {
                 bg: mode('gray.100', '#101010')(props),

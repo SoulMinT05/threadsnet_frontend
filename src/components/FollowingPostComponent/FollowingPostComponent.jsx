@@ -130,7 +130,13 @@ const FollowingPostComponent = ({ followingPost, postedBy }) => {
                         <Text fontSize={'sm'}>{followingPost.text}</Text>
                         {followingPost.image && (
                             <Box borderRadius={6} overflow={'hidden'} border={'1px solid'} borderColor={'gray.light'}>
-                                <Image src={followingPost.image} w={'full'} alt="Image" />
+                                <Image
+                                    maxHeight={'560px'}
+                                    objectFit={'cover'}
+                                    src={followingPost.image}
+                                    w={'full'}
+                                    alt="Image"
+                                />
                             </Box>
                         )}
                         <Flex gap={3} my={1} alignItems={'center'}>

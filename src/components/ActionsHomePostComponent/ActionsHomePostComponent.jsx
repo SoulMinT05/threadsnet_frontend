@@ -9,8 +9,7 @@ import {
     Textarea,
     useDisclosure,
 } from '@chakra-ui/react';
-import { FiSend } from 'react-icons/fi';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import userAtom from '../../atoms/userAtom';
 import useShowToast from '../../hooks/useShowToast';
@@ -24,7 +23,7 @@ const ActionsHomePostComponent = ({ post }) => {
     const [posts, setPosts] = useRecoilState(postAtom);
     const [isLiking, setIsLiking] = useState(false);
     const [isReplying, setIsReplying] = useState(false);
-    const [reply, setReply] = useState('');
+    const [comment, setComment] = useState('');
     const showToast = useShowToast();
     const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -101,11 +100,11 @@ const ActionsHomePostComponent = ({ post }) => {
         try {
             const userLogin = JSON.parse(localStorage.getItem('userLogin'));
             const accessToken = userLogin?.accessToken;
-            const res = await fetch('/api/post/reply/' + post._id, {
+            const res = await fetch('/api/comment/' + post._id, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
                 body: JSON.stringify({
-                    textComment: reply,
+                    textComment: comment,
                 }),
             });
             const data = await res.json();
@@ -114,7 +113,7 @@ const ActionsHomePostComponent = ({ post }) => {
                 if (p._id === post._id) {
                     return {
                         ...p,
-                        replies: [...p.replies, data.reply],
+                        comments: [...p.comments, data.newComment],
                     };
                 }
                 return p;
@@ -122,7 +121,7 @@ const ActionsHomePostComponent = ({ post }) => {
 
             setPosts(updatedPosts);
             showToast('Success', 'Reply post successfully', 'success');
-            setReply('');
+            setComment('');
         } catch (error) {
             return showToast('Error', error, 'error');
         } finally {
@@ -131,7 +130,7 @@ const ActionsHomePostComponent = ({ post }) => {
     };
     return (
         <>
-            <Flex justifyContent={'start'} flexDirection={'column'}>
+            <Flex justifyContent={'start'} flexDirection={'column'} width={'100%'}>
                 <Flex flexDirection="column">
                     <Flex gap={7} my={2} alignItems={'center'} onClick={(e) => e.preventDefault()}>
                         <svg
@@ -183,8 +182,7 @@ const ActionsHomePostComponent = ({ post }) => {
                             ></path>
                         </svg>
                         <Text color={'gray.light'} fontSize={'sm'} style={{ marginLeft: '-22px' }}>
-                            {/* {replies} */}
-                            {post?.replies.length}
+                            {post?.comments.length}
                         </Text>
 
                         <RepostSVG />
@@ -192,11 +190,11 @@ const ActionsHomePostComponent = ({ post }) => {
                     </Flex>
                 </Flex>
                 <Box borderRadius="md" minWidth={'528px'} marginTop={'8px'} onClick={(e) => e.preventDefault()}>
-                    <Flex gap={3} alignItems="center" w="100%">
+                    <Flex gap={3} alignItems="center" justifyContent={'space-between'} w="100%">
                         <Textarea
                             ref={inputRef}
-                            value={reply}
-                            onChange={(e) => setReply(e.target.value)}
+                            value={comment}
+                            onChange={(e) => setComment(e.target.value)}
                             onKeyDown={handleKeyDown}
                             placeholder={`Bình luận với vai trò ${user?.userData?.username || user?.username}...`}
                             _placeholder={{ color: 'gray.400' }}

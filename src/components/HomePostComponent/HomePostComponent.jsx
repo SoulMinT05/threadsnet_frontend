@@ -160,7 +160,13 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
                         </Text>
                         {post.image && (
                             <Box borderRadius={6} overflow={'hidden'} border={'1px solid'} borderColor={'gray.light'}>
-                                <Image src={post.image} w={'full'} alt="Image" />
+                                <Image
+                                    maxHeight={'560px'}
+                                    objectFit={'cover'}
+                                    src={post.image}
+                                    w={'full'}
+                                    alt="Image"
+                                />
                             </Box>
                         )}
                         <Flex gap={3} my={1} alignItems={'center'}>
