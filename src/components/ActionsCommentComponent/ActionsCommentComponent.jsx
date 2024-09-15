@@ -1,10 +1,13 @@
-import { Box, Button, Flex, Text, Textarea } from '@chakra-ui/react';
+import { Avatar, Box, Button, Flex, Text, Textarea } from '@chakra-ui/react';
 import { useRef, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import userAtom from '../../atoms/userAtom';
 import commentAtom from '../../atoms/commentAtom';
 import useShowToast from '../../hooks/useShowToast';
 import postAtom from '../../atoms/postAtom';
+import ActionsReplyComponent from '../ActionsReplyComponent/ActionsReplyComponent';
+import { BsThreeDots } from 'react-icons/bs';
+import { formatDistanceToNow } from 'date-fns';
 const ActionsHomePostComponent = ({ comment }) => {
     //destructuring: post_ is object copied from post
     const userByAtom = useRecoilValue(userAtom);
@@ -13,13 +16,10 @@ const ActionsHomePostComponent = ({ comment }) => {
 
     const [posts, setPosts] = useRecoilState(postAtom);
 
-    const [comments, setComments] = useRecoilState(commentAtom);
-    // const [comments, setComments] = useRecoilState();
-    console.log('postsActionsCOmment: ', posts);
-    console.log('commentsActionsCOmment: ', comments);
     const [isLiking, setIsLiking] = useState(false);
     const [isReplying, setIsReplying] = useState(false);
     const [reply, setReply] = useState('');
+    const [showTextarea, setShowTextarea] = useState(false);
     const showToast = useShowToast();
 
     const handleLikedComment = async () => {
@@ -88,18 +88,21 @@ const ActionsHomePostComponent = ({ comment }) => {
 
     const inputRef = useRef(null);
     const handleCommentClick = () => {
-        if (inputRef.current) {
-            inputRef.current.focus(); // Focus vào input khi nhấn vào icon comment
-        }
+        setShowTextarea(true);
+        setTimeout(() => {
+            if (inputRef.current) {
+                inputRef.current.focus();
+            }
+        }, 0);
     };
 
     const handleKeyDown = (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-            handleReply();
+            handleReplyComment();
         }
     };
-    const handleReply = async () => {
+    const handleReplyComment = async () => {
         if (!user) {
             return showToast('Error', 'You need to be logged in to reply', 'error');
         }
@@ -108,27 +111,36 @@ const ActionsHomePostComponent = ({ comment }) => {
         try {
             const userLogin = JSON.parse(localStorage.getItem('userLogin'));
             const accessToken = userLogin?.accessToken;
-            const res = await fetch('/api/comment/' + post._id, {
+            const res = await fetch('/api/comment/create/reply/' + comment._id, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
                 body: JSON.stringify({
-                    textComment: comment,
+                    textComment: reply,
                 }),
             });
             const data = await res.json();
-            console.log('dataActionsHome: ', data);
             if (!data.success) return showToast('Error', data.message, 'error');
-            const updatedComments = posts?.map((p) => {
-                if (p._id === post._id) {
+
+            const newReply = data.parentComment.replies[data.parentComment.replies.length - 1];
+            const updatedPosts = posts.map((post) => {
+                if (post._id === data.parentComment.postId) {
+                    const updatedComments = post.comments.map((existingComment) => {
+                        if (existingComment._id === comment._id) {
+                            return {
+                                ...existingComment,
+                                replies: [...existingComment.replies, newReply],
+                            };
+                        }
+                        return existingComment;
+                    });
                     return {
-                        ...p,
-                        comments: [...p.comments, data.newComment],
+                        ...post,
+                        comments: updatedComments,
                     };
                 }
-                return p;
+                return post;
             });
-
-            setComments(updatedComments);
+            setPosts(updatedPosts);
             showToast('Success', 'Reply post successfully', 'success');
             setReply('');
         } catch (error) {
@@ -137,92 +149,111 @@ const ActionsHomePostComponent = ({ comment }) => {
             setIsReplying(false);
         }
     };
+    console.log('comment', comment);
     return (
         <>
             <Flex justifyContent={'start'} flexDirection={'column'} width={'100%'}>
                 <Flex flexDirection="column">
                     <Flex gap={7} my={2} alignItems={'center'} onClick={(e) => e.preventDefault()}>
-                        <svg
-                            aria-label="Like"
-                            color={liked ? 'rgb(237, 73, 86)' : ''}
-                            fill={liked ? 'rgb(237, 73, 86)' : 'transparent'}
-                            height="19"
-                            role="img"
-                            viewBox="0 0 24 22"
-                            width="20"
-                            cursor={'pointer'}
-                            onClick={handleLikedComment}
-                        >
-                            <path
-                                d="M1 7.66c0 4.575 3.899 9.086 9.987 12.934.338.203.74.406 1.013.406.283 0 .686-.203 1.013-.406C19.1 16.746 23 12.234 23 7.66 23 3.736 20.245 1 16.672 1 14.603 1 12.98 1.94 12 3.352 11.042 1.952 9.408 1 7.328 1 3.766 1 1 3.736 1 7.66Z"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                            ></path>
-                        </svg>
-                        <Text
-                            color={'gray.light'}
-                            fontSize={'sm'}
-                            style={{ marginLeft: '-22px' }}
-                            cursor={'pointer'}
-                            onClick={handleLikedComment}
-                        >
-                            {comment?.likes.length}
-                        </Text>
+                        <Flex alignItems="center" gap={2} cursor="pointer" onClick={handleLikedComment}>
+                            <svg
+                                aria-label="Like"
+                                color={liked ? 'rgb(237, 73, 86)' : ''}
+                                fill={liked ? 'rgb(237, 73, 86)' : 'transparent'}
+                                height="19"
+                                role="img"
+                                viewBox="0 0 24 22"
+                                width="20"
+                                cursor={'pointer'}
+                            >
+                                <path
+                                    d="M1 7.66c0 4.575 3.899 9.086 9.987 12.934.338.203.74.406 1.013.406.283 0 .686-.203 1.013-.406C19.1 16.746 23 12.234 23 7.66 23 3.736 20.245 1 16.672 1 14.603 1 12.98 1.94 12 3.352 11.042 1.952 9.408 1 7.328 1 3.766 1 1 3.736 1 7.66Z"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                ></path>
+                            </svg>
+                            <Text color={'gray.light'} fontSize={'sm'} cursor={'pointer'}>
+                                {comment?.likes.length}
+                            </Text>
+                        </Flex>
 
-                        <svg
-                            aria-label="Comment"
-                            color=""
-                            fill=""
-                            height="20"
-                            role="img"
-                            viewBox="0 0 24 24"
-                            width="20"
-                            onClick={handleCommentClick}
-                        >
-                            <title>Comment</title>
-                            <path
-                                d="M20.656 17.008a9.993 9.993 0 1 0-3.59 3.615L22 22Z"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                            ></path>
-                        </svg>
-                        <Text color={'gray.light'} fontSize={'sm'} style={{ marginLeft: '-22px' }}>
-                            {comment?.replies.length}
-                        </Text>
+                        <Flex alignItems="center" gap={2} cursor="pointer" onClick={handleCommentClick}>
+                            <svg
+                                aria-label="Comment"
+                                color=""
+                                fill=""
+                                height="20"
+                                role="img"
+                                viewBox="0 0 24 24"
+                                width="20"
+                            >
+                                <title>Comment</title>
+                                <path
+                                    d="M20.656 17.008a9.993 9.993 0 1 0-3.59 3.615L22 22Z"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                ></path>
+                            </svg>
+                            <Text color={'gray.light'} fontSize={'sm'}>
+                                {comment?.replies.length}
+                            </Text>
+                        </Flex>
 
                         <RepostSVG />
                         <ShareSVG />
                     </Flex>
                 </Flex>
                 {/* Input comment */}
-                <Box borderRadius="md" minWidth={'528px'} marginTop={'8px'} onClick={(e) => e.preventDefault()}>
-                    <Flex gap={3} alignItems="center" justifyContent={'space-between'} w="100%">
-                        <Textarea
-                            ref={inputRef}
-                            value={comment}
-                            onChange={(e) => setReply(e.target.value)}
-                            onKeyDown={handleKeyDown}
-                            placeholder={`Bình luận với vai trò ${user?.userData?.username || user?.username}...`}
-                            _placeholder={{ color: 'gray.400' }}
-                            height={'36px'}
-                            minHeight={'36px'}
-                            padding={'8px'}
-                            flex="1"
-                            border={'none'}
-                            boxShadow={'none'}
-                            lineHeight="short"
-                            width={'100%'}
-                            _focus={{
-                                border: 'none !important', // Tắt border khi focus
-                                boxShadow: 'none !important', // Tắt shadow khi focus
-                            }}
-                            resize="none"
-                        />
-                        <Button onClick={handleReply}>Post</Button>
+                {showTextarea && (
+                    <Box borderRadius="md" minWidth={'528px'} marginTop={'8px'} onClick={(e) => e.preventDefault()}>
+                        <Flex gap={3} alignItems="center" justifyContent={'space-between'} w="100%">
+                            <Textarea
+                                ref={inputRef}
+                                value={reply}
+                                onChange={(e) => setReply(e.target.value)}
+                                onKeyDown={handleKeyDown}
+                                placeholder={`Bình luận với vai trò ${user?.userData?.username || user?.username}...`}
+                                _placeholder={{ color: 'gray.400' }}
+                                height={'36px'}
+                                minHeight={'36px'}
+                                padding={'8px'}
+                                flex="1"
+                                border={'none'}
+                                boxShadow={'none'}
+                                lineHeight="short"
+                                width={'100%'}
+                                _focus={{
+                                    border: 'none !important', // Tắt border khi focus
+                                    boxShadow: 'none !important', // Tắt shadow khi focus
+                                }}
+                                resize="none"
+                            />
+                            <Button onClick={handleReplyComment}>Post</Button>
+                        </Flex>
+                    </Box>
+                )}
+
+                {comment.replies.map((reply) => (
+                    <Flex gap={4} py={2} my={4} w={'full'} key={reply._id}>
+                        <Avatar src={reply?.avatar} size={'sm'} />
+                        <Flex gap={1} w={'full'} flexDirection={'column'}>
+                            <Flex w={'full'} justifyContent={'space-between'} align={'center'}>
+                                <Text fontSize={'sm'} fontWeight={'bold'}>
+                                    {reply?.username}
+                                </Text>
+                                <Flex gap={2} alignItems={'center'}>
+                                    <Text fontSize={'sm'} color={'gray.light'} marginTop={'-2px'} marginRight={'4px'}>
+                                        {formatDistanceToNow(new Date(reply?.createdAt))}
+                                    </Text>
+                                    <BsThreeDots />
+                                </Flex>
+                            </Flex>
+                            <Text>{reply?.textComment}</Text>
+                        </Flex>
                     </Flex>
-                </Box>
+                ))}
             </Flex>
         </>
     );

@@ -21,8 +21,8 @@ const CommentComponent = ({ comment, lastComment }) => {
                             {comment?.username}
                         </Text>
                         <Flex gap={2} alignItems={'center'}>
-                            <Text fontSize={'sm'} color={'gray.light'} marginRight={'4px'}>
-                                {/* {formatDistanceToNow(new Date(comment?.createdAt))} */}
+                            <Text fontSize={'sm'} color={'gray.light'} marginTop={'-2px'} marginRight={'4px'}>
+                                {formatDistanceToNow(new Date(comment?.createdAt))}
                             </Text>
                             <BsThreeDots />
                         </Flex>

@@ -51,12 +51,7 @@ const HomeDetailPostPage = () => {
             try {
                 const res = await fetch(`/api/post/${postId}`);
                 const data = await res.json();
-                console.log('dataGetDetail: ', data);
 
-                // if (!data.success) {
-                //     showToast('Error', data.message, 'error');
-                //     return;
-                // }
                 if (data.error) {
                     showToast('Error', data.message, 'error');
                     return;
@@ -180,7 +175,7 @@ const HomeDetailPostPage = () => {
             <Divider my={4} />
             <Flex justifyContent={'space-between'}>
                 <Flex gap={2} alignItems={'center'}>
-                    <Text fontSize={'15px'}>Replies</Text>
+                    <Text fontSize={'15px'}>Comments</Text>
                     <Modal isOpen={isOpen} onClose={onClose}>
                         <ModalOverlay />
                         <ModalContent>
@@ -226,15 +221,7 @@ const HomeDetailPostPage = () => {
                 </Flex>
             </Flex>
             <Divider my={4} />
-            {/* {currentPost?.comments?.map((comment) => (
-                <CommentComponent
-                    key={comment?._id}
-                    comment={comment}
-                    lastComment={comment._id === currentPost.comments[currentPost.comments.length - 1]._id}
-                />
-            ))} */}
             {currentPost?.comments?.map((comment) => {
-                console.log('commentInCurrentPost: ', comment); // In ra mỗi comment trong quá trình lặp
                 return (
                     <CommentComponent
                         key={comment?._id}
