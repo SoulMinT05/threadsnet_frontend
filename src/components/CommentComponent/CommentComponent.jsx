@@ -23,8 +23,6 @@ const CommentComponent = ({ comment, lastComment }) => {
     const [posts, setPosts] = useRecoilState(postAtom);
     const currentUser = useRecoilValue(userAtom);
     const [loading, setLoading] = useState(false);
-    console.log('commentCommen: ', comment);
-    console.log('postsCommen: ', posts);
     const showToast = useShowToast();
 
     const handleDeleteComment = async () => {
@@ -41,7 +39,6 @@ const CommentComponent = ({ comment, lastComment }) => {
                 },
             });
             const data = await res.json();
-            console.log('dataDeleteComment: ', data);
             if (!data.success) {
                 showToast('Error', data.message, 'error');
                 return;
@@ -57,7 +54,6 @@ const CommentComponent = ({ comment, lastComment }) => {
                 }
                 return post;
             });
-            console.log('updatedPosts: ', updatedPosts);
             setPosts(updatedPosts);
         } catch (error) {
             showToast('Error', error, 'error');
