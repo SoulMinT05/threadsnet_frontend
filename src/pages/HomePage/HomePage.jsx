@@ -56,14 +56,6 @@ const HomePage = () => {
                     <Spinner size="xl" />
                 </Flex>
             )}
-            {/* <Flex align="center" py={'16px'}>
-                <Avatar src={user.userData.avatar} mr={4} />
-                <Text flex="1" fontSize={'md'}>
-                    Start a post ...
-                </Text>
-                <Button>Post</Button>
-            </Flex>
-            <Divider orientation="horizontal" mt={'20px'} mb={'8px'} /> */}
 
             {posts?.map((post, index) => (
                 <HomePostComponent

@@ -54,7 +54,7 @@ const FollowingPostComponent = ({ followingPost, postedBy }) => {
     return (
         <>
             <Link to={`/${user.username}/post/${followingPost._id}`}>
-                <Flex gap={3} mb={4} py={5}>
+                <Flex gap={3} py={5}>
                     <Flex flexDirection={'column'} alignItems={'center'}>
                         <Avatar
                             size="md"
@@ -93,7 +93,7 @@ const FollowingPostComponent = ({ followingPost, postedBy }) => {
                                 </Text>
                                 <Box className="icon-container" onClick={(e) => e.preventDefault()}>
                                     <Menu>
-                                        <MenuButton marginTop={'3px'}>
+                                        <MenuButton width={'40px'} padding={'3px 0px'}>
                                             <ThreeDotsSVG />
                                         </MenuButton>
                                         <Portal>

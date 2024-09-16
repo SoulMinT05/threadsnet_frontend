@@ -59,7 +59,7 @@ const components = {
             dialog: {
                 bg: mode('gray.100', '#101010')(props),
                 color: mode('gray.800', 'whiteAlpha.900')(props),
-                minWidth: '480px',
+                minWidth: '560px',
                 minHeight: '200px',
                 marginLeft: '96px',
                 // display: 'flex',

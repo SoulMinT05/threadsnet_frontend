@@ -61,6 +61,10 @@ const CreatePost = () => {
             const userLogin = JSON.parse(localStorage.getItem('userLogin'));
             const accessToken = userLogin?.accessToken;
 
+            if (!postText && !imgUrl) {
+                return showToast('Error', 'Please provide text or image for the post', 'error');
+            }
+
             const res = await fetch(`/api/post/createPost`, {
                 method: 'POST',
                 headers: {
@@ -69,8 +73,8 @@ const CreatePost = () => {
                 },
                 body: JSON.stringify({
                     postedBy: user?.userData._id || user?._id,
-                    text: postText,
-                    image: imgUrl,
+                    text: postText || '',
+                    image: imgUrl || '',
                 }),
             });
             const data = await res.json();
@@ -156,7 +160,6 @@ const CreatePost = () => {
 
                     <ModalFooter>
                         <Button
-                            //  colorScheme="blue"
                             width="100%" // Đặt chiều rộng 100%
                             bg="gray.800" // Màu nền của nút giống màu nền của modal
                             color="white" // Màu chữ của nút
@@ -171,7 +174,7 @@ const CreatePost = () => {
                             }}
                             onClick={handleCreatePost}
                             isLoading={loading}
-                            isDisabled={!postText}
+                            isDisabled={!postText && !imgUrl}
                         >
                             Post
                         </Button>

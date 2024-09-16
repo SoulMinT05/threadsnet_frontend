@@ -10,6 +10,7 @@ import {
     MenuItem,
     MenuList,
     Portal,
+    Spinner,
     Text,
 } from '@chakra-ui/react';
 import { formatDistanceToNow } from 'date-fns';
@@ -33,6 +34,7 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
     const [user, setUser] = useState(null);
     const currentUser = useRecoilValue(userAtom);
     const [posts, setPosts] = useRecoilState(postAtom);
+    const [loading, setLoading] = useState(false);
 
     useEffect(() => {
         const getUser = async () => {
@@ -53,6 +55,7 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
     }, [postedBy, showToast]);
 
     const handleDeletePost = async () => {
+        setLoading(true);
         try {
             if (!window.confirm('Are you sure you want to delete this post?')) return;
             const userLogin = JSON.parse(localStorage.getItem('userLogin'));
@@ -73,6 +76,8 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
             setPosts(posts.filter((p) => p._id !== post._id));
         } catch (error) {
             showToast('Error', error, 'error');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -81,7 +86,7 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
     return (
         <>
             <Link to={`/${user.username}/post/${post._id}`}>
-                <Flex gap={3} mb={4} py={5}>
+                <Flex gap={3} py={5}>
                     <Flex flexDirection={'column'} alignItems={'center'}>
                         <Avatar
                             size="md"
@@ -94,7 +99,6 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
                         />
                     </Flex>
 
-                    {/* Problem */}
                     <Flex flex={1} flexDirection={'column'} gap={2}>
                         <Flex justifyContent={'space-between'} w={'full'}>
                             <Flex w={'full'} alignItems={'center'}>
@@ -120,7 +124,7 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
                                 </Text>
                                 <Box className="icon-container" onClick={(e) => e.preventDefault()}>
                                     <Menu>
-                                        <MenuButton marginTop={'3px'}>
+                                        <MenuButton width={'40px'} padding={'3px 0px'}>
                                             <ThreeDotsSVG />
                                         </MenuButton>
                                         <Portal>
@@ -136,7 +140,8 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
                                                 {currentUser?.userData?._id === user?._id && (
                                                     <>
                                                         <Divider />
-                                                        <MenuItem
+                                                        {/* <MenuItem
+                                                            isLoading={loading}
                                                             onClick={handleDeletePost}
                                                             display="flex"
                                                             justifyContent="space-between"
@@ -145,7 +150,27 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
                                                         >
                                                             Delete
                                                             <DeleteSVG />
+                                                        </MenuItem> */}
+                                                        <MenuItem
+                                                            onClick={handleDeletePost}
+                                                            display="flex"
+                                                            justifyContent="space-between"
+                                                            padding={'12px'}
+                                                            color={'red'}
+                                                        >
+                                                            {loading ? (
+                                                                <>
+                                                                    Deleting...
+                                                                    <Spinner size="sm" />
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    Delete
+                                                                    <DeleteSVG />
+                                                                </>
+                                                            )}
                                                         </MenuItem>
+
                                                         <Divider />
                                                     </>
                                                 )}

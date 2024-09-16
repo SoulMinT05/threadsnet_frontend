@@ -116,19 +116,13 @@ const HomeDetailPostPage = () => {
                         <Image src="/verified.png" w="4" h={4} marginLeft={'4px'} />
                     </Flex>
                 </Flex>
-                {/* <Flex gap={4} alignItems={'center'}>
-                    <Text fontSize={'sm'} color={'gray.light'}>
-                        {formatDistanceToNow(new Date(user?.createdAt))}
-                    </Text>
-                    <BsThreeDots />
-                </Flex> */}
                 <Flex gap={4} alignItems={'center'} marginRight={'-12px'}>
                     <Text fontSize={'xs'} width={36} textAlign={'right'} color={'gray.light'}>
                         {formatDistanceToNow(new Date(currentPost?.createdAt))}
                     </Text>
                     <Box className="icon-container" onClick={(e) => e.preventDefault()}>
                         <Menu>
-                            <MenuButton marginTop={'3px'}>
+                            <MenuButton width={'40px'} padding={'3px 0px'}>
                                 <ThreeDotsSVG />
                             </MenuButton>
                             <Portal>
@@ -140,7 +134,7 @@ const HomeDetailPostPage = () => {
                                     {currentUser?.userData?._id === user?._id && (
                                         <>
                                             <Divider />
-                                            <MenuItem
+                                            {/* <MenuItem
                                                 onClick={handleDeletePost}
                                                 display="flex"
                                                 justifyContent="space-between"
@@ -149,6 +143,25 @@ const HomeDetailPostPage = () => {
                                             >
                                                 Delete
                                                 <DeleteSVG />
+                                            </MenuItem> */}
+                                            <MenuItem
+                                                onClick={handleDeletePost}
+                                                display="flex"
+                                                justifyContent="space-between"
+                                                padding={'12px'}
+                                                color={'red'}
+                                            >
+                                                {loading ? (
+                                                    <>
+                                                        Deleting...
+                                                        <Spinner size="sm" />
+                                                    </>
+                                                ) : (
+                                                    <>
+                                                        Delete
+                                                        <DeleteSVG />
+                                                    </>
+                                                )}
                                             </MenuItem>
                                             <Divider />
                                         </>

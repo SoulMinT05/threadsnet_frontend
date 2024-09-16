@@ -66,8 +66,13 @@ const ProfilePage = () => {
             </Flex>
             <Divider orientation="horizontal" mt={'20px'} mb={'8px'} />
 
-            {posts?.map((post) => (
-                <HomePostComponent key={post._id} post={post} postedBy={post.postedBy} />
+            {posts?.map((post, index) => (
+                <HomePostComponent
+                    key={post._id}
+                    post={post}
+                    isLastPost={index === posts.length - 1}
+                    postedBy={post.postedBy}
+                />
             ))}
         </Box>
     );
