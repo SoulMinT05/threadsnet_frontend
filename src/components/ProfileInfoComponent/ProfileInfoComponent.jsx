@@ -17,20 +17,23 @@ import './ProfileInfoComponent.scss';
 import { BsInstagram } from 'react-icons/bs';
 import { CgMoreO } from 'react-icons/cg';
 import { useToast } from '@chakra-ui/react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import userAtom from '../../atoms/userAtom';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import useShowToast from '../../hooks/useShowToast';
 
 const ProfileInfoComponent = ({ user }) => {
     const toast = useToast();
-    const currentUser = useRecoilValue(userAtom);
+
+    const navigate = useNavigate();
+    const [currentUser, setCurrentUser] = useRecoilState(userAtom);
     // user: username in params
     // currentUser: user in localStorage
     const [following, setFollowing] = useState(user.followers.includes(currentUser?.userData?._id));
     const showToast = useShowToast();
     const [updating, setUpdating] = useState(false);
+    const [updatingBlock, setUpdatingBlock] = useState(false);
 
     const handleFollow = async () => {
         if (!currentUser) {
@@ -66,6 +69,50 @@ const ProfileInfoComponent = ({ user }) => {
             showToast('Error', error, 'error');
         } finally {
             setUpdating(false);
+        }
+    };
+
+    const handleBlock = async () => {
+        if (!currentUser) {
+            showToast('Error', 'Please login to follow', 'error');
+            return;
+        }
+        if (updatingBlock) return;
+        setUpdatingBlock(true);
+        try {
+            if (
+                !window.confirm(
+                    'Are you sure you want to delete this post? You cannot see them posts after blocking them',
+                )
+            )
+                return;
+            const userLogin = JSON.parse(localStorage.getItem('userLogin'));
+            const accessToken = userLogin?.accessToken;
+            const res = await fetch(`/api/user/blocked/${user._id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
+            });
+            const data = await res.json();
+            if (!data.success) {
+                showToast('Error', data.message, 'error');
+                return;
+            }
+
+            const updatedUserLogin = {
+                ...userLogin,
+                userData: data.response,
+                success: data.success,
+                message: data.message,
+                accessToken: userLogin.accessToken,
+            };
+            localStorage.setItem('userLogin', JSON.stringify(updatedUserLogin));
+            setCurrentUser(updatedUserLogin);
+            showToast('Success', data.message, 'success');
+            navigate('/blockedList');
+        } catch (error) {
+            showToast('Error', error, 'error');
+        } finally {
+            setUpdatingBlock(false);
         }
     };
 
@@ -119,11 +166,19 @@ const ProfileInfoComponent = ({ user }) => {
                     <Button size={'sm'}>Update profile</Button>
                 </Link>
             )}
-            {currentUser?.userData?._id !== user._id && (
-                <Button size={'sm'} onClick={handleFollow} isLoading={updating}>
-                    {following ? 'Unfollow' : 'Follow'}
-                </Button>
-            )}
+            <Flex alignItems={'center'} justifyContent={'space-between'} width={'full'}>
+                {currentUser?.userData?._id !== user._id && (
+                    <Button size={'sm'} onClick={handleFollow} isLoading={updating}>
+                        {following ? 'Unfollow' : 'Follow'}
+                    </Button>
+                )}
+
+                {currentUser?.userData?._id !== user._id && (
+                    <Button size={'sm'} onClick={handleBlock} colorScheme="red" isLoading={updatingBlock}>
+                        Block
+                    </Button>
+                )}
+            </Flex>
 
             <Flex w={'full'} justifyContent={'space-between'}>
                 <Flex gap={2} alignItems={'center'}>

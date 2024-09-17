@@ -1,26 +1,27 @@
-import { Avatar, Box, Button, Divider, Flex, Spinner, Text } from '@chakra-ui/react';
+import { Box, Flex, Spinner } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import useShowToast from '../../hooks/useShowToast';
 import HomePostComponent from '../../components/HomePostComponent/HomePostComponent';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import postAtom from '../../atoms/postAtom';
-import userAtom from '../../atoms/userAtom';
 
 const HomePage = () => {
     const showToast = useShowToast();
     const [posts, setPosts] = useRecoilState(postAtom);
     const [loading, setLoading] = useState(true);
-    const user = useRecoilValue(userAtom);
 
     useEffect(() => {
         const getFeedPosts = async () => {
             setLoading(true);
             setPosts([]);
             try {
+                const userLogin = JSON.parse(localStorage.getItem('userLogin'));
+                const accessToken = userLogin?.accessToken;
                 const res = await fetch(`/api/post/getAllPosts`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
+                        Authorization: `Bearer ${accessToken}`,
                     },
                 });
                 const data = await res.json();

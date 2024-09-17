@@ -4,18 +4,16 @@ import userAtom from '../../atoms/userAtom';
 import { useState } from 'react';
 import useShowToast from '../../hooks/useShowToast';
 
-const MorePage = () => {
+const BlockedListPage = () => {
     const userByAtom = useRecoilValue(userAtom);
     const user = userByAtom?.userData;
-    // const currentUser = useRecoilValue(userAtom);
     const [currentUser, setCurrentUser] = useRecoilState(userAtom);
-    console.log('user: ', user);
 
     const [loading, setLoading] = useState(false);
     const showToast = useShowToast();
 
     const handleUnblock = async (e) => {
-        setLoading(true);
+        // setLoading(true);
         const userId = e.target.getAttribute('data-reply-id');
         try {
             // if (!window.confirm('Are you sure you want to delete this post?')) return;
@@ -34,7 +32,7 @@ const MorePage = () => {
                 showToast('Error', data.message, 'error');
                 return;
             }
-            showToast('Success', 'Deleted post successfully', 'success');
+            showToast('Success', 'Unblocked user successfully', 'success');
 
             const updatedUserLogin = {
                 ...userLogin,
@@ -56,14 +54,20 @@ const MorePage = () => {
     };
     return (
         <div>
-            <Box w="100%" maxW="600px" mx="auto" mt="4">
-                <Text fontSize="2xl" mb="4" fontWeight="bold">
-                    Blocked Users
-                </Text>
+            <Box
+                w="100%"
+                maxW="600px"
+                mx="auto"
+                border="1px solid"
+                borderColor="gray.200"
+                borderRadius="md"
+                mt="4"
+                p="4"
+            >
                 <List spacing={3}>
                     {user?.blockedList.length > 0 ? (
                         user?.blockedList.map((u) => (
-                            <ListItem key={u._id} p="3" border="1px solid #E2E8F0" borderRadius="md">
+                            <ListItem key={u._id} p="3" borderColor="gray.200">
                                 <Flex align="center" justify="space-between">
                                     <Flex align="center">
                                         <Avatar name={u.username} src={u.avatar} />
@@ -73,9 +77,9 @@ const MorePage = () => {
                                         </Box>
                                     </Flex>
                                     <Button
-                                        isLoading={loading}
+                                        // isLoading={loading === u._id}
                                         data-reply-id={u._id}
-                                        colorScheme="red"
+                                        colorScheme="green"
                                         size="sm"
                                         onClick={handleUnblock}
                                     >
@@ -93,4 +97,4 @@ const MorePage = () => {
     );
 };
 
-export default MorePage;
+export default BlockedListPage;

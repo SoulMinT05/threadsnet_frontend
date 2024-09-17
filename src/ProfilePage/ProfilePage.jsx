@@ -49,9 +49,9 @@ const ProfilePage = () => {
         <Box width="640px" borderRadius="lg" borderWidth="1px" boxShadow="md" p={4} m={4} mx="auto" marginRight={'0'}>
             <ProfileInfoComponent user={user} />
 
-            {!fetchingPosts && posts.length === 0 && (
+            {/* {!fetchingPosts && posts.length === 0 && (
                 <h1 style={{ textAlign: 'center' }}>Người dùng chưa đăng bài viết nào</h1>
-            )}
+            )} */}
             {fetchingPosts && (
                 <Flex justifyContent={'center'} my={12}>
                     <Spinner size={'xl'} />

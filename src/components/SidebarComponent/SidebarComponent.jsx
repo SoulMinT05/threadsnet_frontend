@@ -1,4 +1,4 @@
-import { Flex, Icon, Link, Box, useColorMode, IconButton, Button } from '@chakra-ui/react';
+import { Flex, Icon, Link, Box, useColorMode, IconButton } from '@chakra-ui/react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { FaHome, FaHeart, FaUser } from 'react-icons/fa';
 import { useRecoilValue } from 'recoil';
@@ -52,6 +52,9 @@ const SidebarComponent = () => {
             <Box>
                 <Link onClick={() => navigate('/more')} _hover={{ opacity: '0.6' }} marginBottom={'30px'}>
                     <MoreSVG />
+                </Link>
+                <Link onClick={() => navigate('/blockedList')} _hover={{ opacity: '0.6' }} marginBottom={'30px'}>
+                    <BlockSVG />
                 </Link>
                 <IconButton
                     aria-label="Toggle color mode"
@@ -210,6 +213,23 @@ const MoreSVG = () => {
                 y1="20"
                 y2="20"
             ></line>
+        </svg>
+    );
+};
+
+const BlockSVG = () => {
+    return (
+        <svg
+            aria-label=""
+            fill="currentColor"
+            height="24"
+            role="img"
+            style={{ marginBottom: '30px' }}
+            viewBox="0 0 24 24"
+            width="24"
+        >
+            <title></title>
+            <path d="M20.153 20.106A11.493 11.493 0 0 0 3.893 3.858c-.007.007-.016.009-.023.016s-.009.016-.015.023a11.493 11.493 0 0 0 16.247 16.26c.01-.009.022-.012.03-.02.01-.01.012-.022.021-.031Zm1.348-8.102a9.451 9.451 0 0 1-2.119 5.968L6.033 4.622a9.49 9.49 0 0 1 15.468 7.382Zm-19 0a9.451 9.451 0 0 1 2.118-5.967l13.35 13.35A9.49 9.49 0 0 1 2.5 12.003Z"></path>
         </svg>
     );
 };

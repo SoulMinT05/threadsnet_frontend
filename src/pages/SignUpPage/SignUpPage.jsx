@@ -25,7 +25,6 @@ import userAtom from '../../atoms/userAtom';
 
 const SignUpPage = () => {
     const showToast = useShowToast();
-    const setUser = useSetRecoilState(userAtom);
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
     const navigateLogin = () => {

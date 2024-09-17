@@ -29,6 +29,9 @@ const HeaderComponent = () => {
                 if (location.pathname === `/${user?.userData?.username}`) {
                     return 'Profile';
                 }
+                // else if (location.pathname === '/blockedList') {
+                //     return 'Blocked List';
+                // }
                 // else if(location.pathname === `/${user?.userData?.username}/post/${post?.userData?.username}`) {
                 //     return post.userData.username;
                 // }
@@ -42,6 +45,14 @@ const HeaderComponent = () => {
             <Box display="flex" justifyContent="center" mt="16px">
                 <Text fontSize="lg" fontWeight="bold">
                     Profile
+                </Text>
+            </Box>
+        );
+    } else if (location.pathname === '/blockedList') {
+        return (
+            <Box display="flex" justifyContent="center" mt="16px">
+                <Text fontSize="lg" fontWeight="bold">
+                    Blocked List
                 </Text>
             </Box>
         );

@@ -20,6 +20,8 @@ import LikePage from './pages/LikePage/LikePage';
 import MessagePage from './pages/MessagePage/MessagePage';
 import NotificationPage from './pages/NotificationPage/NotificationPage';
 import MorePage from './pages/MorePage/MorePage';
+import BlockedListPage from './pages/BlockedListPage/BlockedListPage';
+import SettingsPage from './pages/SettingsPage/SettingsPage';
 import AdminPage from './pages/AdminPage/AdminPage';
 
 function App() {
@@ -69,6 +71,8 @@ function App() {
                         <Route path="/message" element={user && <MessagePage />} />
                         <Route path="/notification" element={user && <NotificationPage />} />
                         <Route path="/more" element={user && <MorePage />} />
+                        <Route path="/blockedList" element={user && <BlockedListPage />} />
+                        <Route path="/settings" element={user && <SettingsPage />} />
                         <Route path="*" element={<NotFoundPage />} />
                         {/* </Routes> */}
                     </Routes>
