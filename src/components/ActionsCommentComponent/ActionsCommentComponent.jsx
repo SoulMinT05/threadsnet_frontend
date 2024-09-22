@@ -292,6 +292,7 @@ const ActionsHomePostComponent = ({ comment }) => {
                                     boxShadow: 'none !important', // Tắt shadow khi focus
                                 }}
                                 resize="none"
+                                overflow="hidden"
                             />
                             <Button onClick={handleReplyComment}>Post</Button>
                         </Flex>

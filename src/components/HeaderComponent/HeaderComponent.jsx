@@ -56,6 +56,22 @@ const HeaderComponent = () => {
                 </Text>
             </Box>
         );
+    } else if (location.pathname === '/changePassword') {
+        return (
+            <Box display="flex" justifyContent="center" mt="16px">
+                <Text fontSize="lg" fontWeight="bold">
+                    Change password
+                </Text>
+            </Box>
+        );
+    } else if (location.pathname === '/updateProfile') {
+        return (
+            <Box display="flex" justifyContent="center" mt="16px">
+                <Text fontSize="lg" fontWeight="bold">
+                    Update profile
+                </Text>
+            </Box>
+        );
     }
 
     return (

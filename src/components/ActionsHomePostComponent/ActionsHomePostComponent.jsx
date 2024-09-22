@@ -211,12 +211,8 @@ const ActionsHomePostComponent = ({ post }) => {
                                 boxShadow: 'none !important', // Tắt shadow khi focus
                             }}
                             resize="none"
+                            overflow="hidden"
                         />
-                        {/* <InputRightElement onClick={handleReply} width="4.5rem" height="100%">
-                                <Button isLoading={isReplying} h="100%" size="lg" borderRadius="full" fontSize="24px">
-                                    <FiSend />
-                                </Button>
-                            </InputRightElement> */}
                         <Button onClick={handleReply}>Post</Button>
                     </Flex>
                 </Box>

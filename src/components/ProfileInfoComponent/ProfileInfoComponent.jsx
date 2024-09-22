@@ -162,9 +162,14 @@ const ProfileInfoComponent = ({ user }) => {
             </Flex>
             <Text>{user.bio}</Text>
             {currentUser?.userData?._id === user._id && (
-                <Link as={RouterLink} to="/updateProfile">
-                    <Button size={'sm'}>Update profile</Button>
-                </Link>
+                <Flex alignItems={'center'} justifyContent={'space-between'} width={'full'}>
+                    <Link as={RouterLink} to="/updateProfile">
+                        <Button size={'sm'}>Update profile</Button>
+                    </Link>
+                    <Link as={RouterLink} to="/changePassword">
+                        <Button size={'sm'}>Change password</Button>
+                    </Link>
+                </Flex>
             )}
             <Flex alignItems={'center'} justifyContent={'space-between'} width={'full'}>
                 {currentUser?.userData?._id !== user._id && (

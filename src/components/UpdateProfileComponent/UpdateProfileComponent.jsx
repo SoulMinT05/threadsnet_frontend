@@ -92,11 +92,11 @@ const UpdateProfileComponent = () => {
                         spacing={4}
                         w={'full'}
                         maxW={'md'}
-                        bg={useColorModeValue('white', 'gray.700')}
+                        // bg={useColorModeValue('white', 'gray.700')}
                         rounded={'xl'}
                         boxShadow={'lg'}
                         p={6}
-                        my={12}
+                        my={'16px'}
                     >
                         <Heading lineHeight={1.1} fontSize={{ base: '2xl', sm: '3xl' }}>
                             User Profile Edit
@@ -164,16 +164,6 @@ const UpdateProfileComponent = () => {
                                 type="text"
                             />
                         </FormControl>
-                        {/* <FormControl>
-                            <FormLabel>Password</FormLabel>
-                            <Input
-                                value={inputs.password}
-                                onChange={(e) => setInputs({ ...inputs, password: e.target.value })}
-                                placeholder="Your password"
-                                _placeholder={{ color: 'gray.500' }}
-                                type="text"
-                            />
-                        </FormControl> */}
                         <Stack spacing={6} direction={['column', 'row']}>
                             <Button
                                 bg={'red.400'}

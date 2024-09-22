@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import ProfilePage from './ProfilePage/ProfilePage';
+import ProfilePage from './pages/ProfilePage/ProfilePage';
 import HomeDetailPostPage from './pages/HomeDetailPostPage/HomeDetailPostPage';
 import HeaderComponent from './components/HeaderComponent/HeaderComponent';
 import { Container, Flex } from '@chakra-ui/react';
@@ -23,6 +23,7 @@ import MorePage from './pages/MorePage/MorePage';
 import BlockedListPage from './pages/BlockedListPage/BlockedListPage';
 import SettingsPage from './pages/SettingsPage/SettingsPage';
 import AdminPage from './pages/AdminPage/AdminPage';
+import ChangePasswordComponent from './components/ChangePasswordComponent/ChangePasswordComponent';
 
 function App() {
     const user = useRecoilValue(userAtom);
@@ -66,6 +67,7 @@ function App() {
                                 )
                             }
                         />
+                        <Route path="/changePassword" element={user && <ChangePasswordComponent />} />
                         <Route path="/liked" element={user && <LikePage />} />
                         <Route path="/search" element={user && <SearchPage />} />
                         <Route path="/message" element={user && <MessagePage />} />

@@ -1,4 +1,20 @@
-import { Flex, Icon, Link, Box, useColorMode, IconButton } from '@chakra-ui/react';
+import {
+    Flex,
+    Icon,
+    Link,
+    Box,
+    useColorMode,
+    IconButton,
+    Button,
+    Popover,
+    PopoverTrigger,
+    PopoverContent,
+    PopoverHeader,
+    PopoverBody,
+    PopoverFooter,
+    Text,
+    useDisclosure,
+} from '@chakra-ui/react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { FaHome, FaHeart, FaUser } from 'react-icons/fa';
 import { useRecoilValue } from 'recoil';
@@ -14,6 +30,7 @@ const SidebarComponent = () => {
     const user = useRecoilValue(userAtom);
     const { colorMode, toggleColorMode } = useColorMode();
     const logout = useLogout();
+    const { isOpen, onOpen, onClose } = useDisclosure();
 
     return (
         <Flex
@@ -50,12 +67,82 @@ const SidebarComponent = () => {
             </Box>
 
             <Box>
-                <Link onClick={() => navigate('/more')} _hover={{ opacity: '0.6' }} marginBottom={'30px'}>
-                    <MoreSVG />
-                </Link>
-                <Link onClick={() => navigate('/blockedList')} _hover={{ opacity: '0.6' }} marginBottom={'30px'}>
+                {/* <Popover isOpen={isOpen} onClose={onClose} zIndex={10}>
+                    <PopoverTrigger onClick={isOpen ? onClose : onOpen}>
+                        <Link onClick={isOpen ? onClose : onOpen} _hover={{ opacity: '0.6' }} marginBottom={'30px'}>
+                            <MoreSVG />
+                        </Link>
+                    </PopoverTrigger>
+                    <PopoverContent boxShadow="none" padding={'12px'} width={'266px'} zIndex={20}>
+                        <PopoverBody zIndex={10}>
+                            <Box>
+                                <Flex
+                                    alignItems={'center'}
+                                    justifyContent={'start'}
+                                    padding={'8px'}
+                                    _hover={{ opacity: '0.6' }}
+                                    cursor={'pointer'}
+                                    onClick={onClose}
+                                >
+                                    <Link onClick={() => navigate('/blockedList')} _hover={{ opacity: '0.6' }}>
+                                        <BlockSVG />
+                                    </Link>
+                                    <Text marginLeft={'16px'}>Blocked List</Text>
+                                </Flex>
+                                <Flex
+                                    alignItems={'center'}
+                                    justifyContent={'start'}
+                                    padding={'8px'}
+                                    _hover={{ opacity: '0.6' }}
+                                    cursor={'pointer'}
+                                >
+                                    <IconButton
+                                        aria-label="Toggle color mode"
+                                        _hover={{ opacity: '0.6' }}
+                                        icon={colorMode === 'dark' ? <BsFillSunFill /> : <FaMoon />} // Thay đổi icon dựa trên colorMode
+                                        onClick={toggleColorMode}
+                                        variant="ghost"
+                                        fontSize="24px"
+                                        cursor="pointer"
+                                        // boxSize={6}
+                                        // mb="30px"
+                                        ml={'-8px'}
+                                        _focus={{ boxShadow: 'none' }}
+                                    />
+                                    <Text marginLeft={'9px'}>Switch appearance</Text>
+                                </Flex>
+                            </Box>
+                        </PopoverBody>
+                        <PopoverFooter zIndex={10}>
+                            <Flex
+                                alignItems={'center'}
+                                justifyContent={'start'}
+                                padding={'8px'}
+                                _hover={{ opacity: '0.6' }}
+                                cursor={'pointer'}
+                                onClick={onClose}
+                            >
+                                <Link onClick={logout} _hover={{ opacity: '0.6' }}>
+                                    <Icon color={'red'} as={FiLogOut} boxSize={6} />
+                                </Link>
+                                <Text
+                                    _hover={{ opacity: '0.6' }}
+                                    cursor={'pointer'}
+                                    marginLeft={'16px'}
+                                    marginTop={'-6px'}
+                                    color="red"
+                                >
+                                    Logout
+                                </Text>
+                            </Flex>
+                        </PopoverFooter>
+                    </PopoverContent>
+                </Popover> */}
+
+                <Link onClick={() => navigate('/blockedList')} _hover={{ opacity: '0.6' }}>
                     <BlockSVG />
                 </Link>
+
                 <IconButton
                     aria-label="Toggle color mode"
                     _hover={{ opacity: '0.6' }}
@@ -68,9 +155,9 @@ const SidebarComponent = () => {
                     mb="30px"
                     ml={'-8px'}
                 />
-                {/* <Button size={'xs'}>
-                    <FiLogOut size={20} onClick={logout} />
-                </Button> */}
+                <Link onClick={() => navigate('/settings')} _hover={{ opacity: '0.6' }} marginBottom={'30px'}>
+                    <SettingSVG />
+                </Link>
                 {user && (
                     <Link onClick={logout} _hover={{ opacity: '0.6' }} marginBottom={'30px'}>
                         <Icon color={'red'} as={FiLogOut} boxSize={6} mb="30px" />
@@ -230,6 +317,39 @@ const BlockSVG = () => {
         >
             <title></title>
             <path d="M20.153 20.106A11.493 11.493 0 0 0 3.893 3.858c-.007.007-.016.009-.023.016s-.009.016-.015.023a11.493 11.493 0 0 0 16.247 16.26c.01-.009.022-.012.03-.02.01-.01.012-.022.021-.031Zm1.348-8.102a9.451 9.451 0 0 1-2.119 5.968L6.033 4.622a9.49 9.49 0 0 1 15.468 7.382Zm-19 0a9.451 9.451 0 0 1 2.118-5.967l13.35 13.35A9.49 9.49 0 0 1 2.5 12.003Z"></path>
+        </svg>
+    );
+};
+
+const SettingSVG = () => {
+    return (
+        <svg
+            aria-label="Settings"
+            fill="currentColor"
+            height="24"
+            role="img"
+            viewBox="0 0 24 24"
+            width="24"
+            style={{ marginBottom: '30px' }}
+        >
+            <title>Settings</title>
+            <circle
+                cx="12"
+                cy="12"
+                fill="none"
+                r="8.635"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+            ></circle>
+            <path
+                d="M14.232 3.656a1.269 1.269 0 0 1-.796-.66L12.93 2h-1.86l-.505.996a1.269 1.269 0 0 1-.796.66m-.001 16.688a1.269 1.269 0 0 1 .796.66l.505.996h1.862l.505-.996a1.269 1.269 0 0 1 .796-.66M3.656 9.768a1.269 1.269 0 0 1-.66.796L2 11.07v1.862l.996.505a1.269 1.269 0 0 1 .66.796m16.688-.001a1.269 1.269 0 0 1 .66-.796L22 12.93v-1.86l-.996-.505a1.269 1.269 0 0 1-.66-.796M7.678 4.522a1.269 1.269 0 0 1-1.03.096l-1.06-.348L4.27 5.587l.348 1.062a1.269 1.269 0 0 1-.096 1.03m11.8 11.799a1.269 1.269 0 0 1 1.03-.096l1.06.348 1.318-1.317-.348-1.062a1.269 1.269 0 0 1 .096-1.03m-14.956.001a1.269 1.269 0 0 1 .096 1.03l-.348 1.06 1.317 1.318 1.062-.348a1.269 1.269 0 0 1 1.03.096m11.799-11.8a1.269 1.269 0 0 1-.096-1.03l.348-1.06-1.317-1.318-1.062.348a1.269 1.269 0 0 1-1.03-.096"
+                fill="none"
+                stroke="currentColor"
+                strokeLinejoin="round"
+                strokeWidth="2"
+            ></path>
         </svg>
     );
 };

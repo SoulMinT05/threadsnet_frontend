@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
-import ProfileInfoComponent from '../components/ProfileInfoComponent/ProfileInfoComponent';
+import ProfileInfoComponent from '../../components/ProfileInfoComponent/ProfileInfoComponent';
 import { useParams } from 'react-router-dom';
-import useShowToast from '../hooks/useShowToast';
+import useShowToast from '../../hooks/useShowToast';
 import { Spinner, Flex, Divider, Avatar, Button, Box } from '@chakra-ui/react';
-import HomePostComponent from '../components/HomePostComponent/HomePostComponent';
-import useGetUserProfile from '../hooks/useGetUserProfile';
+import HomePostComponent from '../../components/HomePostComponent/HomePostComponent';
+import useGetUserProfile from '../../hooks/useGetUserProfile';
 import { useRecoilState } from 'recoil';
-import postAtom from '../atoms/postAtom';
-import CreatePostProfileComponent from '../components/CreatePostProfileComponent/CreatePostProfileComponent';
+import postAtom from '../../atoms/postAtom';
+import CreatePostProfileComponent from '../../components/CreatePostProfileComponent/CreatePostProfileComponent';
 
 const ProfilePage = () => {
     const { loading, user } = useGetUserProfile();
@@ -20,7 +20,15 @@ const ProfilePage = () => {
         const getPosts = async () => {
             setFetchingPosts(true);
             try {
-                const res = await fetch(`/api/post/user/${username}`);
+                const userLogin = JSON.parse(localStorage.getItem('userLogin'));
+                const accessToken = userLogin?.accessToken;
+                const res = await fetch(`/api/post/user/${username}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                });
                 const data = await res.json();
                 if (!data.success) {
                     showToast('Error', data.message, 'error');

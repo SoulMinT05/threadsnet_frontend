@@ -28,6 +28,54 @@ const colors = {
 };
 
 const components = {
+    Link: {
+        baseStyle: {
+            _focus: {
+                boxShadow: 'none', // Loại bỏ border xanh khi focus
+            },
+        },
+    },
+    IconButton: {
+        baseStyle: {
+            _focus: {
+                boxShadow: 'none', // Loại bỏ border xanh khi focus
+            },
+        },
+    },
+
+    Popover: {
+        baseStyle: (props) => ({
+            content: {
+                bg: mode('#101010', '#262626')(props),
+                color: mode('gray.800', 'whiteAlpha.900')(props),
+                boxShadow: 'md',
+                borderRadius: 'md',
+                marginLeft: '60px',
+                marginTop: '-60px',
+                zIndex: 20,
+
+                _focus: {
+                    boxShadow: 'none', // Loại bỏ border xanh khi focus
+                },
+            },
+            header: {
+                bg: mode('#101010', '#262626')(props),
+                fontWeight: 'bold',
+                color: mode('gray.800', 'whiteAlpha.900')(props),
+                _focus: {
+                    boxShadow: 'none', // Loại bỏ border xanh khi focus
+                },
+            },
+            body: {
+                bg: mode('#101010', '#262626')(props),
+                color: mode('gray.800', 'whiteAlpha.900')(props),
+            },
+            footer: {
+                bg: mode('#101010', '#262626')(props),
+                color: mode('gray.800', 'whiteAlpha.900')(props),
+            },
+        }),
+    },
     Divider: {
         baseStyle: (props) => ({
             borderColor: mode('gray.300', 'whiteAlpha.300')(props),
