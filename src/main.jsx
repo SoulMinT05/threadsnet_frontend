@@ -96,8 +96,11 @@ const components = {
             },
             item: {
                 bg: mode('gray.100', '#101010')(props),
+
                 _hover: {
                     bg: mode('gray.200', '#1e1e1e')(props),
+                    // Hiện tooltip khi hover vào item
+                    position: 'relative',
                 },
             },
         }),

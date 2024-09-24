@@ -4,15 +4,23 @@ import {
     Box,
     Divider,
     Flex,
+    IconButton,
     Image,
     Menu,
     MenuButton,
     MenuItem,
     MenuList,
     Portal,
+    Select,
     Spinner,
     Text,
+    Tooltip,
 } from '@chakra-ui/react';
+import { AiFillEye, AiFillLock, AiFillEyeInvisible, AiOutlineUsergroupAdd } from 'react-icons/ai';
+import { MdPublic } from 'react-icons/md';
+import { FaUserFriends } from 'react-icons/fa';
+import { MdGroups } from 'react-icons/md';
+
 import { formatDistanceToNow } from 'date-fns';
 import { useEffect, useState } from 'react';
 import useShowToast from '../../hooks/useShowToast';
@@ -34,6 +42,8 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
     const [user, setUser] = useState(null);
     const currentUser = useRecoilValue(userAtom);
     const [posts, setPosts] = useRecoilState(postAtom);
+    const [visibility, setVisibility] = useState(post?.visibility);
+    const [showTooltip, setShowTooltip] = useState(false);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -53,6 +63,42 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
 
         getUser();
     }, [postedBy, showToast]);
+
+    const handleVisibilityChange = async (e) => {
+        const newVisibility = e.currentTarget.getAttribute('value');
+        setVisibility(newVisibility);
+
+        try {
+            const userLogin = JSON.parse(localStorage.getItem('userLogin'));
+            const accessToken = userLogin?.accessToken;
+
+            const res = await fetch(`/api/post/updateVisibilityPost/${post._id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${accessToken}`,
+                },
+                body: JSON.stringify({
+                    postId: post?._id,
+                    visibility: newVisibility,
+                }),
+            });
+            const data = await res.json();
+            console.log('dataUpdateVisibility: ', data);
+            if (!data.success) {
+                showToast('Error', data.message, 'error');
+                return;
+            }
+
+            showToast('Success', data.message, 'success');
+            setPosts((prevPosts) => {
+                return prevPosts.map((p) => (p._id === post._id ? { ...p, visibility: newVisibility } : p));
+            });
+            setShowTooltip(false);
+        } catch (error) {
+            showToast('Error', error, 'error');
+        }
+    };
 
     const handleDeletePost = async () => {
         setLoading(true);
@@ -116,12 +162,79 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
                                     {user.username}
                                 </Text>
                                 <Image src="./verified.png" w={4} h={4} ml={1} />
-                            </Flex>
-                            <Flex gap={4} alignItems={'center'} marginRight={'-12px'}>
-                                <Text fontSize={'xs'} width={36} textAlign={'right'} color={'gray.light'}>
-                                    {/* {formatDate(post.createdAt)} */}
+
+                                <Text fontSize={'xs'} mx={'8px'} color={'gray.light'}>
                                     {formatDistanceToNow(new Date(post.createdAt))}
                                 </Text>
+                                <Box width={36} onClick={(e) => e.preventDefault()}>
+                                    <Menu
+                                        onMouseEnter={() => setShowTooltip(true)} // Hiện tooltip khi hover vào Menu
+                                        onMouseLeave={() => setShowTooltip(false)}
+                                    >
+                                        <Tooltip
+                                            label={post.visibility.charAt(0).toUpperCase() + post.visibility.slice(1)}
+                                            aria-label={post.visibility}
+                                            isClose={showTooltip}
+                                        >
+                                            <MenuButton mt={'6px'}>
+                                                {post.visibility === 'public' && <MdPublic color="gray" size={16} />}
+                                                {post.visibility === 'private' && <AiFillLock color="gray" size={16} />}
+                                                {post.visibility === 'friends' && (
+                                                    <FaUserFriends color="gray" size={16} />
+                                                )}
+                                                {post.visibility === 'followers' && <MdGroups color="gray" size={20} />}
+                                            </MenuButton>
+                                        </Tooltip>
+                                        {currentUser?.userData?._id === user?._id && (
+                                            <Portal>
+                                                <MenuList>
+                                                    <MenuItem
+                                                        onClick={handleVisibilityChange}
+                                                        value="public"
+                                                        display="flex"
+                                                        justifyContent="space-between"
+                                                        padding={'12px'}
+                                                    >
+                                                        Public
+                                                        <MdPublic color="gray" size={16} />
+                                                    </MenuItem>
+                                                    <MenuItem
+                                                        onClick={handleVisibilityChange}
+                                                        value="friends"
+                                                        display="flex"
+                                                        justifyContent="space-between"
+                                                        padding={'12px'}
+                                                    >
+                                                        Friends
+                                                        <FaUserFriends color="gray" size={16} />
+                                                    </MenuItem>
+                                                    <MenuItem
+                                                        onClick={handleVisibilityChange}
+                                                        value="followers"
+                                                        display="flex"
+                                                        justifyContent="space-between"
+                                                        padding={'12px'}
+                                                    >
+                                                        Followers
+                                                        <MdGroups color="gray" size={20} />
+                                                    </MenuItem>
+                                                    <MenuItem
+                                                        onClick={handleVisibilityChange}
+                                                        value="private"
+                                                        display="flex"
+                                                        justifyContent="space-between"
+                                                        padding={'12px'}
+                                                    >
+                                                        Private
+                                                        <AiFillLock color="gray" size={16} />
+                                                    </MenuItem>
+                                                </MenuList>
+                                            </Portal>
+                                        )}
+                                    </Menu>
+                                </Box>
+                            </Flex>
+                            <Flex gap={4} alignItems={'center'} marginRight={'-12px'}>
                                 <Box className="icon-container" onClick={(e) => e.preventDefault()}>
                                     <Menu>
                                         <MenuButton width={'40px'} padding={'3px 0px'}>
@@ -140,17 +253,6 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
                                                 {currentUser?.userData?._id === user?._id && (
                                                     <>
                                                         <Divider />
-                                                        {/* <MenuItem
-                                                            isLoading={loading}
-                                                            onClick={handleDeletePost}
-                                                            display="flex"
-                                                            justifyContent="space-between"
-                                                            padding={'12px'}
-                                                            color={'red'}
-                                                        >
-                                                            Delete
-                                                            <DeleteSVG />
-                                                        </MenuItem> */}
                                                         <MenuItem
                                                             onClick={handleDeletePost}
                                                             display="flex"
@@ -290,6 +392,25 @@ const DeleteSVG = () => {
                 strokeLinecap="round"
                 strokeWidth="1.5"
             ></path>
+        </svg>
+    );
+};
+
+const LogoFollowers = () => {
+    return (
+        <svg
+            stroke="currentColor"
+            fill="currentColor"
+            strokeWidth="0"
+            viewBox="0 0 24 24"
+            color="gray"
+            height="20"
+            width="20"
+            xmlns="http://www.w3.org/2000/svg"
+            style="color: gray;width: 20px;"
+        >
+            <path fill="none" d="M0 0h24v24H0z"></path>
+            <path d="M12 12.75c1.63 0 3.07.39 4.24.9 1.08.48 1.76 1.56 1.76 2.73V18H6v-1.61c0-1.18.68-2.26 1.76-2.73 1.17-.52 2.61-.91 4.24-.91zM4 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1.13 1.1c-.37-.06-.74-.1-1.13-.1-.99 0-1.93.21-2.78.58A2.01 2.01 0 0 0 0 16.43V18h4.5v-1.61c0-.83.23-1.61.63-2.29zM20 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm4 3.43c0-.81-.48-1.53-1.22-1.85A6.95 6.95 0 0 0 20 14c-.39 0-.76.04-1.13.1.4.68.63 1.46.63 2.29V18H24v-1.57zM12 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"></path>
         </svg>
     );
 };

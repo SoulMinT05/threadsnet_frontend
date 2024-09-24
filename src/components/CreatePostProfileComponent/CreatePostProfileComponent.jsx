@@ -17,6 +17,7 @@ import {
     Textarea,
     Divider,
     useDisclosure,
+    Select,
 } from '@chakra-ui/react';
 import { useRef, useState } from 'react';
 import usePreviewImg from '../../hooks/usePreviewImg';
@@ -32,6 +33,7 @@ const MAX_CHAR = 500;
 const CreatePostProfileComponent = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const [postText, setPostText] = useState('');
+    const [visibility, setVisibility] = useState('public');
     const imgRef = useRef(null);
     const [remainingChar, setRemainingChar] = useState(MAX_CHAR);
     const user = useRecoilValue(userAtom);
@@ -41,6 +43,9 @@ const CreatePostProfileComponent = () => {
 
     const { handleImgChange, imgUrl, setImgUrl } = usePreviewImg();
     const [loading, setLoading] = useState(false);
+    const handleVisibilityChange = (e) => {
+        setVisibility(e.target.value);
+    };
     const handleTextChange = (e) => {
         const inputText = e.target.value;
 
@@ -70,6 +75,7 @@ const CreatePostProfileComponent = () => {
                     postedBy: user?.userData._id || user?._id,
                     text: postText,
                     image: imgUrl,
+                    visibility: visibility || 'public',
                 }),
             });
             const data = await res.json();
@@ -97,7 +103,16 @@ const CreatePostProfileComponent = () => {
             <Text onClick={onOpen} opacity={'0.5'}>
                 Start a post ...
             </Text>
-            <Modal isOpen={isOpen} onClose={onClose}>
+            <Modal
+                isOpen={isOpen}
+                onClose={onClose}
+                onCloseComplete={() => {
+                    setPostText('');
+                    setImgUrl('');
+                    setVisibility('public');
+                    setRemainingChar(MAX_CHAR);
+                }}
+            >
                 <ModalOverlay />
                 <ModalContent>
                     <Flex alignItems="center">
@@ -125,13 +140,23 @@ const CreatePostProfileComponent = () => {
                                 resize="none"
                             />
                             <Flex alignItems={'center'} justifyContent="space-between">
-                                <Flex alignItems={'center'}>
-                                    <Input type="file" hidden ref={imgRef} onChange={handleImgChange} />
-                                    <BsFillImageFill
-                                        style={{ marginLeft: '5px', cursor: 'pointer' }}
-                                        size={16}
-                                        onClick={() => imgRef.current.click()}
-                                    />
+                                <Flex justifyContent="start">
+                                    <Flex alignItems={'center'}>
+                                        <Input type="file" hidden ref={imgRef} onChange={handleImgChange} />
+                                        <BsFillImageFill
+                                            style={{ marginLeft: '5px', cursor: 'pointer' }}
+                                            size={16}
+                                            onClick={() => imgRef.current.click()}
+                                        />
+                                    </Flex>
+                                    <FormControl maxWidth="120px" ml="16px">
+                                        <Select value={visibility} onChange={handleVisibilityChange}>
+                                            <option value="public">Public</option>
+                                            <option value="friends">Friends</option>
+                                            <option value="followers">Followers</option>
+                                            <option value="private">Private</option>
+                                        </Select>
+                                    </FormControl>
                                 </Flex>
                                 <Text fontSize={'xs'} fontWeight={'bold'}>
                                     {remainingChar} / {MAX_CHAR}
