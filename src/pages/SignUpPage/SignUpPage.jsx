@@ -60,11 +60,7 @@ const SignUpPage = () => {
         <>
             <Flex align={'center'} justify={'center'}>
                 <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
-                    <Stack align={'center'}>
-                        <Heading fontSize={'4xl'} textAlign={'center'}>
-                            Sign up
-                        </Heading>
-                    </Stack>
+                    <Stack align={'center'}></Stack>
                     <Box rounded={'lg'} bg={useColorModeValue('white', 'gray.dark')} boxShadow={'lg'} p={8}>
                         <Stack spacing={4}>
                             <HStack>

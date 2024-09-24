@@ -24,6 +24,8 @@ import BlockedListPage from './pages/BlockedListPage/BlockedListPage';
 import SettingsPage from './pages/SettingsPage/SettingsPage';
 import AdminPage from './pages/AdminPage/AdminPage';
 import ChangePasswordComponent from './components/ChangePasswordComponent/ChangePasswordComponent';
+import ForgotPasswordPage from './pages/ForgotPasswordPage/ForgotPasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage/ResetPasswordPage';
 
 function App() {
     const user = useRecoilValue(userAtom);
@@ -31,7 +33,11 @@ function App() {
 
     return (
         <Flex>
-            {location.pathname !== '/admin' && <SidebarComponent />}
+            {location.pathname !== '/admin' &&
+                location.pathname !== '/login' &&
+                location.pathname !== '/register' &&
+                location.pathname !== '/forgotPassword' &&
+                location.pathname !== '/resetPassword' && <SidebarComponent />}
 
             <Flex
                 flex="1"
@@ -41,13 +47,25 @@ function App() {
             >
                 <Container p={0} sx={{ margin: 0 }} maxW={location.pathname === '/admin' ? 'full' : '640px'}>
                     {location.pathname !== '/admin' && <HeaderComponent />}
+
                     <Routes>
                         <Route path="/admin" element={user && <AdminPage />} />
                         {/* <Routes> */}
                         <Route path="/" element={user ? <HomePage /> : <Navigate to="/login" />} />
                         <Route path="/following" element={user ? <FollowingPage /> : <Navigate to="/login" />} />
                         <Route path="/register" element={<SignUpPage />} />
-                        <Route path="/login" element={!user ? <LoginPage /> : <Navigate to="/" />} />
+                        <Route
+                            path="/login"
+                            element={!user || !user.userData.accessToken ? <LoginPage /> : <Navigate to="/" />}
+                        />
+                        <Route
+                            path="/forgotPassword"
+                            element={!user || !user.userData.accessToken ? <ForgotPasswordPage /> : <Navigate to="/" />}
+                        />
+                        <Route
+                            path="/resetPassword/:token"
+                            element={!user || !user.userData.accessToken ? <ResetPasswordPage /> : <Navigate to="/" />}
+                        />
 
                         <Route
                             path="/updateProfile"

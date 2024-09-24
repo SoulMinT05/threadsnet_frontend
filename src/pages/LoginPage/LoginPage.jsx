@@ -13,7 +13,9 @@ import {
     Text,
     useColorModeValue,
     Link,
+    Divider,
 } from '@chakra-ui/react';
+import { Link as RouterLink } from 'react-router-dom';
 import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -63,11 +65,7 @@ const LoginPage = () => {
         <>
             <Flex align={'center'} justify={'center'}>
                 <Stack spacing={8} mx={'auto'} maxW={'lg'} py={12} px={6}>
-                    <Stack align={'center'}>
-                        <Heading fontSize={'4xl'} textAlign={'center'}>
-                            Login
-                        </Heading>
-                    </Stack>
+                    <Stack align={'center'}></Stack>
                     <Box
                         rounded={'lg'}
                         bg={useColorModeValue('white', 'gray.dark')}
@@ -120,7 +118,18 @@ const LoginPage = () => {
                                     Login
                                 </Button>
                             </Stack>
-                            <Stack pt={6}>
+                            <Stack
+                                to="/forgotPassword"
+                                direction={{ base: 'column', sm: 'row' }}
+                                align={'start'}
+                                justify={'end'}
+                            >
+                                <Link as={RouterLink} to={`/forgotPassword`} color={'blue.400'}>
+                                    Forgot password?
+                                </Link>
+                            </Stack>
+                            <Divider />
+                            <Stack pt={4}>
                                 <Text align={'center'}>
                                     Don&apos;t have account?{' '}
                                     <Link color={'blue.400'} onClick={navigateRegister}>

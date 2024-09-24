@@ -1,19 +1,16 @@
-import { Menu, MenuButton, MenuList, MenuItem, Text, Box, Flex, Link, Button } from '@chakra-ui/react';
+import { Menu, MenuButton, MenuList, MenuItem, Text, Box, Flex } from '@chakra-ui/react';
 import { ChevronDownIcon, CheckIcon } from '@chakra-ui/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Link as RouterLink } from 'react-router-dom';
-import { FiLogOut } from 'react-icons/fi';
 
 import './HeaderComponent.scss';
 import { useRecoilValue } from 'recoil';
 import userAtom from '../../atoms/userAtom';
-import useLogout from '../../hooks/useLogout';
 
 const HeaderComponent = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const user = useRecoilValue(userAtom);
-    const logout = useLogout();
 
     const getTitle = () => {
         switch (location.pathname) {
@@ -69,6 +66,38 @@ const HeaderComponent = () => {
             <Box display="flex" justifyContent="center" mt="16px">
                 <Text fontSize="lg" fontWeight="bold">
                     Update profile
+                </Text>
+            </Box>
+        );
+    } else if (location.pathname === '/login') {
+        return (
+            <Box display="flex" justifyContent="center" mt="16px">
+                <Text fontSize="lg" fontWeight="bold">
+                    Login
+                </Text>
+            </Box>
+        );
+    } else if (location.pathname === '/register') {
+        return (
+            <Box display="flex" justifyContent="center" mt="16px">
+                <Text fontSize="lg" fontWeight="bold">
+                    Sign up
+                </Text>
+            </Box>
+        );
+    } else if (location.pathname === '/forgotPassword') {
+        return (
+            <Box display="flex" justifyContent="center" mt="16px">
+                <Text fontSize="lg" fontWeight="bold">
+                    Forgot password
+                </Text>
+            </Box>
+        );
+    } else if (location.pathname.includes('/resetPassword')) {
+        return (
+            <Box display="flex" justifyContent="center" mt="16px">
+                <Text fontSize="lg" fontWeight="bold">
+                    Reset password
                 </Text>
             </Box>
         );

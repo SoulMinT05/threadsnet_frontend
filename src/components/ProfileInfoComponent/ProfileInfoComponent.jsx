@@ -2,6 +2,7 @@ import {
     Avatar,
     Box,
     Button,
+    Divider,
     Flex,
     Link,
     Menu,
@@ -9,6 +10,7 @@ import {
     MenuItem,
     MenuList,
     Portal,
+    Spinner,
     Text,
     VStack,
 } from '@chakra-ui/react';
@@ -30,10 +32,56 @@ const ProfileInfoComponent = ({ user }) => {
     const [currentUser, setCurrentUser] = useRecoilState(userAtom);
     // user: username in params
     // currentUser: user in localStorage
+    const isFriend = currentUser?.userData?.friends.some(
+        (friend) =>
+            (friend.requester === currentUser?.userData?._id &&
+                friend.recipient === user._id &&
+                friend.status === 'accepted') ||
+            (friend.requester === user._id &&
+                friend.recipient === currentUser?.userData?._id &&
+                friend.status === 'accepted'),
+    );
     const [following, setFollowing] = useState(user.followers.includes(currentUser?.userData?._id));
     const showToast = useShowToast();
     const [updating, setUpdating] = useState(false);
     const [updatingBlock, setUpdatingBlock] = useState(false);
+
+    const handleAddFriend = async () => {
+        if (updating) return; // Tránh lặp lại yêu cầu
+        setUpdating(true);
+
+        try {
+            const userLogin = JSON.parse(localStorage.getItem('userLogin'));
+            const accessToken = userLogin?.accessToken;
+
+            const res = await fetch(`/api/friend/addFriend/${user._id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${accessToken}`,
+                },
+                body: JSON.stringify({
+                    requester: currentUser.userData._id, // ID của currentUser (người gửi yêu cầu)
+                    recipient: user._id, // ID của người nhận yêu cầu
+                }),
+            });
+
+            const data = await res.json();
+            console.log('dataAddFriend: ', data);
+            if (!data.success) {
+                showToast('Error', 'Failed to send friend request', 'error');
+                return;
+            }
+
+            showToast('Success', 'Friend request sent successfully', 'success');
+
+            // Cập nhật trạng thái nếu cần
+        } catch (error) {
+            showToast('Error', error.message || 'An error occurred', 'error');
+        } finally {
+            setUpdating(false);
+        }
+    };
 
     const handleFollow = async () => {
         if (!currentUser) {
@@ -172,6 +220,12 @@ const ProfileInfoComponent = ({ user }) => {
                 </Flex>
             )}
             <Flex alignItems={'center'} justifyContent={'space-between'} width={'full'}>
+                {/* {currentUser?.userData?._id !== user._id && (
+                    <Button size={'sm'} onClick={handleAddFriend} isLoading={updating}>
+                      
+                        Add friend
+                    </Button>
+                )} */}
                 {currentUser?.userData?._id !== user._id && (
                     <Button size={'sm'} onClick={handleFollow} isLoading={updating}>
                         {following ? 'Unfollow' : 'Follow'}
@@ -242,3 +296,22 @@ const ProfileInfoComponent = ({ user }) => {
 };
 
 export default ProfileInfoComponent;
+
+const ThreeDotsSVG = () => {
+    return (
+        <svg
+            aria-label="More"
+            color="currentColor"
+            fill="currentColor"
+            role="img"
+            viewBox="0 0 24 24"
+            height="20"
+            width="20"
+        >
+            <title>More</title>
+            <circle cx="12" cy="12" r="1.5"></circle>
+            <circle cx="6" cy="12" r="1.5"></circle>
+            <circle cx="18" cy="12" r="1.5"></circle>
+        </svg>
+    );
+};
