@@ -18,7 +18,7 @@ const ActionsHomePostComponent = ({ post }) => {
     //destructuring: post_ is object copied from post
     const userByAtom = useRecoilValue(userAtom);
     const user = userByAtom?.userData;
-    const [liked, setLiked] = useState(post.likes.includes(user?._id)); //problem
+    const [liked, setLiked] = useState(post.likes.includes(user?._id));
 
     const [posts, setPosts] = useRecoilState(postAtom);
     const [isLiking, setIsLiking] = useState(false);

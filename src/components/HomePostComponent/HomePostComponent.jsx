@@ -46,6 +46,15 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
     const [showTooltip, setShowTooltip] = useState(false);
     const [loading, setLoading] = useState(false);
 
+    const [saved, setSaved] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+
+    useEffect(() => {
+        if (user && post) {
+            setSaved(post.savedLists.includes(user._id));
+        }
+    }, [user, post]);
+
     useEffect(() => {
         const getUser = async () => {
             if (!postedBy) return;
@@ -98,6 +107,62 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
             setShowTooltip(false);
         } catch (error) {
             showToast('Error', error, 'error');
+        }
+    };
+
+    const handleSavePost = async () => {
+        if (isSaving) return;
+        setIsSaving(true);
+        setLoading(true);
+
+        try {
+            const userLogin = JSON.parse(localStorage.getItem('userLogin'));
+            const accessToken = userLogin?.accessToken;
+            const res = await fetch(`/api/post/saved/${post._id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            const data = await res.json();
+            console.log('dataSaved: ', data);
+            if (!data.success) {
+                showToast('Error', data.message, 'error');
+                return;
+            }
+
+            if (!saved) {
+                const updatedPosts = posts.map((p) => {
+                    if (p._id === post._id) {
+                        return {
+                            ...p,
+                            savedLists: [...p.savedLists, user._id],
+                        };
+                    }
+                    return p;
+                });
+                setPosts(updatedPosts);
+            } else {
+                const updatedPosts = posts.map((p) => {
+                    if (p._id === post._id) {
+                        return {
+                            ...p,
+                            savedLists: p.savedLists.filter((id) => id !== user._id),
+                        };
+                    }
+                    return p;
+                });
+                setPosts(updatedPosts);
+            }
+
+            setSaved(!saved);
+            showToast('Success', data.message, 'success');
+        } catch (error) {
+            showToast('Error', error, 'error');
+        } finally {
+            setIsSaving(false);
+            setLoading(false);
         }
     };
 
@@ -244,12 +309,15 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
                                         <Portal>
                                             <MenuList>
                                                 <MenuItem
+                                                    onClick={handleSavePost}
                                                     display="flex"
                                                     justifyContent="space-between"
                                                     padding={'12px'}
                                                 >
-                                                    Save
-                                                    <SaveSVG />
+                                                    {saved ? 'Unsave' : 'Save'}
+                                                    {saved ? <UnsaveSVG /> : <SaveSVG />}
+                                                    {/* {saved ? 'Save' : 'Unsave'}
+                                                    {saved ? <SaveSVG /> : <UnsaveSVG />} */}
                                                 </MenuItem>
                                                 {currentUser?.userData?._id === user?._id && (
                                                     <>
@@ -331,38 +399,25 @@ const ThreeDotsSVG = () => {
 
 const SaveSVG = () => {
     return (
-        <svg
-            aria-label=""
-            role="img"
-            viewBox="0 0 20 20"
-            color="currentColor"
-            fill="currentColor"
-            height="20"
-            width="20"
-        >
-            <title></title>
-            <path d="M3.40039 17.7891V3.94995C3.40039 2.43117 4.6316 1.19995 6.15039 1.19995H13.8448C15.3636 1.19995 16.5948 2.43117 16.5948 3.94995V17.6516C16.5948 18.592 15.4579 19.063 14.7929 18.398L10.6201 14.2252C10.4198 14.0249 10.097 14.0184 9.88889 14.2106L5.17191 18.5647C4.49575 19.1888 3.40039 18.7093 3.40039 17.7891Z"></path>
+        <svg aria-label="Save" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24">
+            <title>Save</title>
+            <polygon
+                fill="none"
+                points="20 21 12 13.44 4 21 4 3 20 3 20 21"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+            ></polygon>
         </svg>
     );
 };
 
 const UnsaveSVG = () => {
     return (
-        <svg
-            aria-label=""
-            role="img"
-            viewBox="0 0 20 20"
-            color="currentColor"
-            fill="currentColor"
-            height="20"
-            width="20"
-        >
-            <title></title>
-            <path
-                d="M2.6084 5.6994V17.789C2.6084 19.3993 4.52528 20.2386 5.70855 19.1463L10.2392 14.9642L14.2328 18.9577C14.9168 19.6418 15.8863 19.6389 16.5692 19.1861L10.4748 13.2987C10.0828 13.2301 9.66521 13.3393 9.35159 13.6288L4.63461 17.9829C4.46557 18.1389 4.19173 18.019 4.19173 17.789V7.22896L2.6084 5.6994ZM15.8028 12.1889V3.94987C15.8028 2.86831 14.9261 1.99154 13.8445 1.99154H6.15006C5.88463 1.99154 5.63152 2.04435 5.40069 2.14003L4.20789 0.987743C4.76557 0.621348 5.43292 0.408203 6.15006 0.408203H13.8445C15.8005 0.408203 17.3862 1.99386 17.3862 3.94987V13.7185L15.8028 12.1889Z"
-                fill="currentColor"
-            ></path>
-            <path d="M1.5 1.5L18.5 18" stroke="currentColor" strokeLinecap="round" strokeWidth="1.5"></path>
+        <svg aria-label="Remove" fill="currentColor" height="24" role="img" viewBox="0 0 24 24" width="24">
+            <title>Remove</title>
+            <path d="M20 22a.999.999 0 0 1-.687-.273L12 14.815l-7.313 6.912A1 1 0 0 1 3 21V3a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1Z"></path>
         </svg>
     );
 };

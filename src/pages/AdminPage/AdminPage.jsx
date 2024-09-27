@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button, Layout, theme } from 'antd';
 import './AdminPage.scss';
 import LogoComponent from '../../components/LogoComponent/LogoComponent';
@@ -69,12 +69,8 @@ const AdminPage = () => {
                         icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
                     />
                 </Header>
-                <Content style={{ margin: '16px' }}>
-                    {/* Nội dung của trang quản lý người dùng */}
-                    {/* <UserManagementComponent /> */}
-                    {/* <UserPage /> */}
-                    {renderContent()}
-                </Content>
+                {/* Main content */}
+                <Content style={{ margin: '16px' }}>{renderContent()}</Content>
             </Layout>
         </Layout>
     );
