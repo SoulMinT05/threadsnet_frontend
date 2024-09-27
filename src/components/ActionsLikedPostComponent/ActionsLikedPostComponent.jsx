@@ -4,11 +4,11 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import userAtom from '../../atoms/userAtom';
 import useShowToast from '../../hooks/useShowToast';
 import postAtom from '../../atoms/postAtom';
-const ActionsFollowingPostComponent = ({ followingPost }) => {
-    //destructuring: followingPost_ is object copied from followingPost
+const ActionsLikedPostComponent = ({ likedPost }) => {
+    //destructuring: likedPost_ is object copied from likedPost
     const userByAtom = useRecoilValue(userAtom);
     const user = userByAtom?.userData;
-    const [liked, setLiked] = useState(followingPost.likes.includes(user?._id)); //problem
+    const [liked, setLiked] = useState(likedPost.likes.includes(user?._id)); //problem
 
     const [posts, setPosts] = useRecoilState(postAtom);
     const [isLiking, setIsLiking] = useState(false);
@@ -24,7 +24,7 @@ const ActionsFollowingPostComponent = ({ followingPost }) => {
         try {
             const userLogin = JSON.parse(localStorage.getItem('userLogin'));
             const accessToken = userLogin?.accessToken;
-            const res = await fetch('/api/post/liked/' + followingPost._id, {
+            const res = await fetch('/api/post/liked/' + likedPost._id, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
             });
@@ -37,7 +37,7 @@ const ActionsFollowingPostComponent = ({ followingPost }) => {
 
             if (!liked) {
                 const updatedPosts = posts.map((p) => {
-                    if (p._id === followingPost._id) {
+                    if (p._id === likedPost._id) {
                         return {
                             ...p,
                             likes: [...p.likes, user._id],
@@ -48,7 +48,7 @@ const ActionsFollowingPostComponent = ({ followingPost }) => {
                 setPosts(updatedPosts);
             } else {
                 const updatedPosts = posts.map((p) => {
-                    if (p._id === followingPost._id) {
+                    if (p._id === likedPost._id) {
                         return {
                             ...p,
                             likes: p.likes.filter((id) => id !== user._id),
@@ -89,7 +89,7 @@ const ActionsFollowingPostComponent = ({ followingPost }) => {
         try {
             const userLogin = JSON.parse(localStorage.getItem('userLogin'));
             const accessToken = userLogin?.accessToken;
-            const res = await fetch('/api/comment/' + followingPost._id, {
+            const res = await fetch('/api/comment/' + likedPost._id, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
                 body: JSON.stringify({
@@ -99,7 +99,7 @@ const ActionsFollowingPostComponent = ({ followingPost }) => {
             const data = await res.json();
             if (!data.success) return showToast('Error', data.message, 'error');
             const updatedPosts = posts?.map((p) => {
-                if (p._id === followingPost._id) {
+                if (p._id === likedPost._id) {
                     return {
                         ...p,
                         comments: [...p.comments, data.newComment],
@@ -147,7 +147,7 @@ const ActionsFollowingPostComponent = ({ followingPost }) => {
                             onClick={handleLiked}
                         >
                             {/* {likes} */}
-                            {followingPost?.likes.length}
+                            {likedPost?.likes.length}
                         </Text>
 
                         <svg
@@ -171,7 +171,7 @@ const ActionsFollowingPostComponent = ({ followingPost }) => {
                             ></path>
                         </svg>
                         <Text color={'gray.light'} fontSize={'sm'} style={{ marginLeft: '-22px' }}>
-                            {followingPost?.comments.length}
+                            {likedPost?.comments.length}
                         </Text>
 
                         <RepostSVG />
@@ -210,7 +210,7 @@ const ActionsFollowingPostComponent = ({ followingPost }) => {
     );
 };
 
-export default ActionsFollowingPostComponent;
+export default ActionsLikedPostComponent;
 
 const RepostSVG = () => {
     return (

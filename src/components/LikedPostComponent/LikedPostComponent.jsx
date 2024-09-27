@@ -4,54 +4,57 @@ import {
     Box,
     Divider,
     Flex,
-    IconButton,
     Image,
     Menu,
     MenuButton,
     MenuItem,
     MenuList,
     Portal,
-    Select,
     Spinner,
     Text,
     Tooltip,
 } from '@chakra-ui/react';
-import { AiFillEye, AiFillLock, AiFillEyeInvisible, AiOutlineUsergroupAdd } from 'react-icons/ai';
+import { formatDistanceToNow } from 'date-fns';
+// import ActionsFollowingPostComponent from '../ActionsFollowingPostComponent/ActionsFollowingPostComponent';
+import { useEffect, useState } from 'react';
+import useShowToast from '../../hooks/useShowToast';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import userAtom from '../../atoms/userAtom';
+
+import { AiFillLock } from 'react-icons/ai';
 import { MdPublic } from 'react-icons/md';
 import { FaUserFriends } from 'react-icons/fa';
 import { MdGroups } from 'react-icons/md';
-
-import { formatDistanceToNow } from 'date-fns';
-import { useEffect, useState } from 'react';
-import useShowToast from '../../hooks/useShowToast';
-import ActionsHomePostComponent from '../ActionsHomePostComponent/ActionsHomePostComponent';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import userAtom from '../../atoms/userAtom';
 import postAtom from '../../atoms/postAtom';
+import ActionsLikedPostComponent from '../ActionsLikedPostComponent/ActionsLikedPostComponent';
 
-const HomePostComponent = ({ post, postedBy, isLastPost }) => {
-    // const formatDate = (dateString) => {
-    //     const date = new Date(dateString);
-    //     const day = String(date.getDate()).padStart(2, '0');
-    //     const month = String(date.getMonth() + 1).padStart(2, '0');
-    //     const year = date.getFullYear();
-    //     return `${day}/${month}/${year}`;
-    // };
+const LikedPostComponent = ({ likedPost, postedBy, isLastPost }) => {
+    const [visibility, setVisibility] = useState(likedPost?.visibility);
+    const [showTooltip, setShowTooltip] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [posts, setPosts] = useRecoilState(postAtom);
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const year = date.getFullYear();
+        return `${day}/${month}/${year}`;
+    };
     const showToast = useShowToast();
     const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const currentUser = useRecoilValue(userAtom);
-    const [posts, setPosts] = useRecoilState(postAtom);
-    const [visibility, setVisibility] = useState(post?.visibility);
-    const [showTooltip, setShowTooltip] = useState(false);
-    const [loading, setLoading] = useState(false);
+    console.log('postedByLiekd: ', postedBy);
 
     useEffect(() => {
         const getUser = async () => {
-            if (!postedBy) return;
+            // if (!postedBy?._id) return;
+
             try {
                 const res = await fetch(`/api/user/profile/` + postedBy);
                 const data = await res.json();
+                console.log('dataUserProfile: ', data);
                 if (!data.success) {
                     showToast('Error', data.message, 'error');
                 }
@@ -61,7 +64,6 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
                 setUser(null);
             }
         };
-
         getUser();
     }, [postedBy, showToast]);
 
@@ -73,19 +75,18 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
             const userLogin = JSON.parse(localStorage.getItem('userLogin'));
             const accessToken = userLogin?.accessToken;
 
-            const res = await fetch(`/api/post/updateVisibilityPost/${post._id}`, {
+            const res = await fetch(`/api/post/updateVisibilityPost/${likedPost._id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${accessToken}`,
                 },
                 body: JSON.stringify({
-                    postId: post?._id,
+                    postId: likedPost?._id,
                     visibility: newVisibility,
                 }),
             });
             const data = await res.json();
-            console.log('dataUpdateVisibility: ', data);
             if (!data.success) {
                 showToast('Error', data.message, 'error');
                 return;
@@ -93,7 +94,7 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
 
             showToast('Success', data.message, 'success');
             setPosts((prevPosts) => {
-                return prevPosts.map((p) => (p._id === post._id ? { ...p, visibility: newVisibility } : p));
+                return prevPosts.map((p) => (p._id === likedPost._id ? { ...p, visibility: newVisibility } : p));
             });
             setShowTooltip(false);
         } catch (error) {
@@ -107,7 +108,7 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
             if (!window.confirm('Are you sure you want to delete this post?')) return;
             const userLogin = JSON.parse(localStorage.getItem('userLogin'));
             const accessToken = userLogin?.accessToken;
-            const res = await fetch(`/api/post/${post._id}`, {
+            const res = await fetch(`/api/post/${likedPost._id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -120,7 +121,7 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
                 return;
             }
             showToast('Success', 'Deleted post successfully', 'success');
-            setPosts(posts.filter((p) => p._id !== post._id));
+            setPosts(posts.filter((p) => p._id !== likedPost._id));
         } catch (error) {
             showToast('Error', error, 'error');
         } finally {
@@ -132,7 +133,7 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
 
     return (
         <>
-            <Link to={`/${user.username}/post/${post._id}`}>
+            <Link to={`/${user?.username}/post/${likedPost._id}`}>
                 <Flex gap={3} py={5}>
                     <Flex flexDirection={'column'} alignItems={'center'}>
                         <Avatar
@@ -160,30 +161,36 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
                                         navigate(`/${user?.username}`);
                                     }}
                                 >
-                                    {user.username}
+                                    {user?.username}
                                 </Text>
                                 <Image src="./verified.png" w={4} h={4} ml={1} />
 
                                 <Text fontSize={'xs'} mx={'8px'} color={'gray.light'}>
-                                    {formatDistanceToNow(new Date(post.createdAt))}
+                                    {formatDistanceToNow(new Date(likedPost.createdAt))}
                                 </Text>
                                 <Box width={36} onClick={(e) => e.preventDefault()}>
-                                    <Menu
-                                        onMouseEnter={() => setShowTooltip(true)} // Hiện tooltip khi hover vào Menu
-                                        onMouseLeave={() => setShowTooltip(false)}
-                                    >
+                                    <Menu>
                                         <Tooltip
-                                            label={post.visibility.charAt(0).toUpperCase() + post.visibility.slice(1)}
-                                            aria-label={post.visibility}
+                                            label={
+                                                likedPost.visibility.charAt(0).toUpperCase() +
+                                                likedPost.visibility.slice(1)
+                                            }
+                                            aria-label={likedPost.visibility}
                                             isClose={showTooltip}
                                         >
                                             <MenuButton mt={'6px'}>
-                                                {post.visibility === 'public' && <MdPublic color="gray" size={16} />}
-                                                {post.visibility === 'private' && <AiFillLock color="gray" size={16} />}
-                                                {post.visibility === 'friends' && (
+                                                {likedPost.visibility === 'public' && (
+                                                    <MdPublic color="gray" size={16} />
+                                                )}
+                                                {likedPost.visibility === 'private' && (
+                                                    <AiFillLock color="gray" size={16} />
+                                                )}
+                                                {likedPost.visibility === 'friends' && (
                                                     <FaUserFriends color="gray" size={16} />
                                                 )}
-                                                {post.visibility === 'followers' && <MdGroups color="gray" size={20} />}
+                                                {likedPost.visibility === 'followers' && (
+                                                    <MdGroups color="gray" size={20} />
+                                                )}
                                             </MenuButton>
                                         </Tooltip>
                                         {currentUser?.userData?._id === user?._id && (
@@ -284,31 +291,32 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
                             </Flex>
                         </Flex>
                         <Text fontSize={'sm'} marginTop={'-8px'}>
-                            {post.text}
+                            {likedPost.text}
                         </Text>
-                        {post.image && (
+                        {likedPost.image && (
                             <Box borderRadius={6} overflow={'hidden'} border={'1px solid'} borderColor={'gray.light'}>
                                 <Image
                                     maxHeight={'560px'}
                                     objectFit={'cover'}
-                                    src={post.image}
+                                    src={likedPost.image}
                                     w={'full'}
                                     alt="Image"
                                 />
                             </Box>
                         )}
                         <Flex gap={3} my={1} alignItems={'center'}>
-                            <ActionsHomePostComponent post={post} />
+                            <ActionsLikedPostComponent likedPost={likedPost} />
                         </Flex>
                     </Flex>
                 </Flex>
             </Link>
+            {/* <Text>{likedPost.text}</Text> */}
             {!isLastPost && <Divider orientation="horizontal" />}
         </>
     );
 };
 
-export default HomePostComponent;
+export default LikedPostComponent;
 
 const ThreeDotsSVG = () => {
     return (
@@ -393,25 +401,6 @@ const DeleteSVG = () => {
                 strokeLinecap="round"
                 strokeWidth="1.5"
             ></path>
-        </svg>
-    );
-};
-
-const LogoFollowers = () => {
-    return (
-        <svg
-            stroke="currentColor"
-            fill="currentColor"
-            strokeWidth="0"
-            viewBox="0 0 24 24"
-            color="gray"
-            height="20"
-            width="20"
-            xmlns="http://www.w3.org/2000/svg"
-            style="color: gray;width: 20px;"
-        >
-            <path fill="none" d="M0 0h24v24H0z"></path>
-            <path d="M12 12.75c1.63 0 3.07.39 4.24.9 1.08.48 1.76 1.56 1.76 2.73V18H6v-1.61c0-1.18.68-2.26 1.76-2.73 1.17-.52 2.61-.91 4.24-.91zM4 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1.13 1.1c-.37-.06-.74-.1-1.13-.1-.99 0-1.93.21-2.78.58A2.01 2.01 0 0 0 0 16.43V18h4.5v-1.61c0-.83.23-1.61.63-2.29zM20 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm4 3.43c0-.81-.48-1.53-1.22-1.85A6.95 6.95 0 0 0 20 14c-.39 0-.76.04-1.13.1.4.68.63 1.46.63 2.29V18H24v-1.57zM12 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z"></path>
         </svg>
     );
 };

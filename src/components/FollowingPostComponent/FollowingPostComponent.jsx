@@ -28,6 +28,7 @@ import { MdGroups } from 'react-icons/md';
 import postAtom from '../../atoms/postAtom';
 
 const FollowingPostComponent = ({ followingPost, postedBy, isLastPost }) => {
+    console.log('postedByFl: ', postedBy);
     const [visibility, setVisibility] = useState(followingPost?.visibility);
     const [showTooltip, setShowTooltip] = useState(false);
     const [loading, setLoading] = useState(false);
@@ -47,8 +48,11 @@ const FollowingPostComponent = ({ followingPost, postedBy, isLastPost }) => {
 
     useEffect(() => {
         const getUser = async () => {
+            if (!postedBy) return;
+
             try {
                 const res = await fetch(`/api/user/profile/` + postedBy);
+                console.log('postedByFoll: ', postedBy);
                 const data = await res.json();
                 if (!data.success) {
                     showToast('Error', data.message, 'error');
