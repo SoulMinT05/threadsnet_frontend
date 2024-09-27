@@ -1,6 +1,7 @@
 import { Menu } from 'antd';
 import {
     HomeOutlined,
+    UserOutlined,
     AppstoreOutlined,
     AreaChartOutlined,
     SettingOutlined,
@@ -8,26 +9,46 @@ import {
 } from '@ant-design/icons';
 import './MenuListComponent.scss';
 
-const MenuListComponent = ({ darkTheme }) => {
-    return (
-        <Menu theme={darkTheme ? 'dark' : 'light'} mode="inline" className="menu-bar">
-            <Menu.Item key="home" icon={<HomeOutlined />}>
-                Home
-            </Menu.Item>
-            <Menu.Item key="activity" icon={<AppstoreOutlined />}>
-                Activity
-            </Menu.Item>
-            <Menu.Item key="progress" icon={<AreaChartOutlined />}>
-                Progress
-            </Menu.Item>
-            <Menu.Item key="payment" icon={<PayCircleOutlined />}>
-                Payment
-            </Menu.Item>
-            <Menu.Item key="setting" icon={<SettingOutlined />}>
-                Setting
-            </Menu.Item>
-        </Menu>
-    );
+const MenuListComponent = ({ darkTheme, onMenuClick }) => {
+    const items = [
+        {
+            key: 'home',
+            icon: <HomeOutlined />,
+            label: 'Dashboard',
+            onClick: () => onMenuClick('home'),
+        },
+        {
+            key: 'user',
+            icon: <UserOutlined />,
+            label: 'User',
+            onClick: () => onMenuClick('user'),
+        },
+        {
+            key: 'activity',
+            icon: <AppstoreOutlined />,
+            label: 'Activity',
+            onClick: () => onMenuClick('activity'),
+        },
+        {
+            key: 'progress',
+            icon: <AreaChartOutlined />,
+            label: 'Progress',
+            onClick: () => onMenuClick('progress'),
+        },
+        {
+            key: 'payment',
+            icon: <PayCircleOutlined />,
+            label: 'Payment',
+            onClick: () => onMenuClick('payment'),
+        },
+        {
+            key: 'setting',
+            icon: <SettingOutlined />,
+            label: 'Setting',
+            onClick: () => onMenuClick('setting'),
+        },
+    ];
+    return <Menu theme={darkTheme ? 'dark' : 'light'} mode="inline" className="menu-bar" items={items} />;
 };
 
 export default MenuListComponent;

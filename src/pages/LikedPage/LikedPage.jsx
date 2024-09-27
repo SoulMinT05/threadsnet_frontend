@@ -17,7 +17,7 @@ const LikedPage = () => {
             try {
                 const userLogin = JSON.parse(localStorage.getItem('userLogin'));
                 const accessToken = userLogin?.accessToken;
-                const res = await fetch(`/api/user/liked`, {
+                const res = await fetch(`/api/post/liked`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',

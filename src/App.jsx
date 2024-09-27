@@ -26,6 +26,7 @@ import AdminPage from './pages/AdminPage/AdminPage';
 import ChangePasswordComponent from './components/ChangePasswordComponent/ChangePasswordComponent';
 import ForgotPasswordPage from './pages/ForgotPasswordPage/ForgotPasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage/ResetPasswordPage';
+import UserPage from './pages/UserPage/UserPage';
 
 function App() {
     const user = useRecoilValue(userAtom);
@@ -50,6 +51,7 @@ function App() {
 
                     <Routes>
                         <Route path="/admin" element={user && <AdminPage />} />
+                        <Route path="/user" element={user && <UserPage />} />
                         {/* <Routes> */}
                         <Route path="/" element={user ? <HomePage /> : <Navigate to="/login" />} />
                         <Route path="/following" element={user ? <FollowingPage /> : <Navigate to="/login" />} />
