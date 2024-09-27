@@ -10,16 +10,29 @@ import {
     MenuItem,
     MenuList,
     Portal,
+    Spinner,
     Text,
+    Tooltip,
 } from '@chakra-ui/react';
 import { formatDistanceToNow } from 'date-fns';
 import ActionsFollowingPostComponent from '../ActionsFollowingPostComponent/ActionsFollowingPostComponent';
 import { useEffect, useState } from 'react';
 import useShowToast from '../../hooks/useShowToast';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import userAtom from '../../atoms/userAtom';
 
-const FollowingPostComponent = ({ followingPost, postedBy }) => {
+import { AiFillLock } from 'react-icons/ai';
+import { MdPublic } from 'react-icons/md';
+import { FaUserFriends } from 'react-icons/fa';
+import { MdGroups } from 'react-icons/md';
+import postAtom from '../../atoms/postAtom';
+
+const FollowingPostComponent = ({ followingPost, postedBy, isLastPost }) => {
+    const [visibility, setVisibility] = useState(followingPost?.visibility);
+    const [showTooltip, setShowTooltip] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [posts, setPosts] = useRecoilState(postAtom);
+
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         const day = String(date.getDate()).padStart(2, '0');
@@ -49,6 +62,68 @@ const FollowingPostComponent = ({ followingPost, postedBy }) => {
         getUser();
     }, [postedBy, showToast]);
 
+    const handleVisibilityChange = async (e) => {
+        const newVisibility = e.currentTarget.getAttribute('value');
+        setVisibility(newVisibility);
+
+        try {
+            const userLogin = JSON.parse(localStorage.getItem('userLogin'));
+            const accessToken = userLogin?.accessToken;
+
+            const res = await fetch(`/api/post/updateVisibilityPost/${followingPost._id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${accessToken}`,
+                },
+                body: JSON.stringify({
+                    postId: followingPost?._id,
+                    visibility: newVisibility,
+                }),
+            });
+            const data = await res.json();
+            if (!data.success) {
+                showToast('Error', data.message, 'error');
+                return;
+            }
+
+            showToast('Success', data.message, 'success');
+            setPosts((prevPosts) => {
+                return prevPosts.map((p) => (p._id === followingPost._id ? { ...p, visibility: newVisibility } : p));
+            });
+            setShowTooltip(false);
+        } catch (error) {
+            showToast('Error', error, 'error');
+        }
+    };
+
+    const handleDeletePost = async () => {
+        setLoading(true);
+        try {
+            if (!window.confirm('Are you sure you want to delete this post?')) return;
+            const userLogin = JSON.parse(localStorage.getItem('userLogin'));
+            const accessToken = userLogin?.accessToken;
+            const res = await fetch(`/api/post/${followingPost._id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            const data = await res.json();
+            if (!data.success) {
+                showToast('Error', data.message, 'error');
+                return;
+            }
+            showToast('Success', 'Deleted post successfully', 'success');
+            setPosts(posts.filter((p) => p._id !== followingPost._id));
+        } catch (error) {
+            showToast('Error', error, 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     if (!user) return null;
 
     return (
@@ -66,6 +141,7 @@ const FollowingPostComponent = ({ followingPost, postedBy }) => {
                             }}
                         />
                     </Flex>
+
                     <Flex flex={1} flexDirection={'column'} gap={2}>
                         <Flex justifyContent={'space-between'} w={'full'}>
                             <Flex w={'full'} alignItems={'center'}>
@@ -82,15 +158,86 @@ const FollowingPostComponent = ({ followingPost, postedBy }) => {
                                 >
                                     {user.username}
                                 </Text>
-                                {/* {followingPost.followers.length >= 2 && ( */}
                                 <Image src="./verified.png" w={4} h={4} ml={1} />
-                                {/* )} */}
-                            </Flex>
-                            <Flex gap={4} alignItems={'center'}>
-                                <Text fontSize={'xs'} width={36} textAlign={'right'} color={'gray.light'}>
-                                    {/* {formatDate(followingPost.createdAt)} */}
+
+                                <Text fontSize={'xs'} mx={'8px'} color={'gray.light'}>
                                     {formatDistanceToNow(new Date(followingPost.createdAt))}
                                 </Text>
+                                <Box width={36} onClick={(e) => e.preventDefault()}>
+                                    <Menu>
+                                        <Tooltip
+                                            label={
+                                                followingPost.visibility.charAt(0).toUpperCase() +
+                                                followingPost.visibility.slice(1)
+                                            }
+                                            aria-label={followingPost.visibility}
+                                            isClose={showTooltip}
+                                        >
+                                            <MenuButton mt={'6px'}>
+                                                {followingPost.visibility === 'public' && (
+                                                    <MdPublic color="gray" size={16} />
+                                                )}
+                                                {followingPost.visibility === 'private' && (
+                                                    <AiFillLock color="gray" size={16} />
+                                                )}
+                                                {followingPost.visibility === 'friends' && (
+                                                    <FaUserFriends color="gray" size={16} />
+                                                )}
+                                                {followingPost.visibility === 'followers' && (
+                                                    <MdGroups color="gray" size={20} />
+                                                )}
+                                            </MenuButton>
+                                        </Tooltip>
+                                        {currentUser?.userData?._id === user?._id && (
+                                            <Portal>
+                                                <MenuList>
+                                                    <MenuItem
+                                                        onClick={handleVisibilityChange}
+                                                        value="public"
+                                                        display="flex"
+                                                        justifyContent="space-between"
+                                                        padding={'12px'}
+                                                    >
+                                                        Public
+                                                        <MdPublic color="gray" size={16} />
+                                                    </MenuItem>
+                                                    <MenuItem
+                                                        onClick={handleVisibilityChange}
+                                                        value="friends"
+                                                        display="flex"
+                                                        justifyContent="space-between"
+                                                        padding={'12px'}
+                                                    >
+                                                        Friends
+                                                        <FaUserFriends color="gray" size={16} />
+                                                    </MenuItem>
+                                                    <MenuItem
+                                                        onClick={handleVisibilityChange}
+                                                        value="followers"
+                                                        display="flex"
+                                                        justifyContent="space-between"
+                                                        padding={'12px'}
+                                                    >
+                                                        Followers
+                                                        <MdGroups color="gray" size={20} />
+                                                    </MenuItem>
+                                                    <MenuItem
+                                                        onClick={handleVisibilityChange}
+                                                        value="private"
+                                                        display="flex"
+                                                        justifyContent="space-between"
+                                                        padding={'12px'}
+                                                    >
+                                                        Private
+                                                        <AiFillLock color="gray" size={16} />
+                                                    </MenuItem>
+                                                </MenuList>
+                                            </Portal>
+                                        )}
+                                    </Menu>
+                                </Box>
+                            </Flex>
+                            <Flex gap={4} alignItems={'center'} marginRight={'-12px'}>
                                 <Box className="icon-container" onClick={(e) => e.preventDefault()}>
                                     <Menu>
                                         <MenuButton width={'40px'} padding={'3px 0px'}>
@@ -110,14 +257,25 @@ const FollowingPostComponent = ({ followingPost, postedBy }) => {
                                                     <>
                                                         <Divider />
                                                         <MenuItem
+                                                            onClick={handleDeletePost}
                                                             display="flex"
                                                             justifyContent="space-between"
                                                             padding={'12px'}
                                                             color={'red'}
                                                         >
-                                                            Delete
-                                                            <DeleteSVG />
+                                                            {loading ? (
+                                                                <>
+                                                                    Deleting...
+                                                                    <Spinner size="sm" />
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    Delete
+                                                                    <DeleteSVG />
+                                                                </>
+                                                            )}
                                                         </MenuItem>
+
                                                         <Divider />
                                                     </>
                                                 )}
@@ -127,7 +285,9 @@ const FollowingPostComponent = ({ followingPost, postedBy }) => {
                                 </Box>
                             </Flex>
                         </Flex>
-                        <Text fontSize={'sm'}>{followingPost.text}</Text>
+                        <Text fontSize={'sm'} marginTop={'-8px'}>
+                            {followingPost.text}
+                        </Text>
                         {followingPost.image && (
                             <Box borderRadius={6} overflow={'hidden'} border={'1px solid'} borderColor={'gray.light'}>
                                 <Image
@@ -145,6 +305,7 @@ const FollowingPostComponent = ({ followingPost, postedBy }) => {
                     </Flex>
                 </Flex>
             </Link>
+            {!isLastPost && <Divider orientation="horizontal" />}
         </>
     );
 };

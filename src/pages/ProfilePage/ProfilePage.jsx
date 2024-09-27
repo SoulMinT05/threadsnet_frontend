@@ -12,6 +12,7 @@ import CreatePostProfileComponent from '../../components/CreatePostProfileCompon
 const ProfilePage = () => {
     const { loading, user } = useGetUserProfile();
     const { username } = useParams();
+
     const showToast = useShowToast();
     const [posts, setPosts] = useRecoilState(postAtom);
     const [fetchingPosts, setFetchingPosts] = useState(true);

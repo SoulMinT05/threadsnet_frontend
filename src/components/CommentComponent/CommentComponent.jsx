@@ -68,13 +68,15 @@ const CommentComponent = ({ comment, lastComment }) => {
                 <Avatar src={comment?.avatar} size={'sm'} />
                 <Flex gap={1} w={'full'} flexDirection={'column'}>
                     <Flex w={'full'} justifyContent={'space-between'} align={'center'}>
-                        <Text fontSize={'sm'} fontWeight={'bold'}>
-                            {comment?.username}
-                        </Text>
-                        <Flex gap={2} alignItems={'center'}>
-                            <Text fontSize={'sm'} color={'gray.light'} marginTop={'-2px'} marginRight={'4px'}>
+                        <Flex alignItems={'center'}>
+                            <Text fontSize={'sm'} fontWeight={'bold'}>
+                                {comment?.username}
+                            </Text>
+                            <Text fontSize={'sm'} color={'gray.light'} marginLeft={'8px'}>
                                 {formatDistanceToNow(new Date(comment?.createdAt))}
                             </Text>
+                        </Flex>
+                        <Flex gap={2} alignItems={'center'}>
                             <Box className="icon-container" onClick={(e) => e.preventDefault()}>
                                 <Menu>
                                     <MenuButton width={'40px'} padding={'3px 0px'}>
@@ -130,7 +132,7 @@ const CommentComponent = ({ comment, lastComment }) => {
                             </Box>
                         </Flex>
                     </Flex>
-                    <Text>{comment?.textComment}</Text>
+                    <Text marginTop={'-8px'}>{comment?.textComment}</Text>
                     <ActionsCommentComponent comment={comment} lastComment={lastComment} />
                 </Flex>
             </Flex>

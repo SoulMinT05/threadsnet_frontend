@@ -1,16 +1,20 @@
 import { Menu, MenuButton, MenuList, MenuItem, Text, Box, Flex } from '@chakra-ui/react';
 import { ChevronDownIcon, CheckIcon } from '@chakra-ui/icons';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import { Link as RouterLink } from 'react-router-dom';
 
 import './HeaderComponent.scss';
 import { useRecoilValue } from 'recoil';
 import userAtom from '../../atoms/userAtom';
+import postAtom from '../../atoms/postAtom';
 
 const HeaderComponent = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const user = useRecoilValue(userAtom);
+    const post = useRecoilValue(postAtom);
+    const currentPost = post[0];
+    const { username } = useParams();
 
     const getTitle = () => {
         switch (location.pathname) {
@@ -26,12 +30,6 @@ const HeaderComponent = () => {
                 if (location.pathname === `/${user?.userData?.username}`) {
                     return 'Profile';
                 }
-                // else if (location.pathname === '/blockedList') {
-                //     return 'Blocked List';
-                // }
-                // else if(location.pathname === `/${user?.userData?.username}/post/${post?.userData?.username}`) {
-                //     return post.userData.username;
-                // }
                 return 'Menu';
         }
     };
@@ -99,6 +97,39 @@ const HeaderComponent = () => {
                 <Text fontSize="lg" fontWeight="bold">
                     Reset password
                 </Text>
+            </Box>
+        );
+    }
+    // else if (location.pathname === `/${username}`) {
+    //     return (
+    //         <Box display="flex" justifyContent="center" mt="16px">
+    //             <Text fontSize="lg" fontWeight="bold">
+    //                 {username}
+    //             </Text>
+    //         </Box>
+    //     );
+    // }
+    else if (location.pathname.includes(`${username}`)) {
+        return (
+            <Box display="flex" justifyContent="center" mt="16px">
+                <Flex flexDirection={'column'}>
+                    <Text fontSize="lg" fontWeight="bold">
+                        {username}
+                    </Text>
+                </Flex>
+            </Box>
+        );
+    } else if (location.pathname.includes(`/post/${currentPost?._id}`)) {
+        return (
+            <Box display="flex" justifyContent="center" mt="16px">
+                <Flex flexDirection={'column'}>
+                    <Text fontSize="lg" fontWeight="bold">
+                        Thread
+                    </Text>
+                    <Text fontSize={'xs'} mx={'8px'} color={'gray.light'}>
+                        {currentPost.numberViews} views
+                    </Text>
+                </Flex>
             </Box>
         );
     }

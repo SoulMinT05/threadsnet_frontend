@@ -21,10 +21,15 @@ import {
     Portal,
     Spinner,
     Text,
+    Tooltip,
     useDisclosure,
 } from '@chakra-ui/react';
 import './HomeDetailPostPage.scss';
 import { BsFillImageFill } from 'react-icons/bs';
+import { AiFillEye, AiFillLock, AiFillEyeInvisible, AiOutlineUsergroupAdd } from 'react-icons/ai';
+import { MdPublic } from 'react-icons/md';
+import { FaUserFriends } from 'react-icons/fa';
+import { MdGroups } from 'react-icons/md';
 import { useEffect } from 'react';
 import CommentComponent from '../../components/CommentComponent/CommentComponent';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -35,16 +40,21 @@ import { useNavigate, useParams } from 'react-router-dom';
 import userAtom from '../../atoms/userAtom';
 import ActionsHomePostComponent from '../../components/ActionsHomePostComponent/ActionsHomePostComponent';
 import postAtom from '../../atoms/postAtom';
+import { useState } from 'react';
 const HomeDetailPostPage = () => {
     const { isOpen, onOpen, onClose } = useDisclosure();
     const { loading, user } = useGetUserProfile();
 
     const { postId } = useParams();
     const showToast = useShowToast();
+
+    const [showTooltip, setShowTooltip] = useState(false);
     const currentUser = useRecoilValue(userAtom);
     const [posts, setPosts] = useRecoilState(postAtom);
     const navigate = useNavigate();
     const currentPost = posts[0];
+    const [visibility, setVisibility] = useState(currentPost?.visibility);
+    console.log('currentPost: ', currentPost);
     useEffect(() => {
         const getDetailPost = async () => {
             setPosts([]);
@@ -101,7 +111,15 @@ const HomeDetailPostPage = () => {
         <>
             <Flex>
                 <Flex w={'full'} alignItems={'center'} gap={3}>
-                    <Avatar src={user?.avatar} size={'md'} name={user?.name} />
+                    <Avatar
+                        size="md"
+                        name={user.name}
+                        src={user.avatar}
+                        onClick={(e) => {
+                            e.preventDefault();
+                            navigate(`/${user?.username}`);
+                        }}
+                    />
                     <Flex w={'full'} alignItems={'center'}>
                         <Text
                             fontSize={'sm'}
@@ -110,16 +128,42 @@ const HomeDetailPostPage = () => {
                                 textDecoration: 'underline',
                             }}
                             cursor={'pointer'}
+                            onClick={(e) => {
+                                e.preventDefault();
+                                navigate(`/${user?.username}`);
+                            }}
                         >
                             {user?.username}
                         </Text>
                         <Image src="/verified.png" w="4" h={4} marginLeft={'4px'} />
+                        <Text fontSize={'xs'} mx={'8px'} color={'gray.light'}>
+                            {formatDistanceToNow(new Date(currentPost?.createdAt))}
+                        </Text>
+                        <Box width={36} onClick={(e) => e.preventDefault()}>
+                            <Menu
+                                onMouseEnter={() => setShowTooltip(true)} // Hiện tooltip khi hover vào Menu
+                                onMouseLeave={() => setShowTooltip(false)}
+                            >
+                                <Tooltip
+                                    label={
+                                        currentPost.visibility.charAt(0).toUpperCase() + currentPost.visibility.slice(1)
+                                    }
+                                    aria-label={currentPost.visibility}
+                                >
+                                    <MenuButton mt={'6px'}>
+                                        {currentPost.visibility === 'public' && <MdPublic color="gray" size={16} />}
+                                        {currentPost.visibility === 'private' && <AiFillLock color="gray" size={16} />}
+                                        {currentPost.visibility === 'friends' && (
+                                            <FaUserFriends color="gray" size={16} />
+                                        )}
+                                        {currentPost.visibility === 'followers' && <MdGroups color="gray" size={20} />}
+                                    </MenuButton>
+                                </Tooltip>
+                            </Menu>
+                        </Box>
                     </Flex>
                 </Flex>
                 <Flex gap={4} alignItems={'center'} marginRight={'-12px'}>
-                    <Text fontSize={'xs'} width={36} textAlign={'right'} color={'gray.light'}>
-                        {formatDistanceToNow(new Date(currentPost?.createdAt))}
-                    </Text>
                     <Box className="icon-container" onClick={(e) => e.preventDefault()}>
                         <Menu>
                             <MenuButton width={'40px'} padding={'3px 0px'}>
@@ -134,16 +178,6 @@ const HomeDetailPostPage = () => {
                                     {currentUser?.userData?._id === user?._id && (
                                         <>
                                             <Divider />
-                                            {/* <MenuItem
-                                                onClick={handleDeletePost}
-                                                display="flex"
-                                                justifyContent="space-between"
-                                                padding={'12px'}
-                                                color={'red'}
-                                            >
-                                                Delete
-                                                <DeleteSVG />
-                                            </MenuItem> */}
                                             <MenuItem
                                                 onClick={handleDeletePost}
                                                 display="flex"

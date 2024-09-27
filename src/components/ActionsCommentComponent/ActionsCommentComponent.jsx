@@ -304,13 +304,15 @@ const ActionsHomePostComponent = ({ comment }) => {
                         <Avatar src={reply?.avatar} size={'sm'} />
                         <Flex gap={1} w={'full'} flexDirection={'column'}>
                             <Flex w={'full'} justifyContent={'space-between'} align={'center'}>
-                                <Text fontSize={'sm'} fontWeight={'bold'}>
-                                    {reply?.username}
-                                </Text>
-                                <Flex gap={2} alignItems={'center'}>
-                                    <Text fontSize={'sm'} color={'gray.light'} marginTop={'-2px'} marginRight={'4px'}>
+                                <Flex alignItems={'center'}>
+                                    <Text fontSize={'sm'} fontWeight={'bold'}>
+                                        {reply?.username}
+                                    </Text>
+                                    <Text fontSize={'sm'} color={'gray.light'} marginLeft={'8px'}>
                                         {formatDistanceToNow(new Date(reply?.createdAt))}
                                     </Text>
+                                </Flex>
+                                <Flex gap={2} alignItems={'center'}>
                                     <Box className="icon-container" onClick={(e) => e.preventDefault()}>
                                         <Menu>
                                             <MenuButton width={'40px'} padding={'3px 0px'}>
@@ -372,7 +374,7 @@ const ActionsHomePostComponent = ({ comment }) => {
                                     </Box>
                                 </Flex>
                             </Flex>
-                            <Text>{reply?.textComment}</Text>
+                            <Text marginTop={'-8px'}>{reply?.textComment}</Text>
                         </Flex>
                     </Flex>
                 ))}
