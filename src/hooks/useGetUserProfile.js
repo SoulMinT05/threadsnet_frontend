@@ -10,7 +10,16 @@ const useGetUserProfile = () => {
     useEffect(() => {
         const getUser = async () => {
             try {
-                const res = await fetch(`/api/user/profile/${username}`);
+                const userLogin = JSON.parse(localStorage.getItem('userLogin'));
+                const accessToken = userLogin?.accessToken;
+
+                const res = await fetch(`/api/user/profile/${username}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                });
                 const data = await res.json();
                 if (!data.success) {
                     showToast('Error', data.message, 'error');

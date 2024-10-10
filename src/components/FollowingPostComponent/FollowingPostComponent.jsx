@@ -55,7 +55,16 @@ const FollowingPostComponent = ({ followingPost, postedBy, isLastPost }) => {
             if (!postedBy) return;
 
             try {
-                const res = await fetch(`/api/user/profile/` + postedBy);
+                const userLogin = JSON.parse(localStorage.getItem('userLogin'));
+                const accessToken = userLogin?.accessToken;
+
+                const res = await fetch(`/api/user/profile/` + postedBy, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                });
                 const data = await res.json();
                 if (!data.success) {
                     showToast('Error', data.message, 'error');
@@ -135,6 +144,7 @@ const FollowingPostComponent = ({ followingPost, postedBy, isLastPost }) => {
                     }
                     return p;
                 });
+                console.log('updatedPostsPush: ', updatedPosts);
                 setPosts(updatedPosts);
             } else {
                 const updatedPosts = posts.map((p) => {

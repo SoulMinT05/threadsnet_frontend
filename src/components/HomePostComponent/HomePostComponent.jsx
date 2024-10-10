@@ -51,6 +51,8 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
 
     useEffect(() => {
         if (user && post) {
+            console.log('post.savedLists:', post.savedLists);
+            console.log('user._id:', user._id);
             setSaved(post.savedLists.includes(user._id));
         }
     }, [user, post]);
@@ -59,7 +61,16 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
         const getUser = async () => {
             if (!postedBy) return;
             try {
-                const res = await fetch(`/api/user/profile/` + postedBy);
+                const userLogin = JSON.parse(localStorage.getItem('userLogin'));
+                const accessToken = userLogin?.accessToken;
+
+                const res = await fetch(`/api/user/profile/` + postedBy, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                });
                 const data = await res.json();
                 if (!data.success) {
                     showToast('Error', data.message, 'error');

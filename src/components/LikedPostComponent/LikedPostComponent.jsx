@@ -52,7 +52,16 @@ const LikedPostComponent = ({ likedPost, postedBy, isLastPost }) => {
             // if (!postedBy?._id) return;
 
             try {
-                const res = await fetch(`/api/user/profile/` + postedBy);
+                const userLogin = JSON.parse(localStorage.getItem('userLogin'));
+                const accessToken = userLogin?.accessToken;
+
+                const res = await fetch(`/api/user/profile/` + postedBy, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                });
                 const data = await res.json();
                 console.log('dataUserProfile: ', data);
                 if (!data.success) {
