@@ -98,6 +98,8 @@ const CreatePostProfileComponent = () => {
             setLoading(false);
         }
     };
+    const userLogin = JSON.parse(localStorage.getItem('userLogin'));
+    const loggedInUsername = userLogin?.userData?.username;
     return (
         <>
             <Text onClick={onOpen} opacity={'0.5'}>

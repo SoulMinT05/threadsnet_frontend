@@ -12,6 +12,8 @@ import CreatePostProfileComponent from '../../components/CreatePostProfileCompon
 const ProfilePage = () => {
     const { loading, user } = useGetUserProfile();
     const { username } = useParams();
+    console.log('usernameProfile: ', username);
+    console.log('userProfile: ', user);
 
     const showToast = useShowToast();
     const [posts, setPosts] = useRecoilState(postAtom);
@@ -20,6 +22,7 @@ const ProfilePage = () => {
     useEffect(() => {
         const getPosts = async () => {
             setFetchingPosts(true);
+            setPosts([]);
             try {
                 const userLogin = JSON.parse(localStorage.getItem('userLogin'));
                 const accessToken = userLogin?.accessToken;
@@ -31,6 +34,7 @@ const ProfilePage = () => {
                     },
                 });
                 const data = await res.json();
+                console.log('dataUsernameProfile: ', data);
                 if (!data.success) {
                     showToast('Error', data.message, 'error');
                     return;
@@ -54,6 +58,10 @@ const ProfilePage = () => {
     }
     if (!user && !loading) return <h1 style={{ textAlign: 'center' }}>User not found</h1>;
 
+    const userLogin = JSON.parse(localStorage.getItem('userLogin'));
+    const loggedInUsername = userLogin?.userData?.username;
+
+    console.log('postsProfile: ', posts);
     return (
         <Box width="640px" borderRadius="lg" borderWidth="1px" boxShadow="md" p={4} m={4} mx="auto" marginRight={'0'}>
             <ProfileInfoComponent user={user} />
@@ -66,14 +74,27 @@ const ProfilePage = () => {
                     <Spinner size={'xl'} />
                 </Flex>
             )}
-            <Flex align="center" paddingTop={'16px'}>
+
+            {username === loggedInUsername && (
+                <>
+                    <Flex align="center" paddingTop={'16px'}>
+                        <Avatar src={user?.avatar} mr={4} />
+                        <Flex flex="1" fontSize={'md'}>
+                            <CreatePostProfileComponent />
+                        </Flex>
+                        <Button>Post</Button>
+                    </Flex>
+                    <Divider orientation="horizontal" mt={'20px'} mb={'8px'} />
+                </>
+            )}
+            {/* <Flex align="center" paddingTop={'16px'}>
                 <Avatar src={user?.avatar} mr={4} />
                 <Flex flex="1" fontSize={'md'}>
                     <CreatePostProfileComponent />
                 </Flex>
                 <Button>Post</Button>
             </Flex>
-            <Divider orientation="horizontal" mt={'20px'} mb={'8px'} />
+            <Divider orientation="horizontal" mt={'20px'} mb={'8px'} /> */}
 
             {posts?.map((post, index) => (
                 <HomePostComponent

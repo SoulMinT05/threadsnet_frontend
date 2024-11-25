@@ -4,19 +4,17 @@ import {
     Box,
     Divider,
     Flex,
-    IconButton,
     Image,
     Menu,
     MenuButton,
     MenuItem,
     MenuList,
     Portal,
-    Select,
     Spinner,
     Text,
     Tooltip,
 } from '@chakra-ui/react';
-import { AiFillEye, AiFillLock, AiFillEyeInvisible, AiOutlineUsergroupAdd } from 'react-icons/ai';
+import { AiFillLock } from 'react-icons/ai';
 import { MdPublic } from 'react-icons/md';
 import { FaUserFriends } from 'react-icons/fa';
 import { MdGroups } from 'react-icons/md';
@@ -58,6 +56,7 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
     }, [user, post]);
 
     useEffect(() => {
+        console.log('postedBy: ', postedBy);
         const getUser = async () => {
             if (!postedBy) return;
             try {
@@ -72,6 +71,7 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
                     },
                 });
                 const data = await res.json();
+                console.log('dataHoemPost: ', data);
                 if (!data.success) {
                     showToast('Error', data.message, 'error');
                 }
@@ -205,6 +205,7 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
     };
 
     if (!user) return null;
+    console.log('userrrrr: ', user);
 
     return (
         <>

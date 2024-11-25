@@ -1,4 +1,3 @@
-import React from 'react';
 import {
     Flex,
     Box,
@@ -9,7 +8,6 @@ import {
     InputRightElement,
     Stack,
     Button,
-    Heading,
     Text,
     useColorModeValue,
     Link,
