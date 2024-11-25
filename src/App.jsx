@@ -2,7 +2,7 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import ProfilePage from './pages/ProfilePage/ProfilePage';
 import HomeDetailPostPage from './pages/HomeDetailPostPage/HomeDetailPostPage';
 import HeaderComponent from './components/HeaderComponent/HeaderComponent';
-import { Container, Flex } from '@chakra-ui/react';
+import { Box, Container, Flex } from '@chakra-ui/react';
 import HomePage from './pages/HomePage/HomePage';
 
 // import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
@@ -39,14 +39,20 @@ function App() {
                 location.pathname !== '/register' &&
                 location.pathname !== '/forgotPassword' &&
                 location.pathname !== '/resetPassword' && <SidebarComponent />}
-
+            {/* <Box position={'relative'} w={'full'}> */}
             <Flex
                 flex="1"
                 ml={location.pathname !== '/admin' && '80px'}
                 bg={location.pathname === '/admin' && 'white'}
                 justifyContent="center"
             >
-                <Container p={0} sx={{ margin: 0 }} maxW={location.pathname === '/admin' ? 'full' : '640px'}>
+                <Container
+                    p={0}
+                    sx={{ margin: 0 }}
+                    maxW={
+                        location.pathname === '/admin' ? 'full' : location.pathname === '/message' ? '800px' : '640px'
+                    }
+                >
                     {location.pathname !== '/admin' && <HeaderComponent />}
 
                     <Routes>
@@ -100,6 +106,7 @@ function App() {
                     </Routes>
                 </Container>
             </Flex>
+            {/* </Box> */}
         </Flex>
     );
 }
