@@ -71,7 +71,6 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
                     },
                 });
                 const data = await res.json();
-                console.log('dataHoemPost: ', data);
                 if (!data.success) {
                     showToast('Error', data.message, 'error');
                 }
@@ -205,7 +204,6 @@ const HomePostComponent = ({ post, postedBy, isLastPost }) => {
     };
 
     if (!user) return null;
-    console.log('userrrrr: ', user);
 
     return (
         <>

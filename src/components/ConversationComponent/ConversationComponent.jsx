@@ -14,7 +14,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import userAtom from '../../atoms/userAtom';
 import { BsCheck2All, BsFillImageFill } from 'react-icons/bs';
 import { selectedConversationAtom } from '../../atoms/messageAtom';
-const ConversationComponent = ({ conversation }) => {
+const ConversationComponent = ({ conversation, isOnline }) => {
     const user = conversation.participants[0];
 
     const currentUser = useRecoilValue(userAtom);
@@ -55,7 +55,7 @@ const ConversationComponent = ({ conversation }) => {
                     }}
                     src={user.avatar}
                 >
-                    <AvatarBadge boxSize="1em" bg="green.500" />
+                    {isOnline ? <AvatarBadge boxSize="1em" bg="green.500" /> : ''}
                 </Avatar>
             </WrapItem>
 
