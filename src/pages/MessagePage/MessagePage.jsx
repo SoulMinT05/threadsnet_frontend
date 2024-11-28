@@ -3,7 +3,115 @@ import { Box, Button, Flex, Input, Skeleton, SkeletonCircle, Text, useColorModeV
 import ConversationComponent from '../../components/ConversationComponent/ConversationComponent';
 import MessageContainerComponent from '../../components/MessageContainerComponent/MessageContainerComponent';
 import { GiConversation } from 'react-icons/gi';
+import { useEffect, useState } from 'react';
+import useShowToast from '../../hooks/useShowToast';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import userAtom from '../../atoms/userAtom';
+import { conversationsAtom, selectedConversationAtom } from '../../atoms/messageAtom';
 const MessagePage = () => {
+    const [searchingUser, setSearchingUser] = useState(false);
+    const [loadingConversations, setLoadingConversations] = useState(true);
+    const [searchText, setSearchText] = useState('');
+    const [selectedConversation, setSelectedConversation] = useRecoilState(selectedConversationAtom);
+    const [conversations, setConversations] = useRecoilState(conversationsAtom);
+
+    console.log('selectedConversation: ', selectedConversation);
+    const currentUser = useRecoilValue(userAtom);
+    const showToast = useShowToast();
+
+    useEffect(() => {
+        const getConversations = async () => {
+            try {
+                const userLogin = JSON.parse(localStorage.getItem('userLogin'));
+                const accessToken = userLogin?.accessToken;
+
+                const res = await fetch('/api/message/conversations', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                });
+                const data = await res.json();
+                if (data.error) {
+                    showToast('Error', data.error, 'error');
+                    return;
+                }
+                console.log('dataConversations: ', data);
+                setConversations(data);
+            } catch (error) {
+                showToast('Error', error.message, 'error');
+            } finally {
+                setLoadingConversations(false);
+            }
+        };
+
+        getConversations();
+    }, [showToast, setConversations]);
+
+    console.log('searchText: ', searchText);
+    const handleConversationSearch = async (e) => {
+        e.preventDefault();
+        setSearchingUser(true);
+        try {
+            const userLogin = JSON.parse(localStorage.getItem('userLogin'));
+            const accessToken = userLogin?.accessToken;
+            const res = await fetch(`/api/user/profile/${searchText}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${accessToken}`,
+                },
+            });
+            const searchedUser = await res.json();
+            console.log('searchedUser: ', searchedUser);
+            if (!searchedUser.success || searchedUser.error) {
+                showToast('Error', searchedUser.error, 'error');
+                return;
+            }
+
+            const messagingYourself = searchedUser.user._id === currentUser.userData._id;
+            console.log('messagingYourself: ', messagingYourself);
+            if (messagingYourself) {
+                showToast('Error', 'You cannot message yourself', 'error');
+                return;
+            }
+
+            const conversationAlreadyExists = conversations.find((conversation) => {
+                return conversation.participants[0]._id === searchedUser.user._id;
+            });
+            if (conversationAlreadyExists) {
+                setSelectedConversation({
+                    _id: conversationAlreadyExists._id,
+                    userId: searchedUser.user._id,
+                    username: searchedUser.user.username,
+                    avatar: searchedUser.user.avatar,
+                });
+                return;
+            }
+
+            const mockConversation = {
+                mock: true,
+                lastMessage: {
+                    text: '',
+                    sender: '',
+                },
+                _id: Date.now(),
+                participants: [
+                    {
+                        _id: searchedUser.user._id,
+                        username: searchedUser.user.username,
+                        avatar: searchedUser.user.avatar,
+                    },
+                ],
+            };
+            setConversations((prevConvs) => [...prevConvs, mockConversation]);
+        } catch (error) {
+            showToast('Error', error.message, 'error');
+        } finally {
+            setSearchingUser(false);
+        }
+    };
     return (
         <Box
             position={'absolute'}
@@ -25,16 +133,16 @@ const MessagePage = () => {
                     <Text fontWeight={700} color={useColorModeValue('gray.600', 'gray.400')}>
                         Your Conversations
                     </Text>
-                    <form>
+                    <form onSubmit={handleConversationSearch}>
                         <Flex alignItems={'center'} gap={2}>
-                            <Input placeholder="Search for a user" />
-                            <Button size={'sm'}>
+                            <Input placeholder="Search for a user" onChange={(e) => setSearchText(e.target.value)} />
+                            <Button size={'sm'} onClick={handleConversationSearch} isLoading={searchingUser}>
                                 <SearchIcon />
                             </Button>
                         </Flex>
                     </form>
 
-                    {false &&
+                    {loadingConversations &&
                         [0, 1, 2, 3, 4].map((_, i) => (
                             <Flex key={i} gap={4} alignItems={'center'} p={'1'} borderRadius={'md'}>
                                 <Box>
@@ -47,23 +155,26 @@ const MessagePage = () => {
                             </Flex>
                         ))}
 
-                    <ConversationComponent />
-                    <ConversationComponent />
-                    <ConversationComponent />
+                    {!loadingConversations &&
+                        conversations.map((conversation) => (
+                            <ConversationComponent key={conversation._id} conversation={conversation} />
+                        ))}
                 </Flex>
-                {/* <Flex
-                    flex={70}
-                    borderRadius={'md'}
-                    p={2}
-                    flexDir={'column'}
-                    alignItems={'center'}
-                    justifyContent={'center'}
-                    height={'400px'}
-                >
-                    <GiConversation size={100} />
-                    <Text fontSize={20}>Select a conversation to start messaging</Text>
-                </Flex> */}
-                <MessageContainerComponent />
+                {!selectedConversation._id && (
+                    <Flex
+                        flex={70}
+                        borderRadius={'md'}
+                        p={2}
+                        flexDir={'column'}
+                        alignItems={'center'}
+                        justifyContent={'center'}
+                        height={'400px'}
+                    >
+                        <GiConversation size={100} />
+                        <Text fontSize={20}>Select a conversation to start messaging</Text>
+                    </Flex>
+                )}
+                {selectedConversation._id && <MessageContainerComponent />}
             </Flex>
         </Box>
     );

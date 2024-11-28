@@ -1,8 +1,52 @@
 import { Avatar, Divider, Flex, Image, Skeleton, SkeletonCircle, Text, useColorModeValue } from '@chakra-ui/react';
 import MessageComponent from '../MessageComponent/MessageComponent';
 import MessageInputComponent from '../MessageInputComponent/MessageInputComponent';
+import { conversationsAtom, selectedConversationAtom } from '../../atoms/messageAtom';
+import useShowToast from '../../hooks/useShowToast';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useEffect, useState } from 'react';
+import userAtom from '../../atoms/userAtom';
 
 const MessageContainerComponent = () => {
+    const showToast = useShowToast();
+    const selectedConversation = useRecoilValue(selectedConversationAtom);
+    const [loadingMessages, setLoadingMessages] = useState(true);
+    const [messages, setMessages] = useState([]);
+    const currentUser = useRecoilValue(userAtom);
+    const setConversations = useSetRecoilState(conversationsAtom);
+
+    useEffect(() => {
+        const getMessages = async () => {
+            setLoadingMessages(true);
+            setMessages([]);
+            const userLogin = JSON.parse(localStorage.getItem('userLogin'));
+            const accessToken = userLogin?.accessToken;
+
+            try {
+                if (selectedConversation.mock) return;
+                const res = await fetch(`/api/message/${selectedConversation.userId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                });
+                const data = await res.json();
+                if (data.error) {
+                    showToast('Error', data.error, 'error');
+                    return;
+                }
+                console.log('dataMessageCOntainer: ', data);
+                setMessages(data);
+            } catch (error) {
+                showToast('Error', error.message, 'error');
+            } finally {
+                setLoadingMessages(false);
+            }
+        };
+
+        getMessages();
+    }, [showToast, selectedConversation.userId]);
     return (
         <Flex
             flex="70"
@@ -13,16 +57,16 @@ const MessageContainerComponent = () => {
         >
             {/* Message header */}
             <Flex w={'full'} h={12} alignItems={'center'} gap={2}>
-                <Avatar src="" size={'sm'} />
+                <Avatar src={selectedConversation.avatar} size={'sm'} />
                 <Text display={'flex'} alignItems={'center'}>
-                    bobdone <Image src="/verified.png" w={4} h={4} ml={1} />
+                    {selectedConversation.username} <Image src="/verified.png" w={4} h={4} ml={1} />
                 </Text>
             </Flex>
 
             <Divider />
 
             <Flex flexDir={'column'} gap={4} my={4} p={2} height={'400px'} overflowY={'auto'}>
-                {false &&
+                {loadingMessages &&
                     [...Array(5)].map((_, i) => (
                         <Flex
                             key={i}
@@ -42,17 +86,20 @@ const MessageContainerComponent = () => {
                         </Flex>
                     ))}
 
-                <MessageComponent ownMessage={true} />
-                <MessageComponent ownMessage={false} />
-                <MessageComponent ownMessage={false} />
-                <MessageComponent ownMessage={false} />
-                <MessageComponent ownMessage={false} />
-                <MessageComponent ownMessage={false} />
-                <MessageComponent ownMessage={true} />
-                <MessageComponent ownMessage={false} />
+                {!loadingMessages &&
+                    messages.map((message) => {
+                        return (
+                            <Flex key={message._id} direction={'column'}>
+                                <MessageComponent
+                                    message={message}
+                                    ownMessage={currentUser.userData._id === message.sender}
+                                />
+                            </Flex>
+                        );
+                    })}
             </Flex>
 
-            <MessageInputComponent />
+            <MessageInputComponent setMessages={setMessages} />
         </Flex>
     );
 };
