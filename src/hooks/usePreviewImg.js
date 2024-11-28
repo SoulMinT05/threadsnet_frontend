@@ -12,6 +12,7 @@ const usePreviewImg = () => {
             const reader = new FileReader(); // init new
 
             reader.onloadend = () => {
+                console.log('reader.result: ', reader.result);
                 setImgUrl(reader.result); //result after file is read
             };
             reader.readAsDataURL(file); //convert file to file base64
@@ -20,6 +21,8 @@ const usePreviewImg = () => {
             setImgUrl(null);
         }
     };
+    console.log('imgUrlPreviewImg: ', imgUrl);
+
     return { handleImgChange, imgUrl, setImgUrl };
 };
 
