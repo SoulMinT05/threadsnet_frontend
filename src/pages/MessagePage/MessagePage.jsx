@@ -16,10 +16,29 @@ const MessagePage = () => {
     const [selectedConversation, setSelectedConversation] = useRecoilState(selectedConversationAtom);
     const [conversations, setConversations] = useRecoilState(conversationsAtom);
 
-    console.log('selectedConversation: ', selectedConversation);
     const currentUser = useRecoilValue(userAtom);
     const showToast = useShowToast();
     const { socket, onlineUsers } = useSocket();
+
+    useEffect(() => {
+        socket?.on('messagesSeen', ({ conversationId }) => {
+            setConversations((prev) => {
+                const updatedConversations = prev.map((conversation) => {
+                    if (conversation._id === conversationId) {
+                        return {
+                            ...conversation,
+                            lastMessage: {
+                                ...conversation.lastMessage,
+                                seen: true,
+                            },
+                        };
+                    }
+                    return conversation;
+                });
+                return updatedConversations;
+            });
+        });
+    }, [socket, setConversations]);
 
     useEffect(() => {
         const getConversations = async () => {
@@ -39,7 +58,6 @@ const MessagePage = () => {
                     showToast('Error', data.error, 'error');
                     return;
                 }
-                console.log('dataConversations: ', data);
                 setConversations(data);
             } catch (error) {
                 showToast('Error', error.message, 'error');
@@ -51,7 +69,6 @@ const MessagePage = () => {
         getConversations();
     }, [showToast, setConversations]);
 
-    console.log('searchText: ', searchText);
     const handleConversationSearch = async (e) => {
         e.preventDefault();
         setSearchingUser(true);

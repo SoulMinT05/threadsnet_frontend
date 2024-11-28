@@ -71,7 +71,9 @@ const ConversationComponent = ({ conversation, isOnline }) => {
                     ) : (
                         ''
                     )}
-                    {lastMessage.text.length > 18 ? lastMessage.text.substring(0, 18) + '...' : lastMessage.text}
+                    {lastMessage.text.length > 18
+                        ? lastMessage.text.substring(0, 18) + '...'
+                        : lastMessage.text || <BsFillImageFill size={16} />}
                 </Text>
             </Stack>
         </Flex>
