@@ -49,8 +49,15 @@ function App() {
                 <Container
                     p={0}
                     sx={{ margin: 0 }}
+                    // maxW={
+                    //     location.pathname === '/admin' ? 'full' : location.pathname === '/message' ? '800px' : '640px'
+                    // }
                     maxW={
-                        location.pathname === '/admin' ? 'full' : location.pathname === '/message' ? '800px' : '640px'
+                        location.pathname === '/'
+                            ? { base: '640px', md: '900px' }
+                            : location.pathname === '/message'
+                            ? '800px'
+                            : '640px'
                     }
                 >
                     {location.pathname !== '/admin' && <HeaderComponent />}
@@ -106,7 +113,6 @@ function App() {
                     </Routes>
                 </Container>
             </Flex>
-            {/* </Box> */}
         </Flex>
     );
 }

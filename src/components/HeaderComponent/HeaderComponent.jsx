@@ -91,6 +91,14 @@ const HeaderComponent = () => {
                 </Text>
             </Box>
         );
+    } else if (location.pathname === '/message') {
+        return (
+            <Box display="flex" justifyContent="center" mt="16px">
+                <Text fontSize="lg" fontWeight="bold">
+                    Message
+                </Text>
+            </Box>
+        );
     } else if (location.pathname.includes('/resetPassword')) {
         return (
             <Box display="flex" justifyContent="center" mt="16px">
