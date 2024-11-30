@@ -43,15 +43,15 @@ const SidebarComponent = () => {
             padding="20px"
         >
             <Box>
-                <Link onClick={() => navigate('/admin')} _hover={{ opacity: '0.6' }}>
+                {/* <Link onClick={() => navigate('/admin')} _hover={{ opacity: '0.6' }}>
                     <Icon as={MdDashboard} boxSize={6} mb="30px" />
-                </Link>
+                </Link> */}
                 <Link onClick={() => navigate('/')} _hover={{ opacity: '0.6' }}>
                     <Icon as={FaHome} boxSize={6} mb="30px" />
                 </Link>
-                <Link onClick={() => navigate('/search')} _hover={{ opacity: '0.6' }} marginBottom={'30px'}>
+                {/* <Link onClick={() => navigate('/search')} _hover={{ opacity: '0.6' }} marginBottom={'30px'}>
                     <SearchSVG />
-                </Link>
+                </Link> */}
                 <Link onClick={() => navigate('/message')} _hover={{ opacity: '0.6' }} marginBottom={'30px'}>
                     <MessageSVG />
                 </Link>
@@ -155,9 +155,9 @@ const SidebarComponent = () => {
                     mb="30px"
                     ml={'-8px'}
                 />
-                <Link onClick={() => navigate('/settings')} _hover={{ opacity: '0.6' }} marginBottom={'30px'}>
+                {/* <Link onClick={() => navigate('/settings')} _hover={{ opacity: '0.6' }} marginBottom={'30px'}>
                     <SettingSVG />
-                </Link>
+                </Link> */}
                 {user && (
                     <Link onClick={logout} _hover={{ opacity: '0.6' }} marginBottom={'30px'}>
                         <Icon color={'red'} as={FiLogOut} boxSize={6} mb="30px" />

@@ -177,11 +177,11 @@ const UpdateProfileComponent = () => {
                                 <Link>Cancel</Link>
                             </Button>
                             <Button
-                                bg={'green.400'}
+                                bg={'blue.400'}
                                 color={'white'}
                                 w="full"
                                 _hover={{
-                                    bg: 'green.500',
+                                    bg: 'blue.500',
                                 }}
                                 type="submit"
                                 isLoading={updating}

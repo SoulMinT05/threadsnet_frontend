@@ -17,6 +17,7 @@ import SidebarComponent from './components/SidebarComponent/SidebarComponent';
 import FollowingPage from './pages/FollowingPage/FollowingPage';
 import SearchPage from './pages/SearchPage/SearchPage';
 import LikedPage from './pages/LikedPage/LikedPage';
+import SavedPage from './pages/SavedPage/SavedPage';
 import MessagePage from './pages/MessagePage/MessagePage';
 import NotificationPage from './pages/NotificationPage/NotificationPage';
 import MorePage from './pages/MorePage/MorePage';
@@ -102,6 +103,7 @@ function App() {
                         />
                         <Route path="/changePassword" element={user && <ChangePasswordComponent />} />
                         <Route path="/liked" element={user && <LikedPage />} />
+                        <Route path="/saved" element={user && <SavedPage />} />
                         <Route path="/search" element={user && <SearchPage />} />
                         <Route path="/message" element={user && <MessagePage />} />
                         <Route path="/notification" element={user && <NotificationPage />} />

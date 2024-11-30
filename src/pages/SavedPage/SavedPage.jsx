@@ -25,7 +25,6 @@ const LikedPage = () => {
                     },
                 });
                 const data = await res.json();
-                console.log('dataLiekdPost: ', data);
                 if (!data.success) {
                     showToast('Error', data.message, 'error');
                     return;
@@ -51,7 +50,7 @@ const LikedPage = () => {
             mx="auto"
             marginRight={'0'}
         >
-            {!loading && posts?.length === 0 && (
+            {!loading && posts.likedPosts?.length === 0 && (
                 <h1 style={{ textAlign: 'center' }}>Theo dõi thêm người dùng để xem bài viết của họ</h1>
             )}
             {loading && (
@@ -61,10 +60,10 @@ const LikedPage = () => {
             )}
             {posts?.map((likedPost, index) => (
                 <LikedPostComponent
-                    key={likedPost?._id}
+                    key={likedPost._id}
                     likedPost={likedPost}
                     isLastPost={index === posts.length - 1}
-                    postedBy={likedPost?.postedBy}
+                    postedBy={likedPost.postedBy}
                 />
             ))}
         </Box>

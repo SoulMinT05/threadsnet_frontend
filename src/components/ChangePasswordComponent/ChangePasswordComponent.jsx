@@ -61,7 +61,6 @@ const ChangePasswordComponent = () => {
                             <Input
                                 value={inputs.currentPassword}
                                 onChange={(e) => setInputs({ ...inputs, currentPassword: e.target.value })}
-                                placeholder="current password"
                                 _placeholder={{ color: 'gray.500' }}
                                 type="password"
                             />
@@ -71,7 +70,6 @@ const ChangePasswordComponent = () => {
                             <Input
                                 value={inputs.newPassword}
                                 onChange={(e) => setInputs({ ...inputs, newPassword: e.target.value })}
-                                placeholder="new password"
                                 _placeholder={{ color: 'gray.500' }}
                                 type="password"
                             />
@@ -90,11 +88,11 @@ const ChangePasswordComponent = () => {
                                 <Link>Cancel</Link>
                             </Button>
                             <Button
-                                bg={'green.400'}
+                                bg={'blue.400'}
                                 color={'white'}
                                 w="full"
                                 _hover={{
-                                    bg: 'green.500',
+                                    bg: 'blue.500',
                                 }}
                                 type="submit"
                                 isLoading={updating}

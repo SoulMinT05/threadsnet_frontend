@@ -175,29 +175,29 @@ const LikedPostComponent = ({ likedPost, postedBy, isLastPost }) => {
                                 <Image src="./verified.png" w={4} h={4} ml={1} />
 
                                 <Text fontSize={'xs'} mx={'8px'} color={'gray.light'}>
-                                    {formatDistanceToNow(new Date(likedPost.createdAt))}
+                                    {formatDistanceToNow(new Date(likedPost?.createdAt))}
                                 </Text>
                                 <Box width={36} onClick={(e) => e.preventDefault()}>
                                     <Menu>
                                         <Tooltip
                                             label={
-                                                likedPost.visibility.charAt(0).toUpperCase() +
-                                                likedPost.visibility.slice(1)
+                                                likedPost?.visibility.charAt(0).toUpperCase() +
+                                                likedPost?.visibility.slice(1)
                                             }
-                                            aria-label={likedPost.visibility}
+                                            aria-label={likedPost?.visibility}
                                             isClose={showTooltip}
                                         >
                                             <MenuButton mt={'6px'}>
-                                                {likedPost.visibility === 'public' && (
+                                                {likedPost?.visibility === 'public' && (
                                                     <MdPublic color="gray" size={16} />
                                                 )}
-                                                {likedPost.visibility === 'private' && (
+                                                {likedPost?.visibility === 'private' && (
                                                     <AiFillLock color="gray" size={16} />
                                                 )}
-                                                {likedPost.visibility === 'friends' && (
+                                                {likedPost?.visibility === 'friends' && (
                                                     <FaUserFriends color="gray" size={16} />
                                                 )}
-                                                {likedPost.visibility === 'followers' && (
+                                                {likedPost?.visibility === 'followers' && (
                                                     <MdGroups color="gray" size={20} />
                                                 )}
                                             </MenuButton>
@@ -300,14 +300,14 @@ const LikedPostComponent = ({ likedPost, postedBy, isLastPost }) => {
                             </Flex>
                         </Flex>
                         <Text fontSize={'sm'} marginTop={'-8px'}>
-                            {likedPost.text}
+                            {likedPost?.text}
                         </Text>
-                        {likedPost.image && (
+                        {likedPost?.image && (
                             <Box borderRadius={6} overflow={'hidden'} border={'1px solid'} borderColor={'gray.light'}>
                                 <Image
                                     maxHeight={'560px'}
                                     objectFit={'cover'}
-                                    src={likedPost.image}
+                                    src={likedPost?.image}
                                     w={'full'}
                                     alt="Image"
                                 />
